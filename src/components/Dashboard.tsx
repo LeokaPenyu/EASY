@@ -44,13 +44,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ role, exams, onViewExam })
   };
 
   const decSummaryReadyCount = exams.filter(e => e.status === ExamStatus.APPROVED).length;
-  const decPendingSubmissionCount = exams.filter(e => e.status === ExamStatus.EXPIRED || e.status === ExamStatus.LOCKED).length;
+  const decPendingSubmissionCount = exams.filter(e => e.status === ExamStatus.EXPIRED || e.status === ExamStatus.LOCKED || e.status === ExamStatus.UNLOCK_REQUESTED).length;
 
-  const secVerificationCount = exams.filter(e => e.status === ExamStatus.PENDING_VERIFICATION || e.status === ExamStatus.SUBMITTED).length;
-  const secUnlockRequestCount = exams.filter(e => e.status === ExamStatus.EXPIRED || e.status === ExamStatus.LOCKED).length;
+  const secNewApplicationCount = exams.filter(e => e.status === ExamStatus.PENDING_VERIFICATION).length;
+  const secVerificationCount = exams.filter(e => e.status === ExamStatus.SUBMITTED).length;
+  const secUnlockRequestCount = exams.filter(e => e.status === ExamStatus.UNLOCK_REQUESTED).length;
   const secPrintReadyCount = exams.filter(e => e.status === ExamStatus.COMPLETED).length;
 
-  const sebcPersonnelInputCount = exams.filter(e => e.status === ExamStatus.APPROVED && e.district === 'BINTULU').length; // Dummy logic
+  const sebcPersonnelInputCount = exams.filter(e => e.status === ExamStatus.APPROVED).length;
   const sebcResultsInputCount = exams.filter(e => e.status === ExamStatus.APPROVED).length;
 
   return (
@@ -133,6 +134,16 @@ export const Dashboard: React.FC<DashboardProps> = ({ role, exams, onViewExam })
                </h3>
                <div className="space-y-3">
                  <button 
+                  onClick={() => onViewExam('new-application-list')}
+                  className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-brand-red/30 transition-all group"
+                 >
+                   <span className="text-sm font-medium text-gray-700 group-hover:text-brand-red">Permohonan Baru Dihantar</span>
+                   <div className="flex items-center gap-3">
+                     <span className="bg-brand-red text-white px-2 py-0.5 rounded-full text-[10px] font-black">{secNewApplicationCount}</span>
+                     <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-brand-red" />
+                   </div>
+                 </button>
+                 <button 
                   onClick={() => onViewExam('verification-list')}
                   className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-brand-red/30 transition-all group"
                  >
@@ -153,10 +164,20 @@ export const Dashboard: React.FC<DashboardProps> = ({ role, exams, onViewExam })
                    </div>
                  </button>
                  <button 
-                  onClick={() => onViewExam('print-list')}
+                  onClick={() => onViewExam('sedia-cetak-list')}
                   className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-action-teal/30 transition-all group"
                  >
                    <span className="text-sm font-medium text-gray-700 group-hover:text-action-teal">Sedia untuk Dicetak</span>
+                   <div className="flex items-center gap-3">
+                     <span className="bg-action-teal text-white px-2 py-0.5 rounded-full text-[10px] font-black">{secPrintReadyCount}</span>
+                     <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-action-teal" />
+                   </div>
+                 </button>
+                 <button 
+                  onClick={() => onViewExam('print-list')}
+                  className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-action-teal/30 transition-all group"
+                 >
+                   <span className="text-sm font-medium text-gray-700 group-hover:text-action-teal">Penyata Peperiksaan</span>
                    <div className="flex items-center gap-3">
                      <span className="bg-action-teal text-white px-2 py-0.5 rounded-full text-[10px] font-black">{secPrintReadyCount}</span>
                      <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-action-teal" />
@@ -168,39 +189,55 @@ export const Dashboard: React.FC<DashboardProps> = ({ role, exams, onViewExam })
 
           {/* SEBC Role Worklist */}
           {role === UserRole.SEBC && (
-            <div className="card border-l-4 border-l-orange-500 bg-orange-50/10">
-               <h3 className="text-sm font-black uppercase tracking-widest text-charcoal mb-4 flex items-center gap-2">
-                 <FileCheck className="w-4 h-4 text-orange-500" />
+            <div className="card border-l-4 border-l-[#2D5A8E] bg-[#2D5A8E]/5">
+               <h3 className="text-sm font-black uppercase tracking-widest text-[#2D5A8E] mb-2 flex items-center gap-2">
+                 <FileCheck className="w-4 h-4 text-[#2D5A8E]" />
                  Senarai Kerja (Worklist) - Board
                </h3>
+               <p className="text-xs font-medium text-gray-500 mb-4 px-6 border-b border-gray-200 pb-2 border-dashed">
+                 Pengerusi Lembaga Pengarah Peperiksaan Cawangan
+               </p>
                <div className="space-y-3">
                  <button 
-                  onClick={() => onViewExam('personnel-input')}
-                  className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-brand-red/30 transition-all group"
+                  className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-[#2D5A8E]/30 transition-all group"
                  >
-                   <span className="text-sm font-medium text-gray-700 group-hover:text-brand-red">Sedia untuk Memasukkan Senarai Pemeriksa</span>
+                   <span className="text-sm font-medium text-gray-700 group-hover:text-[#2D5A8E]">Sedia untuk Penyediaan Peperiksaan</span>
                    <div className="flex items-center gap-3">
-                     <span className="bg-brand-red text-white px-2 py-0.5 rounded-full text-[10px] font-black">{sebcPersonnelInputCount}</span>
-                     <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-brand-red" />
+                     <span className="bg-gray-400 group-hover:bg-[#2D5A8E] text-white px-2 py-0.5 rounded-full text-[10px] font-black transition-colors">0</span>
+                     <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-[#2D5A8E]" />
+                   </div>
+                 </button>
+                 <button 
+                  onClick={() => onViewExam('personnel-input')}
+                  className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-[#2D5A8E]/30 transition-all group shadow-sm hover:shadow-md"
+                 >
+                   <span className="text-sm font-medium text-gray-700 group-hover:text-[#2D5A8E]">Sedia untuk memasukkan Senarai Pemeriksa</span>
+                   <div className="flex items-center gap-3">
+                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-black transition-colors ${sebcPersonnelInputCount > 0 ? 'bg-[#2D5A8E] text-white' : 'bg-gray-400 group-hover:bg-[#2D5A8E] text-white'}`}>
+                       {sebcPersonnelInputCount}
+                     </span>
+                     <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-[#2D5A8E]" />
                    </div>
                  </button>
                  <button 
                   onClick={() => onViewExam('results-input')}
-                  className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-action-teal/30 transition-all group"
+                  className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-[#2D5A8E]/30 transition-all group shadow-sm hover:shadow-md"
                  >
-                   <span className="text-sm font-medium text-gray-700 group-hover:text-action-teal">Sedia untuk Memasukkan Keputusan</span>
+                   <span className="text-sm font-medium text-gray-700 group-hover:text-[#2D5A8E]">Sedia untuk memasukkan Keputusan</span>
                    <div className="flex items-center gap-3">
-                     <span className="bg-action-teal text-white px-2 py-0.5 rounded-full text-[10px] font-black">{sebcResultsInputCount}</span>
-                     <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-action-teal" />
+                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-black transition-colors ${sebcResultsInputCount > 0 ? 'bg-[#2D5A8E] text-white' : 'bg-gray-400 group-hover:bg-[#2D5A8E] text-white'}`}>
+                       {sebcResultsInputCount}
+                     </span>
+                     <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-[#2D5A8E]" />
                    </div>
                  </button>
                  <button 
-                  className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-gray-500/30 transition-all group"
+                  className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-[#2D5A8E]/30 transition-all group"
                  >
-                   <span className="text-sm font-medium text-gray-700 group-hover:text-gray-500">Permintaan Membuka Keputusan yang Dikunci</span>
+                   <span className="text-sm font-medium text-gray-700 group-hover:text-[#2D5A8E]">Permintaan untuk Membuka Peperiksaan yang Dikunci</span>
                    <div className="flex items-center gap-3">
-                     <span className="bg-gray-500 text-white px-2 py-0.5 rounded-full text-[10px] font-black">0</span>
-                     <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-gray-500" />
+                     <span className="bg-gray-400 group-hover:bg-[#2D5A8E] text-white px-2 py-0.5 rounded-full text-[10px] font-black transition-colors">0</span>
+                     <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-[#2D5A8E]" />
                    </div>
                  </button>
                </div>
@@ -260,23 +297,25 @@ export const Dashboard: React.FC<DashboardProps> = ({ role, exams, onViewExam })
         </div>
 
         <div className="space-y-6">
-          <div className="card border-l-4 border-l-alert-red bg-red-50/30">
-            <div className="flex gap-4">
-              <AlertCircle className="w-6 h-6 text-alert-red flex-shrink-0" />
-              <div>
-                <h4 className="font-bold text-alert-red text-sm mb-1">{t('lockedNoticeTitle')}</h4>
-                <p className="text-xs text-gray-600 leading-relaxed mb-3">
-                  {t('lockedNoticeDesc')}
-                </p>
-                <button 
-                  onClick={() => onViewExam('unlock-list')}
-                  className="btn-secondary text-xs py-1.5 w-full flex justify-center gap-2"
-                >
-                  <Lock className="w-3.5 h-3.5" /> {t('requestUnlock')}
-                </button>
+          {role === UserRole.DEC && (
+            <div className="card border-l-4 border-l-alert-red bg-red-50/30">
+              <div className="flex gap-4">
+                <AlertCircle className="w-6 h-6 text-alert-red flex-shrink-0" />
+                <div>
+                  <h4 className="font-bold text-alert-red text-sm mb-1">{t('lockedNoticeTitle')}</h4>
+                  <p className="text-xs text-gray-600 leading-relaxed mb-3">
+                    {t('lockedNoticeDesc')}
+                  </p>
+                  <button 
+                    onClick={() => onViewExam('unlock-list')}
+                    className="btn-secondary text-xs py-1.5 w-full flex justify-center gap-2"
+                  >
+                    <Lock className="w-3.5 h-3.5" /> {t('requestUnlock')}
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           <div className="card">
             <h3 className="text-lg font-bold mb-4">{t('quickLinks')}</h3>

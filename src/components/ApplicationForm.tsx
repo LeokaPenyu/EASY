@@ -18,30 +18,75 @@ import {
 } from 'lucide-react';
 
 interface ApplicationFormProps {
+  initialExamType?: string | null;
   goBack: () => void;
   onSubmit: (exam: MockExam) => void;
   onSaveDraft: (exam: MockExam) => void;
 }
 
-export const ApplicationForm: React.FC<ApplicationFormProps> = ({ goBack, onSubmit, onSaveDraft }) => {
+export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamType, goBack, onSubmit, onSaveDraft }) => {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = React.useState<'permohonan' | 'rumusan' | 'keputusan'>('permohonan');
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [form, setForm] = React.useState<ApplicationFormState>({
     district: '',
     organizationName: '',
-    category: 'Private',
+    categoryVAD: false,
+    categoryPrivate: false,
     examAddress: '',
     trainingOfficerName: '',
     trainingOfficerId: '',
-    language: 'BM',
+    trainingOfficerAddress: '',
+    examDate: '',
+    subject: '',
+    languageBM: false,
+    languageBI: false,
+    languageBC: false,
     paymentDescription: '',
     attachment: undefined,
     candidates: [],
+    jurulatih: [],
+    penyelia: [],
+    pemeriksa: [],
   });
 
   const [confirmDialog, setConfirmDialog] = React.useState<{message: string, onConfirm: () => void} | null>(null);
   const [alertDialog, setAlertDialog] = React.useState<{message: string, onClose?: () => void} | null>(null);
+
+  const [newJurulatih, setNewJurulatih] = React.useState({ name: '', icNumber: '', address: '', warrantNumber: '' });
+  const [newPenyelia, setNewPenyelia] = React.useState({ name: '', icNumber: '' });
+  const [newPemeriksa, setNewPemeriksa] = React.useState({ name: '', address: '', warrantNumber: '' });
+
+  React.useEffect(() => {
+    if (initialExamType) {
+      if (initialExamType.includes(' - ')) {
+        const [date, subject] = initialExamType.split(' - ');
+        setForm(prev => ({ ...prev, examDate: date, subject: subject.trim() }));
+      } else {
+        // "Biasas" are just '700/1' etc based on the array text id from ExamTypeSelection
+        // In ExamTypeSelection, it's just '700/1', '700/2', etc. So that is the subject.
+        setForm(prev => ({ ...prev, subject: initialExamType }));
+      }
+    }
+  }, [initialExamType]);
+
+  const addJurulatih = () => {
+    setForm(prev => ({ ...prev, jurulatih: [...prev.jurulatih, { ...newJurulatih, id: Date.now().toString() }] }));
+    setNewJurulatih({ name: '', icNumber: '', address: '', warrantNumber: '' });
+  };
+  const removeJurulatih = (id: string) => setForm(prev => ({ ...prev, jurulatih: prev.jurulatih.filter(j => j.id !== id) }));
+
+  const addPenyelia = () => {
+    setForm(prev => ({ ...prev, penyelia: [...prev.penyelia, { ...newPenyelia, id: Date.now().toString() }] }));
+    setNewPenyelia({ name: '', icNumber: '' });
+  };
+  const removePenyelia = (id: string) => setForm(prev => ({ ...prev, penyelia: prev.penyelia.filter(p => p.id !== id) }));
+
+  const addPemeriksa = () => {
+    setForm(prev => ({ ...prev, pemeriksa: [...prev.pemeriksa, { ...newPemeriksa, id: Date.now().toString() }] }));
+    setNewPemeriksa({ name: '', address: '', warrantNumber: '' });
+  };
+  const removePemeriksa = (id: string) => setForm(prev => ({ ...prev, pemeriksa: prev.pemeriksa.filter(p => p.id !== id) }));
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -94,7 +139,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ goBack, onSubm
       status,
       organization: form.organizationName || 'Organisasi',
       unitName: form.organizationName || 'Unit',
-      category: form.category || 'Private',
+      category: form.categoryPrivate ? 'Private' : (form.categoryVAD ? 'VAD' : 'Unknown'),
       courseStart: '10/05/2026',
       courseEnd: '12/05/2026',
       examDate: formattedDate,
@@ -261,6 +306,17 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ goBack, onSubm
               </h3>
               <span className="text-[10px] font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">SECTION 01</span>
             </div>
+
+            <div className="flex flex-col sm:flex-row sm:gap-12 gap-6 items-start sm:items-center mb-8 p-4 bg-gray-50/50 rounded-[8px] border border-gray-100">
+              <div className="space-y-1">
+                <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">No. Pendaftaran</div>
+                <div className="font-bold text-lg text-charcoal">(Akan dijana)</div>
+              </div>
+              <div className="space-y-1">
+                <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Status</div>
+                <div className="font-semibold text-charcoal bg-gray-200 px-3 py-1 rounded text-xs inline-block">Baru</div>
+              </div>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-2">
@@ -279,30 +335,30 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ goBack, onSubm
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">{t('categoryLabel')} <span className="text-brand-red">*</span></label>
-                <div className="flex gap-6 h-[44px] items-center px-1">
+                <div className="flex flex-wrap gap-8 items-center px-1 pt-1 h-[40px]">
                   <label className="flex items-center gap-3 cursor-pointer group">
                     <div className="relative flex items-center justify-center">
                       <input 
-                        type="radio" 
-                        name="category" 
-                        checked={form.category === 'Private'}
-                        onChange={() => handleInputChange('category', 'Private')}
-                        className="w-4 h-4 text-brand-red accent-brand-red cursor-pointer" 
+                        type="checkbox" 
+                        name="categoryVAD" 
+                        checked={form.categoryVAD}
+                        onChange={(e) => handleInputChange('categoryVAD', e.target.checked)}
+                        className="w-4 h-4 text-action-teal accent-action-teal rounded cursor-pointer" 
                       />
                     </div>
-                    <span className="text-sm font-semibold text-gray-600 group-hover:text-charcoal transition-colors">Private</span>
+                    <span className="text-sm font-semibold text-gray-600 group-hover:text-charcoal transition-colors">VAD+ Ordinary</span>
                   </label>
                   <label className="flex items-center gap-3 cursor-pointer group">
                     <div className="relative flex items-center justify-center">
                       <input 
-                        type="radio" 
-                        name="category" 
-                        checked={form.category === 'VAD'}
-                        onChange={() => handleInputChange('category', 'VAD')}
-                        className="w-4 h-4 text-brand-red accent-brand-red cursor-pointer" 
+                        type="checkbox" 
+                        name="categoryPrivate" 
+                        checked={form.categoryPrivate}
+                        onChange={(e) => handleInputChange('categoryPrivate', e.target.checked)}
+                        className="w-4 h-4 text-action-teal accent-action-teal rounded cursor-pointer" 
                       />
                     </div>
-                    <span className="text-sm font-semibold text-gray-600 group-hover:text-charcoal transition-colors">VAD / Unit</span>
+                    <span className="text-sm font-semibold text-gray-600 group-hover:text-charcoal transition-colors">Private</span>
                   </label>
                 </div>
               </div>
@@ -361,14 +417,35 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ goBack, onSubm
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">{t('officerIdLabel')} <span className="text-brand-red">*</span></label>
-                <input 
-                  type="text" 
-                  value={form.trainingOfficerId}
-                  onChange={(e) => handleInputChange('trainingOfficerId', e.target.value)}
-                  placeholder="Contoh: SWOT-9999" 
+                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Alamat Pegawai <span className="text-brand-red">*</span></label>
+                <textarea 
+                  rows={2}
+                  value={form.trainingOfficerAddress}
+                  onChange={(e) => handleInputChange('trainingOfficerAddress', e.target.value)}
+                  placeholder="Alamat Pegawai" 
                   className="w-full p-3 bg-gray-50 border border-gray-200 rounded-[6px] text-sm outline-none focus:ring-2 focus:ring-brand-red/10 focus:border-brand-red/30 transition-all font-medium" 
                 />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-gray-100 mt-2">
+              <div className="space-y-2">
+                 <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Tarikh Peperiksaan <span className="text-brand-red">*</span></label>
+                 {(!initialExamType || !initialExamType.includes(' - ')) ? (
+                   <input 
+                     type="date"
+                     value={form.examDate}
+                     onChange={(e) => handleInputChange('examDate', e.target.value)}
+                     min={new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+                     className="w-full p-3 bg-white border border-gray-200 rounded-[6px] text-sm focus:ring-2 focus:ring-brand-red/10 focus:border-brand-red/30 transition-all font-medium"
+                   />
+                 ) : (
+                   <div className="w-full p-3 bg-gray-50 border border-gray-200 rounded-[6px] text-sm font-bold text-charcoal">{form.examDate}</div>
+                 )}
+              </div>
+              <div className="space-y-2">
+                 <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Subjek <span className="text-brand-red">*</span></label>
+                 <div className="w-full p-3 bg-gray-50 border border-gray-200 rounded-[6px] text-sm font-bold text-charcoal">{form.subject}</div>
               </div>
             </div>
           </section>
@@ -383,8 +460,111 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ goBack, onSubm
             </div>
           </section>
 
+          {activeTab === 'rumusan' && (
+            <>
+              {/* Section: Senarai Jurulatih */}
+              <section className="card space-y-4 shadow-sm border-gray-200/60">
+                <h3 className="font-bold text-charcoal border-b pb-2">Senarai Jurulatih</h3>
+                <div className="flex gap-2 p-2 bg-gray-50 rounded">
+                   <input placeholder="Nama" className="text-sm p-1 border rounded" value={newJurulatih.name} onChange={e => setNewJurulatih(prev => ({...prev, name: e.target.value}))} />
+                   <input placeholder="No. KP" className="text-sm p-1 border rounded" value={newJurulatih.icNumber} onChange={e => setNewJurulatih(prev => ({...prev, icNumber: e.target.value}))} />
+                   <input placeholder="Alamat" className="text-sm p-1 border rounded" value={newJurulatih.address} onChange={e => setNewJurulatih(prev => ({...prev, address: e.target.value}))} />
+                   <input placeholder="No. Waran" className="text-sm p-1 border rounded" value={newJurulatih.warrantNumber} onChange={e => setNewJurulatih(prev => ({...prev, warrantNumber: e.target.value}))} />
+                   <button onClick={addJurulatih} className="px-2 bg-action-teal text-white rounded text-sm">+</button>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm text-left">
+                    <thead>
+                      <tr className="bg-gray-100 text-gray-500 uppercase text-[10px] tracking-widest">
+                        <th className="p-2">Nama</th>
+                        <th className="p-2">No. KP/Pasport</th>
+                        <th className="p-2">Alamat</th>
+                        <th className="p-2">No. Jurulatih/Waran</th>
+                        <th className="p-2"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {form.jurulatih.map((j, i) => (
+                        <tr key={j.id} className="border-b">
+                          <td className="p-2">{j.name}</td>
+                          <td className="p-2">{j.icNumber}</td>
+                          <td className="p-2">{j.address}</td>
+                          <td className="p-2">{j.warrantNumber}</td>
+                          <td className="p-2"><button onClick={() => removeJurulatih(j.id)} className="text-brand-red text-xs">Delete</button></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+
+              {/* Section: Senarai Penyelia */}
+              <section className="card space-y-4 shadow-sm border-gray-200/60">
+                <h3 className="font-bold text-charcoal border-b pb-2">Senarai Penyelia</h3>
+                <div className="flex gap-2 p-2 bg-gray-50 rounded">
+                   <input placeholder="Nama" className="text-sm p-1 border rounded" value={newPenyelia.name} onChange={e => setNewPenyelia(prev => ({...prev, name: e.target.value}))} />
+                   <input placeholder="No. KP" className="text-sm p-1 border rounded" value={newPenyelia.icNumber} onChange={e => setNewPenyelia(prev => ({...prev, icNumber: e.target.value}))} />
+                   <button onClick={addPenyelia} className="px-2 bg-action-teal text-white rounded text-sm">+</button>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm text-left">
+                    <thead>
+                      <tr className="bg-gray-100 text-gray-500 uppercase text-[10px] tracking-widest">
+                        <th className="p-2">Nama</th>
+                        <th className="p-2">No. KP/Pasport</th>
+                        <th className="p-2"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {form.penyelia.map((p, i) => (
+                        <tr key={p.id} className="border-b">
+                          <td className="p-2">{p.name}</td>
+                          <td className="p-2">{p.icNumber}</td>
+                          <td className="p-2"><button onClick={() => removePenyelia(p.id)} className="text-brand-red text-xs">Delete</button></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+
+              {/* Section: Senarai Pemeriksa Praktikal */}
+              <section className="card space-y-4 shadow-sm border-gray-200/60">
+                <h3 className="font-bold text-charcoal border-b pb-2">Senarai Pemeriksa Praktikal</h3>
+                <div className="flex gap-2 p-2 bg-gray-50 rounded">
+                   <input placeholder="Nama" className="text-sm p-1 border rounded" value={newPemeriksa.name} onChange={e => setNewPemeriksa(prev => ({...prev, name: e.target.value}))} />
+                   <input placeholder="Alamat" className="text-sm p-1 border rounded" value={newPemeriksa.address} onChange={e => setNewPemeriksa(prev => ({...prev, address: e.target.value}))} />
+                   <input placeholder="No. Waran" className="text-sm p-1 border rounded" value={newPemeriksa.warrantNumber} onChange={e => setNewPemeriksa(prev => ({...prev, warrantNumber: e.target.value}))} />
+                   <button onClick={addPemeriksa} className="px-2 bg-action-teal text-white rounded text-sm">+</button>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm text-left">
+                    <thead>
+                      <tr className="bg-gray-100 text-gray-500 uppercase text-[10px] tracking-widest">
+                        <th className="p-2">Nama</th>
+                        <th className="p-2">Alamat</th>
+                        <th className="p-2">No. Jurulatih/Waran</th>
+                        <th className="p-2"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {form.pemeriksa.map((p, i) => (
+                        <tr key={p.id} className="border-b">
+                          <td className="p-2">{p.name}</td>
+                          <td className="p-2">{p.address}</td>
+                          <td className="p-2">{p.warrantNumber}</td>
+                          <td className="p-2"><button onClick={() => removePemeriksa(p.id)} className="text-brand-red text-xs">Delete</button></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            </>
+          )}
+
           {/* Section 4: Bahas & Lampiran */}
-          <section className="card space-y-8 shadow-sm border-gray-200/60">
+          <section className="card space-y-8 shadow-sm border-gray-200/60 pb-8">
             <div className="flex items-center justify-between border-b border-gray-50 pb-5">
               <h3 className="font-bold text-charcoal flex items-center gap-3">
                 <div className="p-2 bg-brand-red/5 rounded-lg">
@@ -396,62 +576,95 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ goBack, onSubm
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-              <div className="space-y-6">
-                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">{t('languageOptionLabel')} <span className="text-brand-red">*</span></label>
-                <div className="flex flex-wrap gap-8 px-1">
-                  {['BM', 'BI', 'BC'].map((lang) => (
-                    <label key={lang} className="flex items-center gap-3 cursor-pointer group">
-                      <input 
-                        type="radio" 
-                        name="language" 
-                        checked={form.language === lang}
-                        onChange={() => handleInputChange('language', lang)}
-                        className="w-4 h-4 text-brand-red accent-brand-red cursor-pointer" 
-                      />
-                      <span className="text-sm font-bold text-gray-600 group-hover:text-charcoal transition-colors">{lang}</span>
+              <div className="space-y-8">
+                <div className="space-y-4">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Pilihan bahasa dalam peperiksaan <span className="text-brand-red">*</span></label>
+                  <div className="flex flex-wrap gap-6 px-1 items-center">
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input type="checkbox" className="w-5 h-5 accent-action-teal border-gray-300 rounded cursor-pointer" checked={form.languageBM} onChange={(e) => handleInputChange('languageBM', e.target.checked)} />
+                      <span className="font-bold text-sm text-charcoal">BM</span>
                     </label>
-                  ))}
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input type="checkbox" className="w-5 h-5 accent-action-teal border-gray-300 rounded cursor-pointer" checked={form.languageBI} onChange={(e) => handleInputChange('languageBI', e.target.checked)} />
+                      <span className="font-bold text-sm text-charcoal">BI</span>
+                    </label>
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input type="checkbox" className="w-5 h-5 accent-action-teal border-gray-300 rounded cursor-pointer" checked={form.languageBC} onChange={(e) => handleInputChange('languageBC', e.target.checked)} />
+                      <span className="font-bold text-sm text-charcoal">BC</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="space-y-3 p-5 bg-gray-50 rounded-[8px] border border-gray-200">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Bilangan Calon</label>
+                  <div className="space-y-3 text-sm text-charcoal">
+                    <div className="flex justify-between border-b border-gray-200/60 pb-3">
+                      <span className="text-gray-500">Jumlah Calon:</span>
+                      <span className="font-bold text-base">{form.candidates.length}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-500 pl-2 text-xs">• Ahli:</span>
+                      <span className="font-bold">{form.candidates.filter(c => c.isMember || (c.membershipId && c.membershipId.trim() !== '')).length}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-500 pl-2 text-xs">• Bukan Ahli:</span>
+                      <span className="font-bold">{form.candidates.length - form.candidates.filter(c => c.isMember || (c.membershipId && c.membershipId.trim() !== '')).length}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">{t('paymentProofLabel')} <span className="text-brand-red">*</span></label>
-                <input 
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                  className="hidden"
-                  accept=".pdf,.jpg,.jpeg,.png"
-                />
-                <div 
-                  onClick={() => fileInputRef.current?.click()}
-                  className={`border-2 border-dashed rounded-[12px] p-8 text-center space-y-3 transition-all cursor-pointer group ${
-                    form.attachment 
-                      ? 'border-green-300 bg-green-50/30' 
-                      : 'border-gray-200 bg-gray-50/50 hover:border-action-teal/40 hover:bg-action-teal/[0.02]'
-                  }`}
-                >
-                  {form.attachment ? (
-                    <CheckCircle2 className="w-10 h-10 text-green-500 mx-auto" />
-                  ) : (
-                    <FileText className="w-10 h-10 text-gray-300 mx-auto group-hover:text-action-teal group-hover:scale-110 transition-all" />
-                  )}
-                  <div className="space-y-1">
-                    <p className="text-[13px] font-bold text-charcoal">
-                      {form.attachment ? form.attachment.name : t('uploadReceipt')}
-                    </p>
-                    <p className="text-[10px] text-gray-400 uppercase tracking-wider">
-                      {form.attachment ? form.attachment.size : 'PDF, JPG, PNG (MAX 5MB)'}
-                    </p>
+              <div className="space-y-6">
+                <div className="space-y-4">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">{t('paymentProofLabel')} <span className="text-brand-red">*</span></label>
+                  <input 
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    className="hidden"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                  />
+                  <div 
+                    onClick={() => fileInputRef.current?.click()}
+                    className={`border-2 border-dashed rounded-[12px] p-6 text-center space-y-3 transition-all cursor-pointer group ${
+                      form.attachment 
+                        ? 'border-green-300 bg-green-50/30' 
+                        : 'border-gray-200 bg-gray-50/50 hover:border-action-teal/40 hover:bg-action-teal/[0.02]'
+                    }`}
+                  >
+                    {form.attachment ? (
+                      <CheckCircle2 className="w-8 h-8 text-green-500 mx-auto" />
+                    ) : (
+                      <FileText className="w-8 h-8 text-gray-300 mx-auto group-hover:text-action-teal group-hover:scale-110 transition-all" />
+                    )}
+                    <div className="space-y-1">
+                      <p className="text-[13px] font-bold text-charcoal">
+                        {form.attachment ? form.attachment.name : t('uploadReceipt')}
+                      </p>
+                      <p className="text-[10px] text-gray-400 uppercase tracking-wider">
+                        {form.attachment ? form.attachment.size : 'PDF, JPG, PNG (MAX 5MB)'}
+                      </p>
+                    </div>
                   </div>
+                  <input 
+                    type="text" 
+                    placeholder={t('paymentDescriptionPlaceholder')} 
+                    value={form.paymentDescription}
+                    onChange={(e) => handleInputChange('paymentDescription', e.target.value)}
+                    className="w-full p-3 bg-gray-50 border border-gray-200 rounded-[6px] text-sm outline-none focus:ring-2 focus:ring-action-teal/10 font-medium" 
+                  />
                 </div>
-                <input 
-                  type="text" 
-                  placeholder={t('paymentDescriptionPlaceholder')} 
-                  value={form.paymentDescription}
-                  onChange={(e) => handleInputChange('paymentDescription', e.target.value)}
-                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-[6px] text-sm outline-none focus:ring-2 focus:ring-action-teal/10 font-medium" 
-                />
+
+                <div className="space-y-2 p-5 bg-gray-50/80 rounded-[8px] border border-gray-200 mt-6 text-xs text-charcoal">
+                    <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 block">Ringkasan Pembayaran</label>
+                    <p className="flex justify-between items-center"><span>Bayaran yuran peperiksaan (Ahli)<br/><span className="text-gray-500 mt-0.5 inline-block">{form.candidates.filter(c => c.isMember || (c.membershipId && c.membershipId.trim() !== '')).length} x RM 2.00 / calon</span></span> <span className="font-bold text-sm">RM {(form.candidates.filter(c => c.isMember || (c.membershipId && c.membershipId.trim() !== '')).length * 2).toFixed(2)}</span></p>
+                    <div className="h-px w-full bg-gray-200/50 my-2"></div>
+                    <p className="flex justify-between items-center"><span>Bayaran yuran peperiksaan (Bukan Ahli)<br/><span className="text-gray-500 mt-0.5 inline-block">{form.candidates.length - form.candidates.filter(c => c.isMember || (c.membershipId && c.membershipId.trim() !== '')).length} x RM 14.00 / calon</span></span> <span className="font-bold text-sm">RM {((form.candidates.length - form.candidates.filter(c => c.isMember || (c.membershipId && c.membershipId.trim() !== '')).length) * 14).toFixed(2)}</span></p>
+                    <div className="border-t border-gray-200/80 pt-3 mt-3 flex justify-between uppercase text-[11px] font-bold items-center">
+                      <span>Jumlah bayaran</span> 
+                      <span className="text-action-teal text-[15px]">RM {((form.candidates.filter(c => c.isMember || (c.membershipId && c.membershipId.trim() !== '')).length * 2) + ((form.candidates.length - form.candidates.filter(c => c.isMember || (c.membershipId && c.membershipId.trim() !== '')).length) * 14)).toFixed(2)}</span>
+                    </div>
+                </div>
               </div>
             </div>
           </section>

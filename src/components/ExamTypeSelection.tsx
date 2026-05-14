@@ -9,13 +9,18 @@ interface ExamTypeSelectionProps {
 
 export const ExamTypeSelection: React.FC<ExamTypeSelectionProps> = ({ onBack, onSelect }) => {
   const { t } = useLanguage();
+  const [examCategory, setExamCategory] = useState<'biasa' | 'berpusat'>('berpusat');
   const [selectedType, setSelectedType] = useState('');
 
-  const examTypes = [
-    { id: '1', name: '700/1 - First Aid at Work', category: 'Pusat' },
-    { id: '2', name: '700/2 - Advanced First Aid', category: 'Daerah' },
-    { id: '3', name: '700/3 - Pendidikan Kesihatan Asas', category: 'Pusat' },
-    { id: '4', name: '700/4 - Basic First Aid', category: 'Daerah' },
+  const berpusatExams = [
+    { id: '2016-12-31 - 800/2', text: '2016-12-31 - 800/2' },
+    { id: '2017-06-15 - 800/3', text: '2017-06-15 - 800/3' },
+  ];
+
+  const biasaExams = [
+    { id: '700/1', text: '700/1 - First Aid at Work' },
+    { id: '700/2', text: '700/2 - Advanced First Aid' },
+    { id: '700/4', text: '700/4 - Basic First Aid' },
   ];
 
   return (
@@ -41,8 +46,7 @@ export const ExamTypeSelection: React.FC<ExamTypeSelectionProps> = ({ onBack, on
               Arahan Pendaftaran:
             </p>
             <p className="text-[13px] text-charcoal/80 leading-relaxed">
-              5. Untuk terus menambah rekod baru, sila pilih <span className="font-bold underline decoration-brand-red/30 underline-offset-2">Nama Peperiksaan</span>.<br />
-              6. Klik butang <span className="font-bold text-action-teal underline decoration-action-teal/30 underline-offset-2">PILIH</span> untuk memulakan permohonan.
+              Sila pilih jenis peperiksaan kemudian klik butang <span className="font-bold text-action-teal">PILIH</span> untuk memulakan permohonan.
             </p>
             <p className="text-xs text-gray-500 italic bg-white/50 p-2 rounded border border-gray-100">
               {t('peperiksaanBerpusatNote')}
@@ -50,20 +54,56 @@ export const ExamTypeSelection: React.FC<ExamTypeSelectionProps> = ({ onBack, on
           </div>
         </div>
 
-        <div className="space-y-3">
-          <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">{t('examTypeLabel')}</label>
-          <select 
-            value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value)}
-            className="w-full p-4 bg-gray-50 border border-gray-200 rounded-[6px] text-sm outline-none focus:ring-2 focus:ring-action-teal/10 transition-all font-semibold text-charcoal"
-          >
-            <option value="">{t('examTypePlaceholder')}</option>
-            {examTypes.map(type => (
-              <option key={type.id} value={type.id}>
-                {type.name} — ({type.category.toUpperCase()})
-              </option>
-            ))}
-          </select>
+        <div className="space-y-6">
+          <div className="space-y-3">
+            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Kategori Peperiksaan</label>
+            <div className="flex gap-6 p-4 bg-gray-50 border border-gray-200 rounded-[6px]">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input 
+                  type="radio" 
+                  name="examCategory" 
+                  value="biasa" 
+                  checked={examCategory === 'biasa'} 
+                  onChange={() => {
+                    setExamCategory('biasa');
+                    setSelectedType('');
+                  }}
+                  className="w-4 h-4 text-action-teal focus:ring-action-teal"
+                />
+                <span className="text-sm text-charcoal font-semibold">Peperiksaan Biasa</span>
+              </label>
+              
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input 
+                  type="radio" 
+                  name="examCategory" 
+                  value="berpusat" 
+                  checked={examCategory === 'berpusat'} 
+                  onChange={() => {
+                    setExamCategory('berpusat');
+                    setSelectedType('');
+                  }}
+                  className="w-4 h-4 text-action-teal focus:ring-action-teal"
+                />
+                <span className="text-sm text-charcoal font-semibold">Peperiksaan Berpusat</span>
+              </label>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">{t('examTypeLabel')}</label>
+            <select 
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value)}
+              className="w-full p-4 bg-gray-50 border border-gray-200 rounded-[6px] text-sm outline-none focus:ring-2 focus:ring-action-teal/10 transition-all font-semibold text-charcoal"
+            >
+              <option value="">{t('examTypePlaceholder')}</option>
+              {examCategory === 'berpusat' 
+                ? berpusatExams.map(ex => <option key={ex.id} value={ex.id}>{ex.text}</option>)
+                : biasaExams.map(ex => <option key={ex.id} value={ex.id}>{ex.text}</option>)
+              }
+            </select>
+          </div>
         </div>
 
         <button 

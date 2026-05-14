@@ -17,7 +17,10 @@ import {
   Lock,
   Unlock,
   ThumbsUp,
-  ThumbsDown
+  ThumbsDown,
+  X,
+  MousePointer2,
+  ArrowRight
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { MockExam } from '../data/mockExams';
@@ -46,7 +49,10 @@ interface ExamSummaryViewProps {
   onSuccess?: (exam: MockExam) => void;
   initialEditMode?: boolean;
   isSummaryReady?: boolean;
+  initialTab?: 'borang' | 'rumusan' | 'keputusan';
 }
+
+import { PenyataPeperiksaanPrint } from './PenyataPeperiksaanPrint';
 
 export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({ 
   role,
@@ -57,7 +63,8 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
   onUpdateStatus,
   onSuccess,
   initialEditMode = false,
-  isSummaryReady = false
+  isSummaryReady = false,
+  initialTab
 }) => {
   const { t } = useLanguage();
   
@@ -65,7 +72,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
   const selectedMock = exams.find(e => e.id === examId) || exams[0];
 
   const [activeTab, setActiveTab] = useState<'borang' | 'rumusan' | 'keputusan'>(
-    selectedMock.status === ExamStatus.DRAFT || selectedMock.status === ExamStatus.PENDING_VERIFICATION || selectedMock.status === ExamStatus.SUBMITTED ? 'borang' : 'rumusan'
+    initialTab || (selectedMock.status === ExamStatus.DRAFT || selectedMock.status === ExamStatus.PENDING_VERIFICATION || selectedMock.status === ExamStatus.SUBMITTED ? 'borang' : 'rumusan')
   );
   const [isEditable, setIsEditable] = useState(initialEditMode);
   
@@ -74,14 +81,15 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
   const [localStatus, setLocalStatus] = useState<ExamStatus>(selectedMock.status as ExamStatus);
   const [showNotification, setShowNotification] = useState<{show: boolean, message: string} | null>(null);
   const [showUnlockDialog, setShowUnlockDialog] = useState(false);
+  const [showPrint, setShowPrint] = useState(false);
   const [unlockApproved, setUnlockApproved] = useState(false);
   const [isUnlockRequested, setIsUnlockRequested] = useState(false);
-  const [isResultsSubmitted, setIsResultsSubmitted] = useState(false);
+  const [isResultsSubmitted, setIsResultsSubmitted] = useState(localStatus === ExamStatus.COMPLETED);
   const [showSECUnlockDialog, setShowSECUnlockDialog] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState<{message: string, onConfirm: () => void} | null>(null);
-  const [alertDialog, setAlertDialog] = useState<{message: string, onClose?: () => void} | null>(null);
-  const [newDueDate, setNewDueDate] = useState('25/11/2016');
-  const [isSecondUnlock, setIsSecondUnlock] = useState(false);
+  const [alertDialog, setAlertDialog] = useState<{message: string, onClose?: () => void, buttonText?: string} | null>(null);
+  const [newDueDate, setNewDueDate] = useState('2016-11-25');
+  const [isSecondUnlock, setIsSecondUnlock] = useState((selectedMock.unlockRequestCount || 0) >= 1);
   const [paymentFile, setPaymentFile] = useState<string | null>(null);
 
   const examData = {
@@ -97,6 +105,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
     subject: selectedMock.subject,
     address: selectedMock.address || 'Sekolah SAINS',
     attachment: selectedMock.attachment || { name: 'rena-deco-clay-craft-map.png', size: '390 KB' },
+    unlockRequestCount: selectedMock.unlockRequestCount || 0,
     candidates: selectedMock.candidates as Candidate[]
   };
 
@@ -173,6 +182,28 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
     triggerNotification('Permohonan untuk memperbaharui kursus telah diproses.');
   };
 
+  const [showAddPemeriksaDialog, setShowAddPemeriksaDialog] = useState(false);
+  const [selectedPemeriksaId, setSelectedPemeriksaId] = useState('');
+
+  const availablePemeriksaOptions = [
+    { id: 'PEM-01', name: 'LUKE', ic: '800101-13-5555', address: 'Kuching', waran: 'W001' },
+    { id: 'PEM-02', name: 'LEIA', ic: '810202-13-6666', address: 'Miri', waran: 'W002' },
+    { id: 'PEM-03', name: 'HAN', ic: '790303-13-7777', address: 'Bintulu', waran: 'W003' }
+  ];
+
+  const handleOpenAddPemeriksa = () => {
+    setSelectedPemeriksaId('');
+    setShowAddPemeriksaDialog(true);
+  };
+
+  const confirmAddPemeriksa = () => {
+    const selected = availablePemeriksaOptions.find(p => p.id === selectedPemeriksaId);
+    if (selected) {
+      setPemeriksa([...pemeriksa, { id: Math.random().toString(), name: selected.name, ic: selected.ic, address: selected.address, waran: selected.waran }]);
+    }
+    setShowAddPemeriksaDialog(false);
+  };
+
   const addJurulatih = () => setJurulatih([...jurulatih, { id: Math.random().toString(), name: '', ic: '', address: '', waran: '' }]);
   const addPenyelia = () => setPenyelia([...penyelia, { id: Math.random().toString(), name: '', ic: '' }]);
   const addPemeriksa = () => setPemeriksa([...pemeriksa, { id: Math.random().toString(), name: '', ic: '', address: '', waran: '' }]);
@@ -218,7 +249,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
     lang: (selectedMock as any).lang || { bm: 1, bi: 1, bc: 0 }
   };
 
-  const isExpired = localStatus === ExamStatus.EXPIRED && !unlockApproved;
+  const isExpired = (localStatus === ExamStatus.EXPIRED || localStatus === ExamStatus.UNLOCK_REQUESTED) && !unlockApproved;
 
   const handleUnlockRequest = () => {
     setShowUnlockDialog(true);
@@ -227,7 +258,16 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
   const confirmUnlock = () => {
     setShowUnlockDialog(false);
     setIsUnlockRequested(true);
-    triggerNotification('Permintaan untuk membuka kunci telah dihantar kepada SEC/SEBC.');
+    setLocalStatus(ExamStatus.UNLOCK_REQUESTED);
+    const updatedExam = { ...selectedMock, status: ExamStatus.UNLOCK_REQUESTED };
+    if (onUpdateStatus) {
+      onUpdateStatus(examId, ExamStatus.UNLOCK_REQUESTED);
+    }
+    setAlertDialog({
+      message: 'Berjaya! Permohonan buka kunci telah dihantar kepada SEC.',
+      onClose: () => onBack(),
+      buttonText: 'Kembali ke Senarai'
+    });
   };
 
   const handleUnlockApprove = () => {
@@ -237,6 +277,16 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
   const confirmSECUnlock = () => {
     setShowSECUnlockDialog(false);
     setUnlockApproved(true);
+    setLocalStatus(ExamStatus.APPROVED);
+    if (onUpdateExam) {
+      onUpdateExam(examId, { 
+        status: ExamStatus.APPROVED, 
+        deadline: newDueDate, 
+        unlockRequestCount: (selectedMock.unlockRequestCount || 0) + 1 
+      });
+    } else if (onUpdateStatus) {
+      onUpdateStatus(examId, ExamStatus.APPROVED);
+    }
     triggerNotification(`Permohonan telah dibuka kunci. Tarikh akhir baru: ${newDueDate}`);
   };
 
@@ -291,7 +341,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                 }}
                 className="px-8 py-2 bg-action-teal text-white rounded shadow-md font-bold text-sm hover:bg-teal-700"
               >
-                Tutup
+                {alertDialog.buttonText || 'Tutup'}
               </button>
             </div>
           </div>
@@ -526,6 +576,18 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                   </button>
                 </div>
               )}
+
+              {role === UserRole.SEC && localStatus === ExamStatus.UNLOCK_REQUESTED && (
+                <div className="flex border border-gray-400 rounded overflow-hidden">
+                  <button 
+                    onClick={handleUnlockApprove}
+                    className="flex items-center gap-1.5 px-3 py-1 bg-white hover:bg-green-50 font-bold text-[11px] text-charcoal hover:text-green-700 transition-all uppercase"
+                  >
+                    <Unlock className="w-4 h-4 text-green-600 fill-green-600/10" />
+                    Buka Kunci
+                  </button>
+                </div>
+              )}
             </div>
           </motion.div>
         )}
@@ -543,7 +605,9 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                   <h3 className="text-xl text-charcoal font-bold">
                     {localStatus === ExamStatus.SUBMITTED 
                       ? 'Rumusan Peperiksaan Telah Dihantar' 
-                      : (localStatus === ExamStatus.EXPIRED 
+                      : localStatus === ExamStatus.APPROVED
+                        ? 'Rumusan Peperiksaan Telah Disahkan'
+                        : (localStatus === ExamStatus.EXPIRED || localStatus === ExamStatus.UNLOCK_REQUESTED
                           ? 'Menunggu Penyerahan Rumusan Peperiksaan' 
                           : 'Sedia untuk Penyediaan Rumusan Peperiksaan')
                     }
@@ -562,16 +626,39 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
             {/* Locked/Submitted Content View (Figure 17 Style) */}
             {(isExpired || localStatus === ExamStatus.SUBMITTED) ? (
               <div className="card text-center py-12 space-y-6 border border-gray-300">
-                <p className="text-lg font-bold text-charcoal max-w-2xl mx-auto leading-relaxed">
+                <p className="text-[13px] font-bold text-charcoal max-w-2xl mx-auto leading-relaxed">
                   {localStatus === ExamStatus.SUBMITTED 
                     ? 'Rumusan Peperiksaan telah dihantar dan sedang diproses oleh Penyelaras Peperiksaan Negeri (SEC).'
-                    : `Rumusan Peperiksaan menunggu penyerahan oleh Penyelaras Peperiksaan Daerah. 
-                       Tarikh akhir penyerahan: ${examData.deadline}`
+                    : <>Rumusan Peperiksaan menunggu penyerahan oleh Penyelaras Peperiksaan Daerah.<br/>Tarikh akhir penyerahan: <span className="text-red-600">{examData.deadline}</span></>
                   }
                 </p>
+                {/* The Buka Kunci button */}
+                {localStatus === ExamStatus.UNLOCK_REQUESTED && role === UserRole.SEC && (
+                   <div className="flex justify-center mt-6">
+                      <button 
+                        onClick={handleUnlockApprove}
+                        className="btn-footer flex items-center gap-1.5 px-6 py-1.5 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-sm shadow-sm text-blue-600"
+                      >
+                        <Unlock className="w-4 h-4 text-blue-600" />
+                        Buka Kunci
+                      </button>
+                   </div>
+                )}
+                {localStatus !== ExamStatus.SUBMITTED && role !== UserRole.SEC && (
+                   <div className="flex justify-center mt-6">
+                      <button 
+                        onClick={handleUnlockRequest}
+                        disabled={localStatus === ExamStatus.UNLOCK_REQUESTED}
+                        className="btn-footer flex items-center gap-1.5 px-4 py-1 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-blue-600 disabled:opacity-50"
+                      >
+                        <Unlock className="w-3 h-3 text-blue-600" />
+                        Buka Kunci
+                      </button>
+                   </div>
+                )}
                 {/* Status-specific indicators in center (keeping as extra context, but Figure 15 buttons go in footer) */}
-                {isExpired && isUnlockRequested && (
-                  <div className="flex justify-center">
+                {localStatus === ExamStatus.UNLOCK_REQUESTED && (
+                  <div className="flex justify-center mt-4">
                     <div className="flex items-center gap-2 px-6 py-2 bg-orange-50 text-orange-700 border border-orange-200 rounded font-bold text-xs">
                       <RefreshCw className="w-3.5 h-3.5 animate-spin" />
                       Permintaan Menunggu Pengesahan...
@@ -651,7 +738,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                         {jurulatih.map((j) => (
                           <tr key={j.id} className="border-t border-gray-100 group">
                             <td className="px-3 py-1.5 flex items-center gap-2">
-                              {isEditable && (
+                              {isEditable && role !== UserRole.SEBC && (
                                 <button onClick={() => removeJurulatih(j.id)} className="text-black font-bold hover:text-brand-red">X</button>
                               )}
                               <span className="font-bold uppercase">{j.name}</span>
@@ -669,7 +756,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                       </tbody>
                     </table>
                   </div>
-                  {isEditable && (
+                  {isEditable && role !== UserRole.SEBC && (
                     <button 
                       onClick={addJurulatih}
                       className="border border-gray-400 px-4 py-1 flex items-center gap-2 text-action-teal font-bold text-xs rounded-sm hover:bg-gray-50"
@@ -699,10 +786,10 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                           <tr key={p.id} className="border-t border-gray-100">
                             <td className="px-3 py-1.5">
                               <div className="flex items-center gap-2">
-                                {isEditable && (
+                                {isEditable && role !== UserRole.SEBC && (
                                   <button onClick={() => removePenyelia(p.id)} className="text-black font-bold hover:text-brand-red">X</button>
                                 )}
-                                {isEditable ? (
+                                {isEditable && role !== UserRole.SEBC ? (
                                   <input 
                                     type="text" 
                                     value={p.name} 
@@ -715,7 +802,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                               </div>
                             </td>
                             <td className="px-3 py-1.5">
-                              {isEditable ? (
+                              {isEditable && role !== UserRole.SEBC ? (
                                 <input 
                                   type="text" 
                                   value={p.ic} 
@@ -731,7 +818,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                       </tbody>
                     </table>
                   </div>
-                  {isEditable && (
+                  {isEditable && role !== UserRole.SEBC && (
                     <button 
                       onClick={addPenyelia}
                       className="border border-gray-400 px-4 py-1 flex items-center gap-2 text-action-teal font-bold text-xs rounded-sm hover:bg-gray-50"
@@ -742,10 +829,10 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                 </div>
               </div>
 
-              {/* Pemeriksa Praktikal */}
+              {/* Senarai Pemeriksa */}
               <div className="grid grid-cols-[150px_1fr] gap-4">
                 <span className="text-gray-400 font-bold text-right py-1">
-                  <span className="text-brand-red font-bold mr-1">*</span>Senarai Pemeriksa Praktikal:
+                  <span className="text-brand-red font-bold mr-1">*</span>Senarai Pemeriksa:
                 </span>
                 <div className="space-y-2">
                   <div className="overflow-hidden border border-gray-200 rounded-sm">
@@ -755,7 +842,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                           <th className="px-3 py-1.5 text-left text-[11px] font-black text-charcoal border-r border-gray-300">Nama</th>
                           <th className="px-3 py-1.5 text-left text-[11px] font-black text-charcoal border-r border-gray-300">No. KP/Pasport</th>
                           <th className="px-3 py-1.5 text-left text-[11px] font-black text-charcoal border-r border-gray-300 text-center">Alamat</th>
-                          <th className="px-3 py-1.5 text-left text-[11px] font-black text-charcoal">No. Jurulatih/Waran</th>
+                          <th className="px-3 py-1.5 text-left text-[11px] font-black text-charcoal">No. Instruktor/Waran</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -766,12 +853,54 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                                 {isEditable && (
                                   <button onClick={() => removePemeriksa(pr.id)} className="text-black font-bold hover:text-brand-red">X</button>
                                 )}
-                                <span className="font-bold uppercase">{pr.name}</span>
+                                {isEditable && role !== UserRole.SEBC ? (
+                                  <input 
+                                    type="text" 
+                                    value={pr.name} 
+                                    onChange={(e) => setPemeriksa(pemeriksa.map(item => item.id === pr.id ? {...item, name: e.target.value} : item))}
+                                    className="border border-gray-300 rounded px-2 py-0.5 uppercase flex-1" 
+                                  />
+                                ) : (
+                                  <span className="font-bold uppercase">{pr.name}</span>
+                                )}
                               </div>
                             </td>
-                            <td className="px-3 py-1.5">{pr.ic}</td>
-                            <td className="px-3 py-1.5 text-xs text-gray-500">{pr.address}</td>
-                            <td className="px-3 py-1.5">{pr.waran}</td>
+                            <td className="px-3 py-1.5">
+                              {isEditable && role !== UserRole.SEBC ? (
+                                <input 
+                                  type="text" 
+                                  value={pr.ic} 
+                                  onChange={(e) => setPemeriksa(pemeriksa.map(item => item.id === pr.id ? {...item, ic: e.target.value} : item))}
+                                  className="w-full border border-gray-300 rounded px-2 py-0.5" 
+                                />
+                              ) : (
+                                <span>{pr.ic}</span>
+                              )}
+                            </td>
+                            <td className="px-3 py-1.5 text-xs text-gray-500">
+                              {isEditable && role !== UserRole.SEBC ? (
+                                <input 
+                                  type="text" 
+                                  value={pr.address} 
+                                  onChange={(e) => setPemeriksa(pemeriksa.map(item => item.id === pr.id ? {...item, address: e.target.value} : item))}
+                                  className="w-full border border-gray-300 rounded px-2 py-0.5" 
+                                />
+                              ) : (
+                                <span>{pr.address}</span>
+                              )}
+                            </td>
+                            <td className="px-3 py-1.5">
+                              {isEditable && role !== UserRole.SEBC ? (
+                                <input 
+                                  type="text" 
+                                  value={pr.waran} 
+                                  onChange={(e) => setPemeriksa(pemeriksa.map(item => item.id === pr.id ? {...item, waran: e.target.value} : item))}
+                                  className="w-full border border-gray-300 rounded px-2 py-0.5" 
+                                />
+                              ) : (
+                                <span>{pr.waran}</span>
+                              )}
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -779,7 +908,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                   </div>
                   {isEditable && (
                     <button 
-                      onClick={addPemeriksa}
+                      onClick={role === UserRole.SEBC ? handleOpenAddPemeriksa : addPemeriksa}
                       className="border border-gray-400 px-4 py-1 flex items-center gap-2 text-action-teal font-bold text-xs rounded-sm hover:bg-gray-50"
                     >
                       <span className="text-lg leading-none">+</span> Tambah
@@ -815,7 +944,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                                 type="checkbox"
                                 checked={c.attendance?.[type as keyof NonNullable<Candidate['attendance']>] || false}
                                 onChange={() => toggleAttendance(c.id, type as any)}
-                                disabled={!isEditable}
+                                disabled={!isEditable || role === UserRole.SEBC}
                                 className="w-4 h-4 cursor-pointer"
                               />
                             </td>
@@ -941,6 +1070,39 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                     </button>
                   </>
                 )}
+
+                {/* SEBC View Mode Actions */}
+                {isEditable && role === UserRole.SEBC && (
+                  <>
+                    <button 
+                      onClick={() => {
+                        handleSave();
+                        triggerNotification('Maklumat berjaya disimpan.');
+                      }}
+                      className="btn-footer flex items-center gap-1.5 px-4 py-1 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-action-teal"
+                    >
+                      <Save className="w-3 h-3" />
+                      Simpan
+                    </button>
+                    <button 
+                      onClick={() => setIsEditable(false)}
+                      className="btn-footer flex items-center gap-1.5 px-4 py-1 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-brand-red"
+                    >
+                      Batal
+                    </button>
+                  </>
+                )}
+
+                {!isEditable && role === UserRole.SEBC && localStatus === ExamStatus.APPROVED && (
+                  <button 
+                    onClick={() => setIsEditable(true)}
+                    className="btn-footer flex items-center gap-1.5 px-4 py-1 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-blue-600"
+                  >
+                    <Edit3 className="w-3 h-3" />
+                    Ubah
+                  </button>
+                )}
+
                 {!isEditable && role === UserRole.DEC && localStatus !== ExamStatus.SUBMITTED && (
                   <>
                     {(isSummaryReadyFinal || initialEditMode || localStatus === ExamStatus.APPROVED) && !isExpired && (
@@ -974,6 +1136,9 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                         </button>
                       </>
                     )}
+                    {isExpired && localStatus !== ExamStatus.UNLOCK_REQUESTED && (
+                      <></>
+                    )}
                   </>
                 )}
             </div>
@@ -982,42 +1147,71 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
       </motion.div>
     )}
 
-      {/* Unlock Dialog (Figure 16) */}
+      {/* Unlock Dialog */}
       {showUnlockDialog && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-lg shadow-2xl w-full max-w-lg border border-gray-300 overflow-hidden"
+            className="bg-white rounded-xl overflow-hidden border border-gray-200 shadow-2xl w-full max-w-xl"
           >
-            <div className="border border-gray-300 m-2 p-4 space-y-4">
-              <div className="p-3 border border-gray-300 font-bold text-xs leading-relaxed">
-                <p className="text-gray-500 mb-2 underline">Nota</p>
-                <p className="mb-2">Tarikh akhir penyerahan telah lepas, dan anda tidak dibenarkan untuk mengemukakan Exam Return Report sehingga ia dibuka.</p>
-                <p>Permohonan untuk membuka pertama adalah percuma, tetapi anda perlu bayar untuk permohonan yang seterusnya.</p>
+            <div className="bg-action-teal/10 p-5 border-b border-action-teal/20 flex items-center justify-between">
+              <h3 className="font-bold text-action-teal flex items-center gap-2 text-lg">
+                <Unlock className="w-5 h-5" />
+                Permohonan Buka Kunci
+              </h3>
+              <button 
+                onClick={() => setShowUnlockDialog(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              <div className="bg-blue-50/50 border border-blue-100 rounded-lg p-4">
+                <h4 className="text-blue-800 font-bold mb-2 flex items-center gap-2 text-sm"><FileText className="w-4 h-4"/>Nota Penting</h4>
+                <div className="space-y-2 text-blue-800/80 text-sm">
+                  <p>Tarikh akhir penyerahan telah lepas, dan anda tidak dibenarkan untuk mengemukakan <em>Exam Return Report</em> sehingga ia dibuka.</p>
+                  <p>Permohonan untuk membuka pertama adalah percuma, tetapi anda perlu bayar untuk permohonan yang seterusnya.</p>
+                </div>
               </div>
 
-              <div className="text-center py-4 space-y-4">
-                <p className="text-base font-bold text-charcoal flex flex-col">
-                  Tarikh akhir penyerahan: <span className="text-red-600 text-xl font-black">{examData.deadline}</span>
+              <div className="text-center py-4 space-y-3 bg-gray-50 rounded-lg border border-gray-100">
+                <p className="text-[15px] font-medium text-gray-600">
+                  Tarikh akhir penyerahan: <strong className="text-brand-red">{examData.deadline}</strong>
                 </p>
-                <p className="text-base font-bold text-charcoal px-8">
+                <p className="text-[16px] font-bold text-charcoal">
                   Adakah anda ingin memohon untuk peperiksaan ini dibuka?
                 </p>
               </div>
 
-              <div className="flex justify-center gap-3 border-t border-gray-100 pt-4 pb-2">
+              {isSecondUnlock && (
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-gray-700">Lampiran Pembayaran</label>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="flex-1 flex items-center gap-2 p-2 border border-blue-200 bg-blue-50/30 rounded focus-within:ring-2 focus-within:ring-action-teal/50 focus-within:border-action-teal transition-all">
+                       <FileText className="w-5 h-5 text-blue-500 ml-1" />
+                       <span className="text-sm text-charcoal truncate flex-1">{paymentFile || 'Tiada fail dipilih'}</span>
+                       <button className="px-3 py-1 bg-white border border-gray-300 rounded text-xs font-bold text-gray-700 hover:bg-gray-50 shadow-sm whitespace-nowrap">Cari Fail...</button>
+                    </div>
+                  </div>
+                  <input type="text" placeholder="Sila masukkan deskripsi pembayaran (pilihan)..." className="w-full text-sm p-2.5 border border-gray-300 rounded focus:ring-2 focus:ring-action-teal/50 focus:border-action-teal outline-none transition-all mt-2" />
+                </div>
+              )}
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
                 <button 
                   onClick={() => setShowUnlockDialog(false)}
-                  className="flex items-center gap-2 px-4 py-1 border border-gray-300 bg-gray-50 hover:bg-gray-100 rounded text-xs font-bold"
+                  className="px-6 py-2 border border-gray-300 rounded font-bold text-gray-600 hover:bg-gray-50 transition-colors shadow-sm text-sm"
                 >
-                  <span className="text-red-500 font-black">X</span> Tidak
+                  Tidak, Kembali
                 </button>
                 <button 
                   onClick={confirmUnlock}
-                  className="flex items-center gap-2 px-4 py-1 border border-gray-300 bg-gray-50 hover:bg-gray-100 rounded text-xs font-bold"
+                  className="flex items-center gap-2 px-6 py-2 bg-action-teal text-white rounded font-bold hover:bg-teal-700 transition-colors shadow-md text-sm"
                 >
-                  <span className="text-green-600 font-black">✓</span> Ya
+                  <Unlock className="w-4 h-4" /> Ya, Mohon Buka Kunci
                 </button>
               </div>
             </div>
@@ -1025,87 +1219,132 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
         </div>
       )}
 
-      {/* SEC Unlock Dialog (Figure 18 & 19) */}
+      {/* SEC Unlock Dialog */}
       {showSECUnlockDialog && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/50">
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded shadow-xl w-full max-w-xl border border-gray-400 overflow-hidden"
+            className="bg-white rounded-xl overflow-hidden border border-gray-200 shadow-2xl w-full max-w-md"
           >
-            <div className="p-4 space-y-4">
+            <div className="bg-action-teal/10 p-5 border-b border-action-teal/20 flex items-center justify-between">
+              <h3 className="font-bold text-action-teal flex items-center gap-2 text-lg">
+                <Unlock className="w-5 h-5" />
+                Pengesahan Buka Kunci
+              </h3>
+              <button 
+                onClick={() => setShowSECUnlockDialog(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-6 space-y-6">
+              <div className="text-center space-y-2">
+                <p className="text-[15px] font-medium text-gray-600">
+                  Tarikh akhir penyerahan semasa: <strong className="text-brand-red">{examData.deadline}</strong>
+                </p>
+                <p className="text-[16px] font-bold text-charcoal">
+                  Adakah anda bersetuju untuk membuka semula peperiksaan ini?
+                </p>
+              </div>
+
+              <div className="bg-gray-50 border border-gray-200 rounded p-4 flex flex-col items-center justify-center gap-3">
+                  <span className="text-sm font-bold text-gray-700">Tetapkan Tarikh Akhir Penyerahan Baru:</span>
+                  <div className="relative w-full max-w-[200px]">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                       <Calendar className="w-4 h-4 text-action-teal" />
+                    </div>
+                    <input 
+                      type="date" 
+                      value={newDueDate}
+                      onChange={(e) => setNewDueDate(e.target.value)}
+                      className="pl-10 pr-4 py-2 text-sm font-medium border border-gray-300 rounded focus:ring-2 focus:ring-action-teal/50 focus:border-action-teal w-full text-charcoal shadow-sm" 
+                    />
+                  </div>
+              </div>
+
               {isSecondUnlock && (
-                <div className="p-3 border border-gray-300 font-bold text-[11px] leading-relaxed bg-white">
-                  <p className="text-charcoal mb-2 underline">Nota</p>
-                  <p className="mb-2">Tarikh akhir penyerahan telah lepas, dan anda tidak dibenarkan untuk mengemukakan Exam Return Report sehingga ia dibuka.</p>
-                  <p>Permohonan untuk membuka pertama adalah percuma, tetapi anda perlu bayar untuk permohonan yang seterusnya.</p>
+                <div className="bg-blue-50/50 border border-blue-100 rounded p-4 flex flex-col gap-2">
+                  <span className="text-gray-600 text-sm font-bold flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-blue-500" />
+                    Lampiran Pembayaran (DEC)
+                  </span>
+                  <div className="bg-white p-3 border border-blue-200 rounded flex items-center justify-between shadow-sm">
+                      <span className="text-sm text-blue-700 font-medium truncate">
+                        {paymentFile || 'resit_pembayaran_123.pdf'}
+                      </span>
+                      <button className="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200 font-bold transition-colors">Lihat</button>
+                  </div>
                 </div>
               )}
 
-              <div className="text-center py-6 space-y-4">
-                <p className="text-base font-bold text-charcoal">
-                  Tarikh akhir penyerahan: <span className="text-red-500">{examData.deadline}</span>
-                </p>
-                
-                <p className="text-lg font-black text-charcoal">
-                  {isSecondUnlock 
-                    ? "Adakah anda ingin memohon untuk pemeriksaan ini dibuka?" 
-                    : "Adakah anda ingin membuka peperiksaan ini?"}
-                </p>
-
-                <div className="flex flex-col items-center gap-2">
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs font-bold text-gray-500">Tarikh Akhir Penyerahan Baru:</span>
-                    <div className="relative">
-                      <input 
-                        type="date" 
-                        value={toInputDate(newDueDate)}
-                        onChange={(e) => setNewDueDate(fromInputDate(e.target.value))}
-                        className="border border-gray-300 rounded px-8 py-1 text-xs font-bold focus:outline-none" 
-                      />
-                      <Calendar className="w-3.5 h-3.5 text-orange-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
-                    </div>
-                  </div>
-                </div>
-
-                {isSecondUnlock && (
-                  <div className="grid grid-cols-[150px_1fr] gap-4 items-center px-4 mt-4">
-                    <span className="text-gray-500 text-right text-xs font-bold">Lampiran Pembayaran</span>
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-center gap-2 p-2 border border-blue-200 bg-blue-50/30 rounded">
-                        <button className="bg-gray-100 border border-gray-300 px-3 py-1 text-[10px] font-bold rounded shadow-sm">Browse...</button>
-                        <span className="text-xs text-gray-600 truncate">{paymentFile || 'rena-deco-clay-craft-map.png'}</span>
-                      </div>
-                      <input 
-                        className="border border-gray-300 rounded px-3 py-1 text-xs" 
-                        placeholder="Sila masukkan deskripsi pembayaran."
-                      />
-                    </div>
-                  </div>
-                )}
-                
-                {!isSecondUnlock && (
-                   <button 
-                    onClick={() => setIsSecondUnlock(true)}
-                    className="text-[10px] text-blue-500 underline font-bold"
-                   >
-                     Tukar ke permohonan berbayar (Unlock Ke-2)
-                   </button>
-                )}
-              </div>
-
-              <div className="flex justify-center gap-4 bg-gray-50 p-3 border-t border-gray-200">
+              <div className="flex justify-end gap-3 pt-2">
                 <button 
                   onClick={() => setShowSECUnlockDialog(false)}
-                  className="flex items-center gap-2 px-6 py-1 border border-gray-300 bg-white hover:bg-gray-50 rounded text-xs font-bold shadow-sm"
+                  className="px-6 py-2 border border-gray-300 rounded font-bold text-gray-600 hover:bg-gray-50 transition-colors shadow-sm text-sm"
                 >
-                  <span className="text-gray-400 font-bold">X</span> Tidak
+                  Tutup
                 </button>
                 <button 
                   onClick={confirmSECUnlock}
-                  className="flex items-center gap-2 px-6 py-1 border border-gray-300 bg-white hover:bg-gray-50 rounded text-xs font-bold shadow-sm"
+                  className="flex items-center gap-2 px-6 py-2 bg-action-teal text-white rounded font-bold hover:bg-teal-700 transition-colors shadow-md text-sm"
                 >
-                  <span className="text-green-600 font-black">✓</span> Ya
+                  <Unlock className="w-4 h-4" /> Buka Kunci
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Add Pemeriksa Dialog */}
+      {showAddPemeriksaDialog && (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded overflow-hidden shadow-2xl w-full max-w-md border border-gray-400"
+          >
+            {/* Header matches Figure 25 */}
+            <div className="bg-gradient-to-b from-gray-600 to-gray-800 p-2 flex items-center shadow-inner">
+              <h3 className="font-bold text-white text-[13px]">
+                Tambah Pemeriksa
+              </h3>
+            </div>
+            
+            <div className="p-4 bg-white min-h-[140px] relative">
+              <div className="flex flex-col gap-2 mb-8 mt-2">
+                <div className="flex items-center gap-1">
+                  <span className="text-brand-red font-bold text-lg leading-none mt-1">*</span>
+                  <span className="font-bold text-charcoal text-[13px] w-14">Nama:</span>
+                  <select 
+                    className="flex-1 p-1 border border-gray-400 bg-white text-[13px] focus:outline-none focus:ring-1 focus:ring-action-teal shadow-sm"
+                    value={selectedPemeriksaId}
+                    onChange={(e) => setSelectedPemeriksaId(e.target.value)}
+                  >
+                    <option value="">-- Sila Pilih --</option>
+                    {availablePemeriksaOptions.map(opt => (
+                      <option key={opt.id} value={opt.id}>{opt.name}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 absolute bottom-4 right-4">
+                <button 
+                  onClick={() => setShowAddPemeriksaDialog(false)}
+                  className="flex items-center gap-1 px-3 py-1.5 border border-gray-300 rounded-md bg-white hover:bg-gray-50 font-medium text-[12px] text-charcoal shadow-sm transition-colors"
+                >
+                  <X className="w-3.5 h-3.5 text-red-600" /> Tutup
+                </button>
+                <button 
+                  onClick={confirmAddPemeriksa}
+                  disabled={!selectedPemeriksaId}
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-md bg-action-teal hover:bg-teal-700 text-white font-medium text-[12px] shadow-sm disabled:opacity-50 transition-colors"
+                >
+                  <MousePointer2 className="w-3.5 h-3.5" /> Pilih
                 </button>
               </div>
             </div>
@@ -1119,28 +1358,65 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
             animate={{ opacity: 1 }}
             className="space-y-6"
           >
-            <div className="card">
-              <h3 className="text-sm font-black uppercase mb-4">Kemasukan Keputusan Peperiksaan</h3>
-              <div className="overflow-hidden border border-gray-300 rounded-sm">
-                <table className="w-full text-left border-collapse">
-                  <thead className="bg-[#D1D5DB]">
+            <div className="bg-white border-t-2 border-charcoal pt-4 px-8 pb-8">
+              <div className="mb-6">
+                <div className="grid grid-cols-[150px_1fr] gap-4 mb-1">
+                  <span className="text-[13px] font-medium text-gray-500 text-right">No. Pendaftaran:</span>
+                  <span className="text-[15px] font-bold text-charcoal uppercase">{examData.regNo}</span>
+                </div>
+                <div className="grid grid-cols-[150px_1fr] gap-4 mb-1">
+                  <span className="text-[13px] font-medium text-gray-500 text-right">Status:</span>
+                  <span className="text-[13px] text-charcoal">{localStatus === ExamStatus.APPROVED ? 'Rumusan Peperiksaan Telah Dihantar' : examData.status}</span>
+                </div>
+                
+                <div className="h-6"></div>
+                
+                <div className="grid grid-cols-[150px_1fr] gap-4 mb-1">
+                  <span className="text-[13px] font-medium text-gray-500 text-right">Nama Daerah:</span>
+                  <span className="text-[13px] text-charcoal uppercase">{examData.district}</span>
+                </div>
+                <div className="grid grid-cols-[150px_1fr] gap-4 mb-1">
+                  <span className="text-[13px] font-medium text-gray-500 text-right">Nama Unit/Organisasi:</span>
+                  <span className="text-[13px] text-charcoal">{examData.organization}</span>
+                </div>
+                <div className="grid grid-cols-[150px_1fr] gap-4 mb-1 border-brand-red">
+                  <span className="text-[13px] font-medium text-gray-500 text-right flex justify-end items-center"><span className="text-brand-red font-bold mr-1">*</span> Tarikh Peperiksaan:</span>
+                  <span className="text-[13px] text-charcoal">{examData.examDate}</span>
+                </div>
+                <div className="grid grid-cols-[150px_1fr] gap-4 mb-6">
+                  <span className="text-[13px] font-medium text-gray-500 text-right">Subjek:</span>
+                  <span className="text-[13px] text-charcoal">{examData.subject}</span>
+                </div>
+              </div>
+                
+              <div className="grid grid-cols-[150px_1fr] gap-4">
+                  <span className="text-[13px] font-medium text-gray-500 text-right flex justify-end items-start mt-2">
+                    <span className="text-brand-red font-bold mr-1">*</span>Senarai Calon:
+                  </span>
+                  <div className="overflow-hidden border border-gray-400 bg-white">
+                    <table className="w-full text-left border-collapse">
+                      <thead className="bg-[#E5E7EB]">
                     <tr>
-                      <th className="px-3 py-2 text-[11px] font-black text-charcoal border-r border-gray-400">Nama Calon</th>
-                      <th className="px-3 py-2 text-[11px] font-black text-charcoal border-r border-gray-400 text-center">Skor Teori / 100</th>
-                      <th className="px-3 py-2 text-[11px] font-black text-charcoal border-r border-gray-400 text-center">Skor Lisan / 40</th>
-                      <th className="px-3 py-2 text-[11px] font-black text-charcoal text-center">Skor Praktikal / 60</th>
+                      <th className="px-3 py-2 text-[11px] font-black text-charcoal border-r border-gray-400">Nama</th>
+                      <th className="px-3 py-2 text-[11px] font-black text-charcoal border-r border-gray-400">No. KP/Pasport</th>
+                      <th className="px-3 py-2 text-[11px] font-black text-charcoal border-r border-gray-400">No. Ahli BSMM</th>
+                      <th className="px-3 py-2 text-[11px] font-black text-charcoal border-r border-gray-400 text-center">Skor Teori/100</th>
+                      <th className="px-3 py-2 text-[11px] font-black text-charcoal border-r border-gray-400 text-center">Skor Lisan/40</th>
+                      <th className="px-3 py-2 text-[11px] font-black text-charcoal text-center">Skor Praktikal/60</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-300">
                     {candidates.map((c) => (
                       <tr key={c.id} className="divide-x divide-gray-300">
                         <td className="px-3 py-2 font-bold uppercase">{c.name}</td>
+                        <td className="px-3 py-2 text-sm">{c.ic}</td>
+                        <td className="px-3 py-2 text-sm">{c.memberNo}</td>
                         <td className="px-3 py-2">
                           <input 
                             type="number" 
                             disabled={!isEditable || role !== UserRole.SEBC}
                             placeholder="0"
-                            className="w-full text-center focus:outline-none bg-transparent"
+                            className={`w-full text-center focus:outline-none px-1 py-0.5 ${isEditable && role === UserRole.SEBC ? 'border border-gray-300 bg-white shadow-sm' : 'bg-transparent'}`}
                           />
                         </td>
                         <td className="px-3 py-2">
@@ -1148,7 +1424,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                             type="number" 
                             disabled={!isEditable || role !== UserRole.SEBC}
                             placeholder="0"
-                            className="w-full text-center focus:outline-none bg-transparent"
+                            className={`w-full text-center focus:outline-none px-1 py-0.5 ${isEditable && role === UserRole.SEBC ? 'border border-gray-300 bg-white shadow-sm' : 'bg-transparent'}`}
                           />
                         </td>
                         <td className="px-3 py-2">
@@ -1156,7 +1432,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                             type="number" 
                             disabled={!isEditable || role !== UserRole.SEBC}
                             placeholder="0"
-                            className="w-full text-center focus:outline-none bg-transparent"
+                            className={`w-full text-center focus:outline-none px-1 py-0.5 ${isEditable && role === UserRole.SEBC ? 'border border-gray-300 bg-white shadow-sm' : 'bg-transparent'}`}
                           />
                         </td>
                       </tr>
@@ -1164,49 +1440,83 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                   </tbody>
                 </table>
               </div>
+            </div>
               
-              <div className="flex justify-center mt-8 gap-4">
+            <div className="flex justify-start mt-8 gap-2">
+                <button 
+                  onClick={onBack}
+                  className="flex items-center gap-2 px-4 py-1 border border-gray-400 bg-gray-100 text-charcoal font-medium text-[12px] shadow-sm hover:bg-gray-200 transition-all"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" /> Kembali
+                </button>
                 {role === UserRole.SEBC && !isResultsSubmitted && (
                   <>
-                    <button 
-                      onClick={handleSave}
-                      className="px-6 py-2 bg-action-teal text-white font-bold rounded shadow-md hover:bg-teal-700 transition-all uppercase"
-                    >
-                      Simpan Keputusan
-                    </button>
+                    {!isEditable ? (
+                      <button 
+                        onClick={() => setIsEditable(true)}
+                        className="flex items-center gap-2 px-4 py-1 border border-gray-400 bg-white text-charcoal font-medium text-[12px] shadow-sm hover:bg-gray-50 transition-all"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" /> Ubah
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={() => {
+                          handleSave();
+                          // Keep editable state or trigger a specific save for results
+                          setIsEditable(false);
+                          triggerNotification('Keputusan telah disimpan.');
+                        }}
+                        className="flex items-center gap-2 px-4 py-1 border border-gray-400 bg-white text-charcoal font-medium text-[12px] shadow-sm hover:bg-gray-50 transition-all"
+                      >
+                        <Save className="w-3.5 h-3.5" /> Simpan
+                      </button>
+                    )}
                     <button 
                       onClick={() => {
                         setConfirmDialog({
-                          message: 'Hantar Keputusan Peperiksaan ini?',
+                          message: 'Teruskan dengan Pemprosesan Keputusan Selesai?',
                           onConfirm: () => {
                             setIsResultsSubmitted(true);
-                            triggerNotification('Keputusan telah dihantar untuk pengesahan.');
+                            if (onUpdateStatus) {
+                              onUpdateStatus(selectedMock.id, ExamStatus.COMPLETED);
+                            }
+                            setLocalStatus(ExamStatus.COMPLETED);
+                            triggerNotification('Keputusan telah dikemaskini dan dihantar ke SEC.');
+                            setTimeout(() => onBack(), 1500);
                           }
                         });
                       }}
-                      className="px-6 py-2 bg-[#C0182A] text-white font-bold rounded shadow-md hover:bg-red-800 transition-all uppercase"
+                      className="flex items-center gap-2 px-4 py-1 border border-gray-400 bg-blue-50 text-action-teal font-bold text-[12px] shadow-sm hover:bg-blue-100 transition-all"
                     >
-                      Hantar Keputusan
+                      <ArrowRight className="w-3.5 h-3.5" /> Pemprosesan Keputusan Selesai
                     </button>
                   </>
                 )}
                 {isResultsSubmitted && (
-                  <div className="px-6 py-2 bg-green-50 text-green-700 font-bold border border-green-200 rounded flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4" />
-                    Keputusan Telah Dihantar
+                  <div className="flex items-center gap-2">
+                    <div className="px-4 py-1 bg-green-50 text-green-700 font-bold border border-green-200 rounded flex items-center gap-2 text-[12px]">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      Keputusan Telah Selesai diproses
+                    </div>
+                    {role === UserRole.SEC && (
+                      <button 
+                        onClick={() => setShowPrint(true)}
+                        className="px-4 py-1 border border-gray-400 bg-action-teal text-white font-bold rounded shadow-md hover:bg-teal-700 transition-all uppercase text-[12px] flex items-center gap-2"
+                      >
+                        Cetak PP
+                      </button>
+                    )}
                   </div>
                 )}
-                <button 
-                  onClick={onBack}
-                  className="px-6 py-2 border border-gray-300 bg-white text-gray-700 font-bold rounded hover:bg-gray-50 transition-all uppercase"
-                >
-                  Kembali
-                </button>
               </div>
             </div>
           </motion.div>
         )}
       </div>
+      
+      {showPrint && (
+        <PenyataPeperiksaanPrint exam={selectedMock} onClose={() => setShowPrint(false)} />
+      )}
     </div>
   );
 };

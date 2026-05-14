@@ -23,11 +23,19 @@ export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const [examStep, setExamStep] = React.useState<'list' | 'select' | 'form' | 'summary' | 'success'>('list');
   const [selectedExamId, setSelectedExamId] = React.useState<string | null>(null);
+  const [selectedExamType, setSelectedExamType] = React.useState<string | null>(null);
   const [submittedExam, setSubmittedExam] = React.useState<MockExam | null>(null);
   const [isEditMode, setIsEditMode] = React.useState(false);
   const [isSummaryReadyView, setIsSummaryReadyView] = React.useState(false);
+  const [isUnlockListView, setIsUnlockListView] = React.useState(false);
+  const [isPendingSubmissionView, setIsPendingSubmissionView] = React.useState(false);
+  const [isRejectedView, setIsRejectedView] = React.useState(false);
+  const [isVerificationListView, setIsVerificationListView] = React.useState(false);
+  const [isPrintListView, setIsPrintListView] = React.useState(false);
+  const [viewTitle, setViewTitle] = React.useState<string | undefined>(undefined);
   const [initialModuleTab, setInitialModuleTab] = React.useState<'borang' | 'rumusan' | 'keputusan'>('borang');
-  const [initialModuleStatus, setInitialModuleStatus] = React.useState<string>('');
+  const [initialModuleStatus, setInitialModuleStatus] = React.useState<string>('Semua');
+  const [navigationId, setNavigationId] = React.useState(0);
   const [exams, setExams] = React.useState<MockExam[]>(initialExams);
 
   const handleAddExam = (exam: MockExam) => {
@@ -48,9 +56,12 @@ export default function App() {
   React.useEffect(() => {
     if (activeView !== 'ExamApplication') {
       setIsSummaryReadyView(false);
+      setIsPendingSubmissionView(false);
+      setIsRejectedView(false);
+      setIsVerificationListView(false);
     }
     // Only reset to list if we are not in success or summary mode
-    if (activeView === 'ExamApplication' && !isSummaryReadyView && examStep !== 'success' && examStep !== 'summary') {
+    if (activeView === 'ExamApplication' && !isSummaryReadyView && !isPendingSubmissionView && !isRejectedView && !isVerificationListView && examStep !== 'success' && examStep !== 'summary') {
       setExamStep('list');
       setIsEditMode(false);
     }
@@ -65,34 +76,105 @@ export default function App() {
             exams={exams}
             onViewExam={(key) => {
               setActiveView('ExamApplication');
+              setNavigationId(n => n + 1);
+              setIsUnlockListView(false);
+              setIsPendingSubmissionView(false);
+              setIsRejectedView(false);
+              setIsVerificationListView(false);
+              setIsPrintListView(false);
+              setViewTitle(undefined);
               if (key === 'summary-ready') {
                 setIsSummaryReadyView(true);
                 setExamStep('list');
                 setIsEditMode(false);
+                setInitialModuleTab('rumusan');
+                setInitialModuleStatus(ExamStatus.APPROVED);
+                setViewTitle('Sedia untuk Penyediaan Rumusan Peperiksaan');
               } else if (key === 'menunggu-penyerahan') {
                 setActiveView('ExamApplication');
                 setIsSummaryReadyView(false);
+                setIsPendingSubmissionView(true);
                 setInitialModuleTab('rumusan');
-                setInitialModuleStatus(ExamStatus.EXPIRED); // "Menunggu Penyerahan" relates to Expired status based on counts
+                setInitialModuleStatus(ExamStatus.EXPIRED);
                 setExamStep('list');
+                setViewTitle('Menunggu Penyerahan');
               } else if (key === 'borang-list') {
+                setActiveView('ExamApplication');
                 setExamStep('list');
                 setIsSummaryReadyView(false);
+                setIsPendingSubmissionView(false);
+                setIsRejectedView(true);
                 setInitialModuleTab('borang');
-                setInitialModuleStatus('');
+                setInitialModuleStatus(ExamStatus.REJECTED);
+                setViewTitle('Ditolak');
+              } else if (key === 'new-application-list') {
+                setExamStep('list');
+                setIsSummaryReadyView(false);
+                setIsVerificationListView(true);
+                setIsPrintListView(false);
+                setInitialModuleTab('borang');
+                setInitialModuleStatus(ExamStatus.PENDING_VERIFICATION);
+                setViewTitle('Permohonan Baru Dihantar');
               } else if (key === 'verification-list') {
                 setExamStep('list');
                 setIsSummaryReadyView(false);
+                setIsVerificationListView(true);
+                setIsPrintListView(false);
+                setInitialModuleTab('rumusan');
+                setInitialModuleStatus(ExamStatus.SUBMITTED);
+                setViewTitle('Sedia untuk Pengesahan Permohonan');
               } else if (key === 'unlock-list') {
-                setSelectedExamId('1');
-                setIsEditMode(false);
-                setExamStep('summary');
+                setExamStep('list');
                 setIsSummaryReadyView(false);
-              } else if (key === 'print-list' || key === 'personnel-input' || key === 'results-input') {
-                setSelectedExamId('1');
-                setExamStep('summary');
-                setIsEditMode(false);
+                setIsUnlockListView(true);
+                setIsPrintListView(false);
+                setInitialModuleTab('rumusan');
+                setInitialModuleStatus('Semua');
+                setViewTitle('Permintaan Membuka Pemeriksa (Unlock)');
+              } else if (key === 'personnel-input') {
+                setActiveView('ExamApplication');
+                setExamStep('list');
                 setIsSummaryReadyView(false);
+                setIsUnlockListView(false);
+                setIsPendingSubmissionView(false);
+                setIsRejectedView(false);
+                setIsPrintListView(false);
+                setInitialModuleTab('keputusan');
+                setInitialModuleStatus(ExamStatus.APPROVED);
+                setViewTitle('Sedia untuk Memasukkan Senarai Pemeriksa');
+              } else if (key === 'results-input') {
+                setActiveView('ExamApplication');
+                setExamStep('list');
+                setIsSummaryReadyView(false);
+                setIsUnlockListView(false);
+                setIsPendingSubmissionView(false);
+                setIsRejectedView(false);
+                setIsPrintListView(false);
+                setInitialModuleTab('keputusan');
+                setInitialModuleStatus(ExamStatus.APPROVED);
+                setViewTitle('Sedia untuk Memasukkan Keputusan');
+              } else if (key === 'sedia-cetak-list') {
+                setActiveView('ExamApplication');
+                setExamStep('list');
+                setIsSummaryReadyView(false);
+                setIsUnlockListView(false);
+                setIsPendingSubmissionView(false);
+                setIsRejectedView(false);
+                setIsPrintListView(true);
+                setInitialModuleTab('keputusan');
+                setInitialModuleStatus(ExamStatus.COMPLETED);
+                setViewTitle('Sedia untuk Dicetak');
+              } else if (key === 'print-list') {
+                setActiveView('ExamApplication');
+                setExamStep('list');
+                setIsSummaryReadyView(false);
+                setIsUnlockListView(false);
+                setIsPendingSubmissionView(false);
+                setIsRejectedView(false);
+                setIsPrintListView(true);
+                setInitialModuleTab('keputusan');
+                setInitialModuleStatus(ExamStatus.COMPLETED);
+                setViewTitle('Penyata Peperiksaan');
               } else {
                 setSelectedExamId(key);
                 setIsEditMode(false);
@@ -106,12 +188,22 @@ export default function App() {
         if (examStep === 'list') {
           return (
             <ExamApplicationModule 
-              key={`${isSummaryReadyView ? 'summary' : 'normal'}-${initialModuleTab}-${initialModuleStatus}`}
+              key={`module-${navigationId}`}
               role={role}
               exams={exams}
               isSummaryReadyMode={isSummaryReadyView}
+              isUnlockRequestMode={isUnlockListView}
+              isPendingSubmissionMode={isPendingSubmissionView}
+              isRejectedMode={isRejectedView}
+              isNewApplicationListMode={initialModuleTab === 'borang' && initialModuleStatus === ExamStatus.PENDING_VERIFICATION}
+              isVerificationListMode={isVerificationListView && initialModuleStatus === ExamStatus.SUBMITTED}
+              isPrintListMode={isPrintListView}
+              isSebcListMode={initialModuleTab === 'keputusan' && (initialModuleStatus === ExamStatus.SUBMITTED || initialModuleStatus === ExamStatus.APPROVED)}
+              headerTitle={viewTitle}
               initialTab={initialModuleTab}
               initialStatusFilter={initialModuleStatus}
+              onTabChange={(tab) => setInitialModuleTab(tab)}
+              onStatusFilterChange={(status) => setInitialModuleStatus(status)}
               onAddNew={() => setExamStep('select')} 
               onView={(id) => {
                 setSelectedExamId(id);
@@ -146,69 +238,61 @@ export default function App() {
               }}
               initialEditMode={isEditMode}
               isSummaryReady={isSummaryReadyView}
+              initialTab={initialModuleTab}
             />
           );
         }
         if (examStep === 'select') {
-          return <ExamTypeSelection onBack={() => setExamStep('list')} onSelect={(type) => setExamStep('form')} />;
+          return <ExamTypeSelection onBack={() => setExamStep('list')} onSelect={(type) => { setSelectedExamType(type); setExamStep('form'); }} />;
         }
         if (examStep === 'success' && submittedExam) {
           return (
-            <div className="max-w-[800px] mx-auto py-12 px-4">
+            <div className="max-w-[480px] mx-auto py-12 px-4">
               <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="card text-center space-y-8 py-16 shadow-2xl border-t-8 border-green-500 bg-white"
+                className="bg-white text-center space-y-6 pt-10 pb-6 px-10 shadow-xl border border-gray-200 rounded-lg overflow-hidden relative"
               >
-                <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-sm transition-transform hover:rotate-12">
-                  <CheckCircle2 className="w-12 h-12 text-green-600" />
+                <div className="absolute top-0 left-0 right-0 h-1.5 bg-green-500"></div>
+                <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-2 border border-green-100">
+                  <CheckCircle2 className="w-8 h-8 text-green-600" />
                 </div>
-                <div className="space-y-3">
-                  <h2 className="text-3xl font-black text-charcoal tracking-tight uppercase">Penyerahan Berjaya!</h2>
-                  <p className="text-gray-500 font-medium max-w-sm mx-auto leading-relaxed">
+                <div className="space-y-2">
+                  <h2 className="text-xl font-bold text-charcoal">Penyerahan Berjaya!</h2>
+                  <p className="text-gray-500 text-[13px] max-w-sm mx-auto leading-relaxed">
                     {isSummaryReadyView 
                       ? 'Sistem telah menerima Rumusan Peperiksaan anda. Rumusan kini dihantar untuk pengesahan SEC.'
-                      : 'Sistem telah menerima permohonan peperiksaan anda (DEC). Permohonan kini dihantar untuk pengesahan SEC.'}
+                      : 'Sistem telah menerima permohonan peperiksaan anda. Permohonan kini dihantar untuk pengesahan SEC.'}
                   </p>
-                  <p className="text-sm text-action-teal font-bold bg-action-teal/5 py-2 px-4 rounded-full inline-block">
+                  <div className="mt-4 inline-block bg-blue-50 border border-blue-100 text-blue-800 text-[11px] font-medium py-1.5 px-3 rounded text-left shadow-sm">
                     Sistem akan memaklumkan Penyelaras Peperiksaan Negeri (SEC) di Cawangan.
-                  </p>
+                  </div>
                 </div>
 
-                <div className="bg-surface-cream border border-gray-100 rounded-xl p-6 max-w-sm mx-auto space-y-4 shadow-sm">
-                  <div className="flex justify-between items-center text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">
+                <div className="bg-gray-50 border border-gray-100 rounded p-4 w-full space-y-3 shadow-inner">
+                  <div className="flex justify-between items-center text-xs font-bold text-gray-500">
                     <span>No. Pendaftaran</span>
-                    <span className="text-charcoal">{submittedExam.regNo}</span>
+                    <span className="text-charcoal">{submittedExam?.regNo || 'N/A'}</span>
                   </div>
-                  <div className="flex justify-between items-center text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">
+                  <div className="flex justify-between items-center text-xs font-bold text-gray-500">
                     <span>Status Semasa</span>
-                    <span className="text-action-teal px-2 py-0.5 bg-action-teal/10 rounded font-black tracking-wider">DIHANTAR</span>
+                    <span className="text-action-teal px-2 py-0.5 bg-action-teal/10 rounded font-black tracking-wider text-[10px]">DIHANTAR</span>
                   </div>
-                  <div className="flex justify-between items-center text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none pt-2 border-t border-gray-100 italic">
-                    <span>Tarikh Hantar</span>
-                    <span className="text-charcoal font-medium">{new Date().toLocaleDateString('ms-MY')}</span>
+                  <div className="flex justify-between items-center text-[11px] text-gray-400 pt-2 border-t border-gray-200">
+                    <span>Tarikh Hantar: {new Date().toLocaleDateString('ms-MY')}</span>
                   </div>
                 </div>
 
-                <div className="pt-6">
+                <div className="pt-4 border-t border-gray-100">
                   <button 
                     onClick={() => {
                       setExamStep('list');
                       setSubmittedExam(null);
                     }}
-                    className="btn-primary px-12 py-3 shadow-xl shadow-action-teal/20 uppercase tracking-widest font-bold h-12 rounded-lg"
+                    className="w-full flex justify-center items-center gap-2 bg-action-teal hover:bg-teal-700 text-white px-6 py-2 rounded text-[13px] font-bold transition-colors shadow-sm"
                   >
                     Kembali ke Senarai
                   </button>
-                </div>
-                
-                <div className="pt-4 space-y-1">
-                  <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.3em]">
-                    EASY — EXAM ADMINISTRATION SYSTEM
-                  </p>
-                  <p className="text-[10px] text-gray-300 font-bold uppercase tracking-widest">
-                    Persatuan Bulan Sabit Merah Malaysia
-                  </p>
                 </div>
               </motion.div>
             </div>
@@ -216,6 +300,7 @@ export default function App() {
         }
         return (
           <ApplicationForm 
+            initialExamType={selectedExamType}
             goBack={() => setExamStep('select')} 
             onSubmit={(newExam) => {
               const submittedWithCorrectStatus = { ...newExam, status: ExamStatus.SUBMITTED };
@@ -233,6 +318,7 @@ export default function App() {
       case 'NewRequest':
         return (
           <ApplicationForm 
+            initialExamType={selectedExamType}
             goBack={() => setActiveView('Dashboard')} 
             onSubmit={(newExam) => {
               const submittedWithCorrectStatus = { ...newExam, status: ExamStatus.SUBMITTED };
@@ -275,6 +361,16 @@ export default function App() {
         setActiveView={(view) => {
           setActiveView(view);
           setIsSidebarOpen(false);
+          if (view === 'ExamApplication') {
+            setExamStep('list');
+            setIsSummaryReadyView(false);
+            setIsPendingSubmissionView(false);
+            setIsRejectedView(false);
+            setViewTitle(undefined);
+            setInitialModuleTab('borang');
+            setInitialModuleStatus('Semua');
+            setNavigationId(n => n + 1);
+          }
         }} 
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}

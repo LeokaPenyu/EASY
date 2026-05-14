@@ -12,7 +12,8 @@ export enum ExamStatus {
   LOCKED = 'Dikunci',
   EXPIRED = 'Tamat Tempoh',
   SUBMITTED = 'Dihantar',
-  COMPLETED = 'Selesai'
+  COMPLETED = 'Selesai',
+  UNLOCK_REQUESTED = 'Menunggu Buka Kunci'
 }
 
 export interface Candidate {
@@ -29,14 +30,41 @@ export interface Candidate {
   };
 }
 
+export interface Jurulatih {
+  id: string;
+  name: string;
+  icNumber: string;
+  address: string;
+  warrantNumber: string;
+}
+
+export interface Penyelia {
+  id: string;
+  name: string;
+  icNumber: string;
+}
+
+export interface Pemeriksa {
+  id: string;
+  name: string;
+  address: string;
+  warrantNumber: string;
+}
+
 export interface ApplicationFormState {
   district: string;
   organizationName: string;
-  category: 'Private' | 'VAD';
+  categoryVAD: boolean;
+  categoryPrivate: boolean;
   examAddress: string;
   trainingOfficerName: string;
   trainingOfficerId: string;
-  language: 'BM' | 'BI' | 'BC';
+  trainingOfficerAddress: string;
+  examDate: string;
+  subject: string;
+  languageBM: boolean;
+  languageBI: boolean;
+  languageBC: boolean;
   paymentDescription: string;
   attachment?: {
     name: string;
@@ -44,6 +72,9 @@ export interface ApplicationFormState {
     file?: File;
   };
   candidates: Candidate[];
+  jurulatih: Jurulatih[];
+  penyelia: Penyelia[];
+  pemeriksa: Pemeriksa[];
 }
 
 export interface Exam {
@@ -125,8 +156,8 @@ export const TRANSLATIONS = {
     orgNamePlaceholder: "Contoh: SMK Green Road / Hospital Miri",
     examAddressLabel: "Alamat Peperiksaan",
     examAddressPlaceholder: "Alamat penuh lokasi peperiksaan...",
-    officerInfo: "Pegawai Latihan / Jurulatih",
-    officerNameLabel: "Nama Pegawai / Jurulatih",
+    officerInfo: "Pegawai Penjaga Latihan",
+    officerNameLabel: "Nama Pegawai Penjaga Latihan",
     officerIdLabel: "No. Kad Ahli Pegawai",
     candidateList: "Senarai Calon",
     uploadCsv: "Muat Naik CSV",
@@ -236,8 +267,8 @@ export const TRANSLATIONS = {
     orgNamePlaceholder: "Example: SMK Green Road / Hospital Miri",
     examAddressLabel: "Examination Address",
     examAddressPlaceholder: "Full address of examination location...",
-    officerInfo: "Training Officer / Trainer",
-    officerNameLabel: "Officer / Trainer Name",
+    officerInfo: "Training Officer In-Charge",
+    officerNameLabel: "Officer In-Charge Name",
     officerIdLabel: "Officer Member ID No.",
     candidateList: "Candidate List",
     uploadCsv: "Upload CSV",

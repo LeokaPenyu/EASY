@@ -19,8 +19,22 @@ export interface MockExam {
   examDate: string;
   deadline: string;
   address: string;
+  officerCount?: number;
+  remark?: string;
+  applicationLetter?: string;
+  supportDoc?: string;
+  certReady?: string;
+  formA?: string;
+  formB?: string;
   candidates: any[];
+  examiners?: any[];
   attachment?: {
+    name: string;
+    size: string;
+    url?: string;
+  };
+  unlockRequestCount?: number;
+  unlockPaymentProof?: {
     name: string;
     size: string;
     url?: string;
@@ -42,25 +56,74 @@ export const mockExams: MockExam[] = [
     organization: 'Sekolah SAINS',
     unitName: 'Sekolah SAINS',
     category: 'Private',
-    courseStart: '23/11/2016',
-    courseEnd: '23/11/2016',
+    courseStart: '10/11/2016',
+    courseEnd: '18/11/2016',
     examDate: '18/11/2016',
-    deadline: '28/11/2017',
+    deadline: '25/11/2016',
     address: 'Sekolah SAINS',
+    unlockRequestCount: 0,
     candidates: [
       { id: 'c1', name: 'DORY THE FISH', idNo: 'K099012', membershipNo: '123441', isMember: true, attendance: { theory: false, oral: false, practical: false } },
       { id: 'c2', name: 'FELIX THE CAT', idNo: 'K090012', membershipNo: '123442', isMember: true, attendance: { theory: false, oral: false, practical: false } },
     ]
   },
   {
-    id: '2',
+    id: 'unlock-req-sec',
     no: 2,
+    regNo: 'KCH/2023/0022',
+    district: 'KUCHING',
+    date: '2023-04-10',
+    fee: 15.00,
+    candidatesCount: 5,
+    subject: '700/1 - Pendidikan Kesihatan Asas',
+    updated: 'Ya',
+    status: ExamStatus.UNLOCK_REQUESTED,
+    organization: 'MRCS Kuching',
+    unitName: 'Unit Kuching 01',
+    category: 'NGO',
+    courseStart: '01/04/2023',
+    courseEnd: '10/04/2023',
+    examDate: '10/04/2023',
+    deadline: '17/04/2023',
+    address: 'HQ Kuching',
+    unlockRequestCount: 1,
+    candidates: [
+      { id: 'c1', name: 'AHMAD BIN ALI', idNo: '950101-13-5555', membershipNo: 'S-12345', isMember: true, attendance: { theory: true, oral: true, practical: true } },
+    ]
+  },
+  {
+    id: 'unlock-2nd-dec',
+    no: 3,
+    regNo: 'MIRI/2020/0011',
+    district: 'MIRI',
+    date: '2020-08-05',
+    fee: 30.00,
+    candidatesCount: 10,
+    subject: '800/1 - Pertolongan Cemas Asas',
+    updated: 'Ya',
+    status: ExamStatus.EXPIRED,
+    organization: 'Curtin University',
+    unitName: 'Curtin Unit 05',
+    category: 'Private',
+    courseStart: '01/08/2020',
+    courseEnd: '05/08/2020',
+    examDate: '05/08/2020',
+    deadline: '12/08/2020',
+    address: 'Lecture Theatre 3',
+    unlockRequestCount: 1,
+    candidates: [
+      { id: 'c1', name: 'SARAH JANE', idNo: '951212-13-4321', membershipNo: 'M-5544', isMember: true, attendance: { theory: true, oral: true, practical: true } },
+    ]
+  },
+  {
+    id: '2',
+    no: 4,
     regNo: 'KCH/2024/0042',
     district: 'KUCHING',
     date: '2024-03-12',
     fee: 15.00,
     candidatesCount: 10,
-    subject: '700/1 - Pertolongan Cemas Asas',
+    subject: '700/1 - Pendidikan Kesihatan Asas',
     updated: 'Ya',
     status: ExamStatus.PENDING_VERIFICATION,
     organization: 'Malaysian Red Crescent Society',
@@ -72,18 +135,18 @@ export const mockExams: MockExam[] = [
     deadline: '19/03/2024',
     address: 'HQ Kuching',
     candidates: [
-      { id: 'c1', name: 'AHMAD BIN ALI', idNo: '950101-13-5555', membershipNo: 'S-12345', isMember: true, attendance: { theory: true, oral: true, practical: true } },
+      { id: 'c1', name: 'ALEX WONG', idNo: '950101-13-5555', membershipNo: 'S-12345', isMember: true, attendance: { theory: true, oral: true, practical: true } },
     ]
   },
   {
     id: '4',
-    no: 4,
+    no: 5,
     regNo: 'SIU/2024/0088',
     district: 'SIBU',
     date: '2024-05-15',
     fee: 50.00,
     candidatesCount: 20,
-    subject: '700/2 - Rawatan Asas',
+    subject: '800/2 - Pertolongan Cemas Asas dan CPR',
     updated: 'Ya',
     status: ExamStatus.APPROVED,
     organization: 'SMK Sibu',
@@ -99,49 +162,92 @@ export const mockExams: MockExam[] = [
     ]
   },
   {
-    id: '5',
-    no: 5,
-    regNo: 'BTU/2024/0112',
-    district: 'BINTULU',
-    date: '2024-06-10',
-    fee: 25.00,
+    id: '6',
+    no: 6,
+    regNo: 'MIRI/2026/0002',
+    district: 'MIRI',
+    date: '2026-06-15',
+    fee: 100.00,
     candidatesCount: 15,
     subject: '800/1 - Pertolongan Cemas Asas',
-    updated: 'Tidak',
-    status: ExamStatus.APPROVED,
-    organization: 'Bintulu Jaya Poly',
-    unitName: 'Unit Poly 01',
-    category: 'VAD',
-    courseStart: '08/06/2024',
-    courseEnd: '09/06/2024',
-    examDate: '10/06/2024',
-    deadline: '17/06/2024',
-    address: 'Dewan Serbaguna Poly',
+    updated: 'Ya',
+    status: ExamStatus.SUBMITTED,
+    organization: 'SMK Miri Baru',
+    unitName: 'Unit Miri 04',
+    category: 'Government',
+    courseStart: '13/06/2026',
+    courseEnd: '14/06/2026',
+    examDate: '15/05/2026',
+    deadline: '22/05/2026',
+    address: 'SMK Miri Hall',
+    officerCount: 2,
+    remark: 'OK',
+    applicationLetter: 'yes',
+    supportDoc: 'yes',
+    certReady: 'yes',
+    formA: 'yes',
+    formB: 'no',
     candidates: [
-      { id: 'c1', name: 'ZULKIFLI BIN HASSAN', idNo: '900505-13-1234', membershipNo: 'B-1122', isMember: true, attendance: { theory: true, oral: true, practical: true } },
+      { id: 'c1', name: 'JANE DOE', idNo: '990101-13-1111', membershipNo: 'S-8888', isMember: true, attendance: { theory: true, oral: true, practical: true } }
+    ],
+    examiners: []
+  },
+  {
+    id: '7',
+    no: 7,
+    regNo: 'KCH/2026/0003',
+    district: 'KUCHING',
+    date: '2026-07-20',
+    fee: 150.00,
+    candidatesCount: 20,
+    subject: '800/3 - Rawatan Asas',
+    updated: 'Ya',
+    status: ExamStatus.APPROVED,
+    organization: 'SMK Kuching Jaya',
+    unitName: 'Unit Kuching 05',
+    category: 'Government',
+    courseStart: '15/07/2026',
+    courseEnd: '18/07/2026',
+    examDate: '20/07/2026',
+    deadline: '27/07/2026',
+    address: 'SMK Kuching Hall',
+    officerCount: 3,
+    remark: 'OK',
+    applicationLetter: 'yes',
+    supportDoc: 'yes',
+    certReady: 'yes',
+    formA: 'yes',
+    formB: 'no',
+    candidates: [
+      { id: 'c2', name: 'ALI BIN AHMAD', idNo: '000202-13-2222', membershipNo: 'S-7777', isMember: true, attendance: { theory: true, oral: true, practical: true } }
+    ],
+    examiners: [
+       { id: 'e1', name: 'DR. SITI', role: 'Chief Examiner' }
     ]
   },
   {
-    id: '6',
-    no: 6,
-    regNo: 'MIRI/2024/0099',
-    district: 'MIRI',
-    date: '2024-07-05',
-    fee: 30.00,
-    candidatesCount: 8,
-    subject: '700/1 - Pertolongan Cemas Asas',
+    id: '8',
+    no: 8,
+    regNo: 'BTU/2016/0010',
+    district: 'BINTULU',
+    date: '2016-12-01',
+    fee: 4.00,
+    candidatesCount: 2,
+    subject: '800/2 - Pertolongan Cemas Asas dan CPR',
     updated: 'Ya',
-    status: ExamStatus.APPROVED,
-    organization: 'Curtin University',
-    unitName: 'Curtin Unit 05',
+    status: ExamStatus.COMPLETED,
+    organization: 'Sekolah SAINS',
+    unitName: 'Sekolah SAINS',
     category: 'Private',
-    courseStart: '03/07/2024',
-    courseEnd: '04/07/2024',
-    examDate: '05/07/2024',
-    deadline: '12/07/2024',
-    address: 'Lecture Theatre 3',
+    courseStart: '10/11/2016',
+    courseEnd: '18/11/2016',
+    examDate: '18/11/2016',
+    deadline: '25/11/2016',
+    address: 'Sekolah SAINS',
+    unlockRequestCount: 0,
     candidates: [
-      { id: 'c1', name: 'SARAH JANE', idNo: '951212-13-4321', membershipNo: 'M-5544', isMember: true, attendance: { theory: true, oral: true, practical: true } },
+      { id: 'c1', name: 'DORY THE FISH', icNumber: 'K099012', membershipId: '123441', status: 'Pass', isMember: true, attendance: { theory: true, oral: true, practical: true } },
+      { id: 'c2', name: 'FELIX THE CAT', icNumber: 'K090012', membershipId: '123442', status: 'Fail', isMember: true, attendance: { theory: true, oral: true, practical: true } }
     ]
   }
 ];
