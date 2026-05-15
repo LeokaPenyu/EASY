@@ -14,10 +14,12 @@ import { ApplicationForm } from './components/ApplicationForm';
 import { ExamApplicationModule } from './components/ExamApplicationModule';
 import { ExamTypeSelection } from './components/ExamTypeSelection';
 import { ExamSummaryView } from './components/ExamSummaryView';
+import { Login } from './components/Login';
 import { mockExams as initialExams, MockExam } from './data/mockExams';
 
 export default function App() {
   const { t } = useLanguage();
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [activeView, setActiveView] = React.useState<ViewType>('Dashboard');
   const [role, setRole] = React.useState<UserRole>(UserRole.DEC);
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
@@ -353,6 +355,10 @@ export default function App() {
         return <Dashboard role={role} onViewExam={(id) => console.log('View exam', id)} />;
     }
   };
+
+  if (!isLoggedIn) {
+    return <Login onLogin={() => setIsLoggedIn(true)} />;
+  }
 
   return (
     <div className="flex min-h-screen bg-surface-cream text-charcoal overflow-x-hidden">

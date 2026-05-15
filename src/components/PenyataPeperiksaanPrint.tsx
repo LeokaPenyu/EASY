@@ -162,8 +162,41 @@ export const PenyataPeperiksaanPrint: React.FC<Props> = ({ exam, onClose }) => {
           </div>
         </div>
 
+        {/* Senarai Calon dan Keputusan */}
+        <div className="mt-6 mb-8">
+          <h4 className="font-bold mb-2">Senarai Calon dan Keputusan</h4>
+          <table className="w-full border-collapse border border-black text-[10px]">
+            <thead>
+              <tr className="bg-gray-100 border-black border-b-[2px]">
+                <th className="border border-black px-2 py-1 text-center w-8">Bil</th>
+                <th className="border border-black px-2 py-1 text-left">Nama</th>
+                <th className="border border-black px-2 py-1 text-left">No. KP/Pasport</th>
+                <th className="border border-black px-2 py-1 text-center w-16">Teori</th>
+                <th className="border border-black px-2 py-1 text-center w-16">Lisan</th>
+                <th className="border border-black px-2 py-1 text-center w-16">Praktikal</th>
+                <th className="border border-black px-2 py-1 text-center w-20">Keputusan</th>
+              </tr>
+            </thead>
+            <tbody>
+              {exam.candidates?.map((c, i) => (
+                <tr key={i} className="border-b border-black">
+                  <td className="border border-black px-2 py-1 text-center">{i + 1}</td>
+                  <td className="border border-black px-2 py-1 font-bold uppercase">{c.name}</td>
+                  <td className="border border-black px-2 py-1">{c.idNo || (c as any).icNumber}</td>
+                  <td className="border border-black px-2 py-1 text-center">{c.scores?.theory ?? '-'}</td>
+                  <td className="border border-black px-2 py-1 text-center">{c.scores?.oral ?? '-'}</td>
+                  <td className="border border-black px-2 py-1 text-center">{c.scores?.practical ?? '-'}</td>
+                  <td className="border border-black px-2 py-1 text-center font-bold">
+                    {c.status === 'Pass' ? 'LULUS' : c.status === 'Fail' ? 'GAGAL' : '-'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
         {/* Results Summary & Signatures */}
-        <div className="grid grid-cols-[200px_1fr] gap-8 mt-12">
+        <div className="grid grid-cols-[200px_1fr] gap-8 mt-12 break-inside-avoid">
           {/* Laporan dan Ulasan */}
           <div className="border border-black p-3">
             <h4 className="font-bold border-b border-black pb-1 mb-2">Laporan dan Ulasan Pemeriksa</h4>

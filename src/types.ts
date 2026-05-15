@@ -28,6 +28,11 @@ export interface Candidate {
     oral: boolean;
     practical: boolean;
   };
+  scores?: {
+    theory: number;
+    oral: number;
+    practical: number;
+  };
 }
 
 export interface Jurulatih {

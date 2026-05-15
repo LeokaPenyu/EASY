@@ -20,10 +20,12 @@ import {
   ThumbsDown,
   X,
   MousePointer2,
-  ArrowRight
+  ArrowRight,
+  Check
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { MockExam } from '../data/mockExams';
+import { ResultSlipPrint } from './ResultSlipPrint';
 import { UserRole, ExamStatus } from '../types';
 
 interface Candidate {
@@ -32,10 +34,16 @@ interface Candidate {
   idNo: string;
   membershipNo: string;
   isMember: boolean;
+  status?: string;
   attendance?: {
     theory: boolean;
     oral: boolean;
     practical: boolean;
+  };
+  scores?: {
+    theory: number;
+    oral: number;
+    practical: number;
   };
 }
 
@@ -82,6 +90,11 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
   const [showNotification, setShowNotification] = useState<{show: boolean, message: string} | null>(null);
   const [showUnlockDialog, setShowUnlockDialog] = useState(false);
   const [showPrint, setShowPrint] = useState(false);
+  const [showSlipPrint, setShowSlipPrint] = useState(false);
+  const [showSijilModal, setShowSijilModal] = useState(false);
+  const [sijilType, setSijilType] = useState('auto');
+  const [sijilPrefix, setSijilPrefix] = useState('PCA1');
+  const [sijilStart, setSijilStart] = useState('4500');
   const [unlockApproved, setUnlockApproved] = useState(false);
   const [isUnlockRequested, setIsUnlockRequested] = useState(false);
   const [isResultsSubmitted, setIsResultsSubmitted] = useState(localStatus === ExamStatus.COMPLETED);
@@ -110,6 +123,20 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
   };
 
   const [candidates, setCandidates] = useState<Candidate[]>(examData.candidates);
+  
+  const handleScoreChange = (id: string, type: 'theory' | 'oral' | 'practical', value: string) => {
+    const numValue = value === '' ? 0 : parseInt(value, 10);
+    setCandidates(prev => prev.map(c => {
+      if (c.id === id) {
+        const currentScores = c.scores || { theory: 0, oral: 0, practical: 0 };
+        const newScores = { ...currentScores, [type]: numValue };
+        const newStatus = (newScores.theory >= 50 && newScores.oral >= 20 && newScores.practical >= 30) ? 'Pass' : 'Fail';
+        return { ...c, scores: newScores, status: newStatus };
+      }
+      return c;
+    }));
+  };
+
   const [courseStart, setCourseStart] = useState(examData.courseStart);
   const [courseEnd, setCourseEnd] = useState(examData.courseEnd);
   const [address, setAddress] = useState(examData.address);
@@ -1402,21 +1429,24 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                       <th className="px-3 py-2 text-[11px] font-black text-charcoal border-r border-gray-400">No. Ahli BSMM</th>
                       <th className="px-3 py-2 text-[11px] font-black text-charcoal border-r border-gray-400 text-center">Skor Teori/100</th>
                       <th className="px-3 py-2 text-[11px] font-black text-charcoal border-r border-gray-400 text-center">Skor Lisan/40</th>
-                      <th className="px-3 py-2 text-[11px] font-black text-charcoal text-center">Skor Praktikal/60</th>
+                      <th className="px-3 py-2 text-[11px] font-black text-charcoal border-r border-gray-400 text-center">Skor Praktikal/60</th>
+                      <th className="px-3 py-2 text-[11px] font-black text-charcoal text-center">Keputusan</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-300">
                     {candidates.map((c) => (
                       <tr key={c.id} className="divide-x divide-gray-300">
                         <td className="px-3 py-2 font-bold uppercase">{c.name}</td>
-                        <td className="px-3 py-2 text-sm">{c.ic}</td>
-                        <td className="px-3 py-2 text-sm">{c.memberNo}</td>
+                        <td className="px-3 py-2 text-sm">{c.idNo || (c as any).icNumber}</td>
+                        <td className="px-3 py-2 text-sm">{c.membershipNo || (c as any).membershipId}</td>
                         <td className="px-3 py-2">
                           <input 
                             type="number" 
                             disabled={!isEditable || role !== UserRole.SEBC}
                             placeholder="0"
-                            className={`w-full text-center focus:outline-none px-1 py-0.5 ${isEditable && role === UserRole.SEBC ? 'border border-gray-300 bg-white shadow-sm' : 'bg-transparent'}`}
+                            value={c.scores?.theory ?? ''}
+                            onChange={(e) => handleScoreChange(c.id, 'theory', e.target.value)}
+                            className={`w-full text-center focus:outline-none px-1 py-0.5 disabled:opacity-100 disabled:text-charcoal disabled:bg-transparent tracking-widest [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${isEditable && role === UserRole.SEBC ? 'border border-gray-300 bg-white shadow-sm' : 'bg-transparent'}`}
                           />
                         </td>
                         <td className="px-3 py-2">
@@ -1424,7 +1454,9 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                             type="number" 
                             disabled={!isEditable || role !== UserRole.SEBC}
                             placeholder="0"
-                            className={`w-full text-center focus:outline-none px-1 py-0.5 ${isEditable && role === UserRole.SEBC ? 'border border-gray-300 bg-white shadow-sm' : 'bg-transparent'}`}
+                            value={c.scores?.oral ?? ''}
+                            onChange={(e) => handleScoreChange(c.id, 'oral', e.target.value)}
+                            className={`w-full text-center focus:outline-none px-1 py-0.5 disabled:opacity-100 disabled:text-charcoal disabled:bg-transparent tracking-widest [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${isEditable && role === UserRole.SEBC ? 'border border-gray-300 bg-white shadow-sm' : 'bg-transparent'}`}
                           />
                         </td>
                         <td className="px-3 py-2">
@@ -1432,8 +1464,13 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                             type="number" 
                             disabled={!isEditable || role !== UserRole.SEBC}
                             placeholder="0"
-                            className={`w-full text-center focus:outline-none px-1 py-0.5 ${isEditable && role === UserRole.SEBC ? 'border border-gray-300 bg-white shadow-sm' : 'bg-transparent'}`}
+                            value={c.scores?.practical ?? ''}
+                            onChange={(e) => handleScoreChange(c.id, 'practical', e.target.value)}
+                            className={`w-full text-center focus:outline-none px-1 py-0.5 disabled:opacity-100 disabled:text-charcoal disabled:bg-transparent tracking-widest [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${isEditable && role === UserRole.SEBC ? 'border border-gray-300 bg-white shadow-sm' : 'bg-transparent'}`}
                           />
+                        </td>
+                        <td className="px-3 py-2 text-center text-sm font-bold">
+                          {c.status === 'Pass' ? <span className="text-green-600">Lulus</span> : c.status === 'Fail' ? <span className="text-red-600">Gagal</span> : <span className="text-gray-400">-</span>}
                         </td>
                       </tr>
                     ))}
@@ -1477,7 +1514,9 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                           message: 'Teruskan dengan Pemprosesan Keputusan Selesai?',
                           onConfirm: () => {
                             setIsResultsSubmitted(true);
-                            if (onUpdateStatus) {
+                            if (onUpdateExam) {
+                               onUpdateExam(selectedMock.id, { candidates, status: ExamStatus.COMPLETED });
+                            } else if (onUpdateStatus) {
                               onUpdateStatus(selectedMock.id, ExamStatus.COMPLETED);
                             }
                             setLocalStatus(ExamStatus.COMPLETED);
@@ -1499,12 +1538,26 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                       Keputusan Telah Selesai diproses
                     </div>
                     {role === UserRole.SEC && (
-                      <button 
-                        onClick={() => setShowPrint(true)}
-                        className="px-4 py-1 border border-gray-400 bg-action-teal text-white font-bold rounded shadow-md hover:bg-teal-700 transition-all uppercase text-[12px] flex items-center gap-2"
-                      >
-                        Cetak PP
-                      </button>
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={() => setShowSijilModal(true)}
+                          className="px-4 py-1 border border-gray-400 bg-action-teal text-white font-bold rounded shadow-md hover:bg-teal-700 transition-all uppercase text-[12px] flex items-center gap-2"
+                        >
+                          Mengurus Sijil
+                        </button>
+                        <button 
+                          onClick={() => setShowPrint(true)}
+                          className="px-4 py-1 border border-gray-400 bg-action-teal text-white font-bold rounded shadow-md hover:bg-teal-700 transition-all uppercase text-[12px] flex items-center gap-2"
+                        >
+                          Cetak PP
+                        </button>
+                        <button 
+                          onClick={() => setShowSlipPrint(true)}
+                          className="px-4 py-1 border border-gray-400 bg-action-teal text-white font-bold rounded shadow-md hover:bg-teal-700 transition-all uppercase text-[12px] flex items-center gap-2"
+                        >
+                          Cetak Slip
+                        </button>
+                      </div>
                     )}
                   </div>
                 )}
@@ -1515,7 +1568,99 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
       </div>
       
       {showPrint && (
-        <PenyataPeperiksaanPrint exam={selectedMock} onClose={() => setShowPrint(false)} />
+        <PenyataPeperiksaanPrint exam={{...selectedMock, candidates}} onClose={() => setShowPrint(false)} />
+      )}
+
+      {showSlipPrint && (
+        <ResultSlipPrint exam={{...selectedMock, candidates}} onClose={() => setShowSlipPrint(false)} />
+      )}
+
+      {showSijilModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+          <div className="bg-[#E6EFF5] border border-gray-400 w-[500px] shadow-2xl">
+            <div className="bg-gradient-to-b from-[#4A4A4A] to-[#1A1A1A] px-4 py-2 flex items-center justify-between shadow-sm border-b-2 border-brand-red">
+              <h3 className="text-white font-bold text-[14px]">Jenis Sijil</h3>
+              <button onClick={() => setShowSijilModal(false)} className="text-white hover:text-gray-300">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-8">
+              <div className="flex gap-4">
+                <label className="text-[13px] font-bold text-gray-700 w-24 text-right pt-1">Jenis Sijil:</label>
+                <div className="flex-1 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <input 
+                      type="radio" 
+                      id="sijil-auto" 
+                      name="sijilType" 
+                      value="auto" 
+                      checked={sijilType === 'auto'}
+                      onChange={() => setSijilType('auto')}
+                      className="w-4 h-4 cursor-pointer"
+                    />
+                    <label htmlFor="sijil-auto" className="text-[13px] text-charcoal cursor-pointer">
+                      Dijana Automatik
+                    </label>
+                  </div>
+                  
+                  <div className="flex items-start gap-2">
+                    <input 
+                      type="radio" 
+                      id="sijil-manual" 
+                      name="sijilType" 
+                      value="manual" 
+                      checked={sijilType === 'manual'}
+                      onChange={() => setSijilType('manual')}
+                      className="w-4 h-4 cursor-pointer mt-1"
+                    />
+                    <div className="space-y-4">
+                      <label htmlFor="sijil-manual" className="text-[13px] text-charcoal cursor-pointer block">
+                        Pra-cetak oleh ibu pejabat nasional
+                      </label>
+                      
+                      {sijilType === 'manual' && (
+                        <div className="flex items-center gap-3">
+                          <span className="text-[13px] text-charcoal">Bermula Dari</span>
+                          <input 
+                            type="text" 
+                            value={sijilPrefix}
+                            onChange={(e) => setSijilPrefix(e.target.value)}
+                            className="w-20 px-2 py-1 border border-gray-300 rounded shadow-inner text-[13px] focus:outline-action-teal"
+                          />
+                          <input 
+                            type="text" 
+                            value={sijilStart}
+                            onChange={(e) => setSijilStart(e.target.value)}
+                            className="w-24 px-2 py-1 border border-gray-300 rounded shadow-inner text-[13px] focus:outline-action-teal"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-[#D1D5DB] px-4 py-3 flex justify-end gap-2 border-t border-gray-400">
+              <button 
+                onClick={() => setShowSijilModal(false)}
+                className="flex items-center gap-1.5 px-4 py-1.5 bg-white border border-gray-400 font-bold text-[13px] shadow-sm hover:bg-gray-50 text-charcoal"
+              >
+                <X className="w-4 h-4" /> Tidak
+              </button>
+              <button 
+                onClick={() => {
+                  setShowSijilModal(false);
+                  triggerNotification('Sijil berjaya dijana dan sedia untuk dicetak.');
+                }}
+                className="flex items-center gap-1.5 px-6 py-1.5 bg-white border border-gray-400 font-bold text-[13px] shadow-sm hover:bg-green-50 text-action-teal"
+              >
+                <Check className="w-4 h-4" /> Ya
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

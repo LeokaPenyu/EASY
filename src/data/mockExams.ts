@@ -246,8 +246,8 @@ export const mockExams: MockExam[] = [
     address: 'Sekolah SAINS',
     unlockRequestCount: 0,
     candidates: [
-      { id: 'c1', name: 'DORY THE FISH', icNumber: 'K099012', membershipId: '123441', status: 'Pass', isMember: true, attendance: { theory: true, oral: true, practical: true } },
-      { id: 'c2', name: 'FELIX THE CAT', icNumber: 'K090012', membershipId: '123442', status: 'Fail', isMember: true, attendance: { theory: true, oral: true, practical: true } }
+      { id: 'c1', name: 'DORY THE FISH', icNumber: 'K099012', membershipId: '123441', status: 'Pass', isMember: true, attendance: { theory: true, oral: true, practical: true }, scores: { theory: 60, oral: 25, practical: 45 } },
+      { id: 'c2', name: 'FELIX THE CAT', icNumber: 'K090012', membershipId: '123442', status: 'Fail', isMember: true, attendance: { theory: true, oral: true, practical: true }, scores: { theory: 40, oral: 15, practical: 25 } }
     ]
   }
 ];
