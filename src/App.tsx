@@ -17,6 +17,22 @@ import { ExamSummaryView } from './components/ExamSummaryView';
 import { Login } from './components/Login';
 import { mockExams as initialExams, MockExam } from './data/mockExams';
 
+import { CertificateRenewalModule } from './components/CertificateRenewalModule';
+import { AttendanceCertificateModule } from './components/AttendanceCertificateModule';
+import { OnlineExamModule } from './components/OnlineExamModule';
+import { ExamResultsEntry } from './components/ExamResultsEntry';
+import { QuestionBankModule } from './components/QuestionBankModule';
+import { RetestModule } from './components/RetestModule';
+import { ReportsModule } from './components/ReportsModule';
+import { ProfilDaerah } from './components/ProfilDaerah';
+import { ProfilSubjek } from './components/ProfilSubjek';
+import { Calon } from './components/Calon';
+import { Jurulatih } from './components/Jurulatih';
+import { ProfilPengguna } from './components/ProfilPengguna';
+import { PerananPengguna } from './components/PerananPengguna';
+import { TetapanAm } from './components/TetapanAm';
+import { JadualPeperiksaan } from './components/JadualPeperiksaan';
+
 export default function App() {
   const { t } = useLanguage();
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
@@ -337,9 +353,10 @@ export default function App() {
           />
         );
       case 'Calon':
-      case 'ExamProfile':
-      case 'ExamSchedule':
+        return <Calon />;
       case 'Jurulatih':
+        return <Jurulatih />;
+      case 'ExamProfile':
       case 'Panduan':
         return (
           <div className="flex flex-col items-center justify-center p-20 text-center space-y-4">
@@ -351,6 +368,32 @@ export default function App() {
             <button onClick={() => setActiveView('Dashboard')} className="btn-secondary">{t('back')}</button>
           </div>
         );
+      case 'ExamSchedule':
+        return <JadualPeperiksaan />;
+      case 'CertificateRenewal':
+        return <CertificateRenewalModule />;
+      case 'AttendanceCertificate':
+        return <AttendanceCertificateModule />;
+      case 'OnlineExam':
+        return <OnlineExamModule />;
+      case 'ExamResults':
+        return <ExamResultsEntry />;
+      case 'QuestionBank':
+        return <QuestionBankModule />;
+      case 'Retest':
+        return <RetestModule />;
+      case 'Reports':
+        return <ReportsModule />;
+      case 'ProfilDaerah':
+        return <ProfilDaerah />;
+      case 'ProfilSubjek':
+        return <ProfilSubjek />;
+      case 'ProfilPengguna':
+        return <ProfilPengguna />;
+      case 'PerananPengguna':
+        return <PerananPengguna />;
+      case 'TetapanAm':
+        return <TetapanAm />;
       default:
         return <Dashboard role={role} onViewExam={(id) => console.log('View exam', id)} />;
     }

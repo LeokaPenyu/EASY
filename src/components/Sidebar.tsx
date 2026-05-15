@@ -7,7 +7,8 @@ import {
   BookOpen, 
   ChevronDown,
   Plus,
-  X
+  X,
+  Settings
 } from 'lucide-react';
 import { ViewType, UserRole } from '../types';
 import { useLanguage } from '../context/LanguageContext';
@@ -21,7 +22,8 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isOpen, onClose, role }) => {
-  const [examOpen, setExamOpen] = React.useState(true);
+  const [examOpen, setExamOpen] = React.useState(false);
+  const [settingsOpen, setSettingsOpen] = React.useState(false);
   const { t } = useLanguage();
 
   const menuItems = [
@@ -137,6 +139,79 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isO
           <BookOpen className={`w-5 h-5 transition-colors ${activeView === 'Panduan' ? 'text-brand-red' : 'text-gray-400 group-hover:text-charcoal'}`} />
           {t('guide')}
         </button>
+
+        <div className="space-y-1 pt-1">
+          <button
+            onClick={() => setSettingsOpen(!settingsOpen)}
+            className={`w-full flex items-center justify-between px-4 py-3 rounded-[6px] text-sm font-bold transition-all ${
+              settingsOpen ? 'text-charcoal' : 'text-charcoal/80'
+            } hover:bg-gray-50 group`}
+          >
+            <div className="flex items-center gap-4">
+              <Settings className={`w-5 h-5 transition-colors ${settingsOpen ? 'text-brand-red' : 'text-gray-400 group-hover:text-charcoal'}`} />
+              <span>Tetapan</span>
+            </div>
+            <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${settingsOpen ? 'rotate-180' : ''}`} />
+          </button>
+
+          {settingsOpen && (
+            <div className="pl-12 space-y-1">
+              {['Profil Daerah', 'Profil Subjek', 'Peranan Pengguna', 'Profil Pengguna', 'Tetapan Am', 'Susun Atur Sijil'].map(item => (
+                <button
+                  key={item}
+                  onClick={() => {
+                    if (item === 'Profil Daerah') setActiveView('ProfilDaerah');
+                    if (item === 'Profil Subjek') setActiveView('ProfilSubjek');
+                    if (item === 'Profil Pengguna') setActiveView('ProfilPengguna');
+                    if (item === 'Peranan Pengguna') setActiveView('PerananPengguna');
+                    if (item === 'Tetapan Am') setActiveView('TetapanAm');
+                  }}
+                  className={`w-full text-left px-4 py-2.5 rounded-[6px] text-sm font-medium transition-all ${
+                    (activeView === 'ProfilDaerah' && item === 'Profil Daerah') ||
+                    (activeView === 'ProfilSubjek' && item === 'Profil Subjek') ||
+                    (activeView === 'ProfilPengguna' && item === 'Profil Pengguna') ||
+                    (activeView === 'PerananPengguna' && item === 'Peranan Pengguna') ||
+                    (activeView === 'TetapanAm' && item === 'Tetapan Am')
+                    ? 'text-charcoal font-bold bg-gray-50' : 'text-charcoal/70 hover:text-charcoal hover:bg-gray-50'
+                  }`}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="mt-6">
+           <h3 className="px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">New Features / Ciri Baharu</h3>
+           {[
+             { id: 'CertificateRenewal', label: 'Pembaharuan Sijil', badge: 'New' },
+             { id: 'AttendanceCertificate', label: 'Sijil Kehadiran', badge: 'New' },
+             { id: 'OnlineExam', label: 'Peperiksaan Dalam Talian', badge: 'New' },
+             { id: 'Reports', label: 'Laporan & Statistik', badge: 'New' },
+             { id: 'QuestionBank', label: 'Bank Soalan', badge: 'New' },
+             { id: 'Retest', label: 'Ujian Semula (Retest)', badge: 'New' }
+           ].map((mod) => (
+             <button
+               key={mod.id}
+               onClick={() => setActiveView(mod.id as ViewType)}
+               className={`w-full flex items-center justify-between px-4 py-3 rounded-[6px] text-sm font-bold transition-all relative group ${
+                 activeView === mod.id 
+                 ? 'bg-blush-rose text-brand-red-deep shadow-sm' 
+                 : 'text-charcoal/80 hover:bg-gray-50'
+               }`}
+             >
+               {activeView === mod.id && (
+                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1/2 bg-brand-red rounded-r-full" />
+               )}
+               <div className="flex items-center gap-3">
+                 <div className="w-1.5 h-1.5 rounded-full bg-brand-red" />
+                 {mod.label}
+               </div>
+               <span className="text-[9px] uppercase bg-brand-red text-white px-2 py-0.5 rounded-full">{mod.badge}</span>
+             </button>
+           ))}
+        </div>
       </nav>
 
       {(role === UserRole.DEC || role === UserRole.SEC) && (

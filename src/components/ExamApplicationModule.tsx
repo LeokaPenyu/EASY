@@ -158,9 +158,7 @@ export const ExamApplicationModule: React.FC<ExamApplicationModuleProps> = ({
 
   const handleDeleteItem = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (window.confirm('Adakah anda pasti mahu memadam permohonan ini?')) {
-      if (onDelete) onDelete(id);
-    }
+    if (onDelete) onDelete(id);
   };
 
   return (

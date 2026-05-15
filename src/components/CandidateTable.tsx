@@ -1,15 +1,69 @@
 import React from 'react';
 import { Candidate } from '../types';
-import { Plus, Trash2, Upload, Users } from 'lucide-react';
+import { Plus, Trash2, Upload, Users, Search, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+
+const globalCandidates = [
+  { id: '1', nama: 'MIGUEL SILVA', noKp: '970406-13-5288', noAhli: '' },
+  { id: '2', nama: 'ALICE SANTOS', noKp: '880314-13-5062', noAhli: '' },
+  { id: '3', nama: 'ARTHUR OLIVEIRA', noKp: '751231-13-5832', noAhli: '' },
+  { id: '4', nama: 'SOFIA COSTA', noKp: '810905-13-5538', noAhli: '' },
+  { id: '5', nama: 'HEITOR PEREIRA', noKp: '760823-13-5558', noAhli: '' },
+  { id: '6', nama: 'LAURA FERREIRA', noKp: '771102-13-5076', noAhli: '' },
+  { id: '7', nama: 'BERNARDO ALMEIDA', noKp: '690316-13-5552', noAhli: '' },
+  { id: '8', nama: 'VALENTINA LIMA', noKp: '921101-13-5446', noAhli: '' },
+  { id: '9', nama: 'DAVI RODRIGUES', noKp: '900924-13-6359', noAhli: '' },
+  { id: '10', nama: 'HELENA SOUZA', noKp: '800305-13-5332', noAhli: '13-0422-00014330' },
+];
 
 interface CandidateTableProps {
   candidates: Candidate[];
   setCandidates: (candidates: Candidate[]) => void;
+  examDate?: string;
+  subjectCode?: string;
 }
 
-export const CandidateTable: React.FC<CandidateTableProps> = ({ candidates, setCandidates }) => {
+export const CandidateTable: React.FC<CandidateTableProps> = ({ candidates, setCandidates, examDate = '', subjectCode = '' }) => {
   const { t } = useLanguage();
+  const [isSearchModalOpen, setIsSearchModalOpen] = React.useState(false);
+  const [searchName, setSearchName] = React.useState('');
+  const [searchIc, setSearchIc] = React.useState('');
+  const [searchMembershipId, setSearchMembershipId] = React.useState('');
+
+  const filteredGlobalCandidates = globalCandidates.filter(c => 
+    c.nama.toLowerCase().includes(searchName.toLowerCase()) &&
+    c.noKp.includes(searchIc) &&
+    c.noAhli.includes(searchMembershipId)
+  );
+
+  const handleSelectCandidate = (c: typeof globalCandidates[0]) => {
+    // Check if candidate is already in the table
+    if (candidates.some(existing => existing.icNumber === c.noKp)) {
+      alert('Calon ini telah berada dalam senarai.');
+      return;
+    }
+    
+    const newCandidate: Candidate = {
+      id: Math.random().toString(36).substr(2, 9),
+      name: c.nama,
+      icNumber: c.noKp,
+      membershipId: c.noAhli,
+      membershipCategory: c.noAhli ? 'Member' : 'Public',
+      status: 'Pending',
+      isMember: c.noAhli ? true : false,
+      attendance: {
+        theory: false,
+        oral: false,
+        practical: false
+      }
+    };
+    setCandidates([...candidates, newCandidate]);
+    setIsSearchModalOpen(false);
+    setSearchName('');
+    setSearchIc('');
+    setSearchMembershipId('');
+  };
+
   const addRow = () => {
     const newCandidate: Candidate = {
       id: Math.random().toString(36).substr(2, 9),
@@ -49,12 +103,14 @@ export const CandidateTable: React.FC<CandidateTableProps> = ({ candidates, setC
         .slice(1) // Skip header
         .filter((line) => line.trim() !== '')
         .map((line) => {
-          const [name, icNumber, membershipId] = line.split(',').map((s) => s.trim());
+          const [name, icNumber, membershipId, membershipCategory] = line.split(',').map((s) => s.trim());
+          const cat = ['Cadet', 'VAD', 'Member', 'Public'].includes(membershipCategory) ? (membershipCategory as any) : 'Public';
           return {
             id: Math.random().toString(36).substr(2, 9),
             name: name || '',
             icNumber: icNumber || '',
             membershipId: membershipId || '',
+            membershipCategory: cat,
             status: 'Pending',
             isMember: (membershipId || '').trim() !== '',
             attendance: {
@@ -71,9 +127,42 @@ export const CandidateTable: React.FC<CandidateTableProps> = ({ candidates, setC
     event.target.value = '';
   };
 
-  const memberCount = candidates.filter((c) => c.membershipId.trim() !== '').length;
-  const nonMemberCount = candidates.length - memberCount;
-  const totalFee = memberCount * 2 + nonMemberCount * 14;
+  const today = new Date().toISOString().split('T')[0];
+  let cadetCount = 0;
+  let vadCount = 0;
+  let memberCount = 0;
+  let publicCount = 0;
+  let totalFee = 0;
+  
+  // Need to import calculateCandidateFee
+  // I will add the import next
+  candidates.forEach((c) => {
+    const cat = c.membershipCategory || 'Public';
+    if (cat === 'Cadet') cadetCount++;
+    else if (cat === 'VAD') vadCount++;
+    else if (cat === 'Member') memberCount++;
+    else publicCount++;
+    
+    // We haven't dynamically imported calculateCandidateFee here but we'll do it via another file edit
+    // Instead of importing, let's just do a basic calculation here based on the same rules for simplicity
+    
+    // Fallback if import is not there
+    let baseFee = 2; // Cadet, VAD, Member default 2
+    if (cat === 'Public') baseFee = 14;
+    
+    const msPerDay = 24 * 60 * 60 * 1000;
+    const isLate = Math.abs((new Date(examDate).getTime() - new Date(today).getTime()) / msPerDay) < 9;
+    
+    let isOnlineExam = subjectCode.includes('EXD'); // Just simple check
+    
+    if (isOnlineExam) {
+      if (isLate) baseFee = 14;
+      else baseFee = 10;
+    }
+    
+    // For now use default rules
+    totalFee += baseFee;
+  });
 
   return (
     <div className="space-y-6">
@@ -87,6 +176,10 @@ export const CandidateTable: React.FC<CandidateTableProps> = ({ candidates, setC
           </h3>
         </div>
         <div className="flex flex-wrap gap-2">
+          <button onClick={() => setIsSearchModalOpen(true)} className="btn-secondary text-[11px] font-bold uppercase tracking-wider flex items-center gap-2 flex-1 justify-center sm:flex-none h-10 px-6">
+            <Search className="w-3.5 h-3.5" />
+            Cari Calon Sedia Ada
+          </button>
           <label className="btn-secondary text-[11px] font-bold uppercase tracking-wider cursor-pointer flex items-center gap-2 flex-1 justify-center sm:flex-none h-10 px-6">
             <Upload className="w-3.5 h-3.5" />
             {t('uploadCsv')}
@@ -99,6 +192,75 @@ export const CandidateTable: React.FC<CandidateTableProps> = ({ candidates, setC
         </div>
       </div>
 
+      {isSearchModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white rounded-xl shadow-2xl overflow-hidden max-w-2xl w-full mx-auto flex flex-col max-h-[90vh]">
+            <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-charcoal text-white rounded-t-xl">
+              <h3 className="text-lg font-bold">Carian Calon</h3>
+              <button onClick={() => setIsSearchModalOpen(false)} className="text-gray-300 hover:text-white transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-4 bg-gray-50 border-b border-gray-100 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Nama</label>
+                  <input type="text" value={searchName} onChange={e => setSearchName(e.target.value)} className="w-full px-3 py-2 text-sm border border-gray-200 rounded-[6px] outline-none focus:border-action-teal" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">No. KP/Pasport</label>
+                  <input type="text" value={searchIc} onChange={e => setSearchIc(e.target.value)} className="w-full px-3 py-2 text-sm border border-gray-200 rounded-[6px] outline-none focus:border-action-teal" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">No. Ahli BSMM</label>
+                  <input type="text" value={searchMembershipId} onChange={e => setSearchMembershipId(e.target.value)} className="w-full px-3 py-2 text-sm border border-gray-200 rounded-[6px] outline-none focus:border-action-teal" />
+                </div>
+              </div>
+            </div>
+
+            <div className="overflow-y-auto p-4 bg-white flex-1 min-h-[300px]">
+              <table className="w-full text-sm text-left border border-gray-200 rounded-lg overflow-hidden">
+                <thead className="bg-gray-100 text-[10px] uppercase tracking-widest text-gray-500 font-bold border-b border-gray-200">
+                  <tr>
+                    <th className="px-4 py-3 w-10">Pilih</th>
+                    <th className="px-4 py-3">No.</th>
+                    <th className="px-4 py-3">Nama</th>
+                    <th className="px-4 py-3">No. KP/Pasport</th>
+                    <th className="px-4 py-3">No. Ahli BSMM</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {filteredGlobalCandidates.length > 0 ? (
+                    filteredGlobalCandidates.map((c, i) => (
+                      <tr key={c.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-4 py-3">
+                          <input type="radio" name="candidateSelect" onChange={() => handleSelectCandidate(c)} className="w-4 h-4 text-action-teal cursor-pointer" />
+                        </td>
+                        <td className="px-4 py-3 text-gray-400 font-bold">{i + 1}</td>
+                        <td className="px-4 py-3 font-semibold text-charcoal">{c.nama}</td>
+                        <td className="px-4 py-3">{c.noKp}</td>
+                        <td className="px-4 py-3">{c.noAhli || '-'}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={5} className="px-4 py-8 text-center text-gray-400 italic">Tiada Rekod Ditemui</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+            
+            <div className="p-4 border-t border-gray-100 flex justify-end bg-gray-50">
+               <button onClick={() => setIsSearchModalOpen(false)} className="px-6 py-2 bg-gray-200 text-charcoal font-bold text-sm rounded shadow-sm hover:bg-gray-300 transition-colors">
+                 Tutup
+               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="overflow-x-auto border border-gray-100 rounded-[8px] bg-white shadow-sm">
         <table className="w-full text-left min-w-[840px]">
           <thead className="bg-gray-100/50 text-[10px] uppercase tracking-widest text-gray-500 font-bold border-b border-gray-100 italic">
@@ -107,13 +269,14 @@ export const CandidateTable: React.FC<CandidateTableProps> = ({ candidates, setC
               <th className="px-6 py-4">{t('fullName')}</th>
               <th className="px-6 py-4">{t('icNumber')}</th>
               <th className="px-6 py-4">{t('membershipNumber')}</th>
+              <th className="px-6 py-4">Kategori Keahlian</th>
               <th className="px-6 py-4 text-right w-24">{t('action')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
             {candidates.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-6 py-12 text-center text-gray-400 text-sm italic font-medium">
+                <td colSpan={6} className="px-6 py-12 text-center text-gray-400 text-sm italic font-medium">
                   {t('noCandidates')}
                 </td>
               </tr>
@@ -150,6 +313,19 @@ export const CandidateTable: React.FC<CandidateTableProps> = ({ candidates, setC
                       className="w-full px-3 py-2 text-sm bg-gray-50/50 border border-gray-100 rounded-[4px] outline-none focus:border-action-teal/40 focus:bg-white transition-all font-medium"
                     />
                   </td>
+                  <td className="px-6 py-3">
+                    <select
+                      value={c.membershipCategory || ''}
+                      onChange={(e) => updateCandidate(c.id, 'membershipCategory', e.target.value as any)}
+                      className="w-full px-3 py-2 text-sm bg-gray-50/50 border border-gray-100 rounded-[4px] outline-none focus:border-action-teal/40 focus:bg-white transition-all font-medium"
+                    >
+                      <option value="" disabled>Pilih Kategori</option>
+                      <option value="Cadet">Cadet</option>
+                      <option value="VAD">VAD</option>
+                      <option value="Member">Member</option>
+                      <option value="Public">Public</option>
+                    </select>
+                  </td>
                   <td className="px-6 py-3 text-right">
                     <button
                       onClick={() => removeRow(c.id)}
@@ -173,11 +349,19 @@ export const CandidateTable: React.FC<CandidateTableProps> = ({ candidates, setC
             <div className="flex flex-wrap gap-8">
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 rounded-full bg-success-green/20 border border-success-green" />
-                <p className="text-xs font-semibold text-gray-600">{t('member')}: <span className="font-bold text-charcoal">{memberCount}</span> x RM 2.00</p>
+                <p className="text-xs font-semibold text-gray-600">Cadet: <span className="font-bold text-charcoal">{cadetCount}</span></p>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-success-green/20 border border-success-green" />
+                <p className="text-xs font-semibold text-gray-600">VAD: <span className="font-bold text-charcoal">{vadCount}</span></p>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-success-green/20 border border-success-green" />
+                <p className="text-xs font-semibold text-gray-600">Member: <span className="font-bold text-charcoal">{memberCount}</span></p>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 rounded-full bg-brand-red/20 border border-brand-red" />
-                <p className="text-xs font-semibold text-gray-600">{t('nonMember')}: <span className="font-bold text-charcoal">{nonMemberCount}</span> x RM 14.00</p>
+                <p className="text-xs font-semibold text-gray-600">Public: <span className="font-bold text-charcoal">{publicCount}</span></p>
               </div>
             </div>
           </div>

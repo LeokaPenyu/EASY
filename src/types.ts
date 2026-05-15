@@ -16,11 +16,14 @@ export enum ExamStatus {
   UNLOCK_REQUESTED = 'Menunggu Buka Kunci'
 }
 
+export type MembershipCategory = 'Cadet' | 'VAD' | 'Member' | 'Public';
+
 export interface Candidate {
   id: string;
   name: string;
   icNumber: string;
   membershipId: string;
+  membershipCategory?: MembershipCategory;
   status: 'Pass' | 'Fail' | 'Absent' | 'Pending';
   isMember?: boolean;
   attendance?: {
@@ -41,6 +44,7 @@ export interface Jurulatih {
   icNumber: string;
   address: string;
   warrantNumber: string;
+  certExpiryDate?: string;
 }
 
 export interface Penyelia {
@@ -54,6 +58,7 @@ export interface Pemeriksa {
   name: string;
   address: string;
   warrantNumber: string;
+  certExpiryDate?: string;
 }
 
 export interface ApplicationFormState {
@@ -98,7 +103,7 @@ export enum Language {
   EN = 'EN'
 }
 
-export type ViewType = 'Dashboard' | 'Calon' | 'ExamProfile' | 'ExamSchedule' | 'Jurulatih' | 'Panduan' | 'NewRequest' | 'ExamApplication';
+export type ViewType = 'Dashboard' | 'Calon' | 'ExamProfile' | 'ExamSchedule' | 'Jurulatih' | 'Panduan' | 'NewRequest' | 'ExamApplication' | 'CertificateRenewal' | 'AttendanceCertificate' | 'OnlineExam' | 'ExamResults' | 'QuestionBank' | 'Retest' | 'Reports' | 'ProfilDaerah' | 'ProfilSubjek' | 'ProfilPengguna' | 'PerananPengguna' | 'TetapanAm';
 
 export const TRANSLATIONS = {
   [Language.BM]: {

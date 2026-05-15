@@ -20,6 +20,49 @@ interface DashboardProps {
   onViewExam: (id: string) => void;
 }
 
+const ExamListAccordion: React.FC<{ exams: MockExam[] }> = ({ exams }) => {
+  const [isOpen, setIsOpen] = React.useState(false);
+
+  return (
+    <div className="card shadow-sm border border-gray-100 p-0 overflow-hidden">
+      <button 
+        className="w-full text-left bg-gray-100 p-4 flex justify-between items-center hover:bg-gray-200 transition-colors"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <h3 className="text-lg font-bold text-charcoal">
+          Peperiksaan yang Akan Datang ({exams.length})
+        </h3>
+        <svg className={`w-5 h-5 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {isOpen && (
+        <div className="p-4 bg-white border-t border-gray-200 text-sm">
+          <div className="space-y-2">
+            {exams.map((exam) => {
+              const parts = exam.examDate.split('/');
+              let exDate = new Date();
+              let hariLagi = '';
+              if (parts.length === 3) {
+                 exDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+                 const today = new Date();
+                 const diffTime = Math.ceil((exDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+                 hariLagi = diffTime >= 0 ? `${diffTime} hari lagi` : `${Math.abs(diffTime)} hari lepas`;
+              }
+              
+              return (
+                <div key={exam.id} className="flex justify-between items-center py-2 border-b border-gray-50 last:border-0 hover:bg-gray-50 px-2 rounded cursor-pointer transition-colors text-[#0066CC] font-medium truncate">
+                  <span>{exam.regNo} - {exam.subject} - {exam.examDate} ({hariLagi})</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 export const Dashboard: React.FC<DashboardProps> = ({ role, exams, onViewExam }) => {
   const { t } = useLanguage();
 
@@ -27,7 +70,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ role, exams, onViewExam })
     { label: t('upcomingExams'), value: '4', icon: Calendar, color: 'text-action-teal' },
     { label: t('pendingVerification'), value: '12', icon: Clock, color: 'text-orange-500' },
     { label: t('completedMonth'), value: '8', icon: CheckCircle2, color: 'text-success-green' },
-    { label: t('lockedReports'), value: '1', icon: Lock, color: 'text-alert-red' },
+    { label: 'Sijil Tamat Tempoh (30 hari)', value: '3', icon: AlertCircle, color: 'text-amber-500' },
+    { label: 'Calon Retest Tertunda', value: '5', icon: Clock, color: 'text-brand-red' },
+    { label: 'Laporan Dijana', value: '14', icon: FileCheck, color: 'text-[#2D5A8E]' },
   ];
 
   const getStatusLabel = (status: ExamStatus) => {
@@ -61,7 +106,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ role, exams, onViewExam })
         <p className="text-gray-500">{t('roleSummary')} {role}.</p>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {stats.map((stat, i) => (
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
@@ -119,6 +164,26 @@ export const Dashboard: React.FC<DashboardProps> = ({ role, exams, onViewExam })
                     <div className="flex items-center gap-3">
                       <span className="text-action-teal font-bold">{decSummaryReadyCount}</span>
                       <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-action-teal" />
+                    </div>
+                  </button>
+                  <button 
+                   onClick={() => console.log('AttendanceCertificate')} // For routing
+                   className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-action-teal/30 transition-all group"
+                  >
+                    <span className="text-sm font-medium text-gray-700 group-hover:text-action-teal">Sijil Kehadiran Perlu Dijana</span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-action-teal font-bold">2</span>
+                      <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-action-teal" />
+                    </div>
+                  </button>
+                  <button 
+                   onClick={() => console.log('CertificateRenewal')}
+                   className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-amber-500/30 transition-all group"
+                  >
+                    <span className="text-sm font-medium text-gray-700 group-hover:text-amber-500">Sijil Tamat Tempoh (30 hari)</span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-amber-500 font-bold">3</span>
+                      <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-amber-500" />
                     </div>
                   </button>
                 </div>
@@ -240,63 +305,28 @@ export const Dashboard: React.FC<DashboardProps> = ({ role, exams, onViewExam })
                      <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-[#2D5A8E]" />
                    </div>
                  </button>
+                 <button 
+                  onClick={() => console.log('OnlineExam')}
+                  className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-[#2D5A8E]/30 transition-all group shadow-sm hover:shadow-md"
+                 >
+                   <span className="text-sm font-medium text-gray-700 group-hover:text-[#2D5A8E]">Peperiksaan Aktif – Masuk Markah</span>
+                   <div className="flex items-center gap-3">
+                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-black transition-colors bg-[#2D5A8E] text-white`}>
+                       4
+                     </span>
+                     <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-[#2D5A8E]" />
+                   </div>
+                 </button>
                </div>
             </div>
           )}
 
-          <div className="card">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold">{t('examStatus')}</h3>
-              <button className="text-action-teal text-sm font-medium hover:underline flex items-center gap-1">
-                {t('viewAll')} <ArrowUpRight className="w-4 h-4" />
-              </button>
-            </div>
-            
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="text-xs text-gray-400 uppercase tracking-wider border-b border-gray-100">
-                    <th className="pb-3 font-semibold">{t('examTitle')}</th>
-                    <th className="pb-3 font-semibold text-center">{t('date')}</th>
-                    <th className="pb-3 font-semibold text-center">{t('statusHeader')}</th>
-                    <th className="pb-3 font-semibold text-right">{t('action')}</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                  {exams.map((exam) => (
-                    <tr key={exam.id} className="group hover:bg-surface-cream/50 transition-colors">
-                      <td className="py-4">
-                        <p className="font-semibold text-sm">{exam.subject}</p>
-                        <p className="text-xs text-gray-500">{exam.category} • {exam.district}</p>
-                      </td>
-                      <td className="py-4 text-center">
-                        <span className="text-sm text-gray-600">{exam.examDate}</span>
-                      </td>
-                      <td className="py-4 text-center">
-                        <span className={`badge ${
-                          exam.status === ExamStatus.LOCKED ? 'badge-tolak' : 
-                          exam.status === ExamStatus.APPROVED ? 'badge-lulus' : 'badge-baru'
-                        }`}>
-                          {getStatusLabel(exam.status)}
-                        </span>
-                      </td>
-                      <td className="py-4 text-right">
-                        <button 
-                          onClick={() => onViewExam(exam.id)}
-                          className="text-[10px] font-bold uppercase tracking-widest text-action-teal bg-action-teal/5 px-3 py-1.5 rounded-md hover:bg-action-teal hover:text-white transition-all"
-                        >
-                          {t('details')}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+
         </div>
 
         <div className="space-y-6">
+          <ExamListAccordion exams={exams} />
+
           {role === UserRole.DEC && (
             <div className="card border-l-4 border-l-alert-red bg-red-50/30">
               <div className="flex gap-4">

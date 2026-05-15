@@ -4,6 +4,7 @@ import { ApplicationFormState, Candidate } from '../types';
 import { MockExam } from '../data/mockExams';
 import { useLanguage } from '../context/LanguageContext';
 import { ExamStatus } from '../types';
+import { isInstructorEligible } from '../utils/certificateUtils';
 import { 
   Building2, 
   CheckCircle2,
@@ -14,7 +15,9 @@ import {
   Save, 
   Send, 
   Stethoscope, 
-  UserSquare2 
+  UserSquare2,
+  AlertTriangle,
+  XCircle
 } from 'lucide-react';
 
 interface ApplicationFormProps {
@@ -53,9 +56,9 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
   const [confirmDialog, setConfirmDialog] = React.useState<{message: string, onConfirm: () => void} | null>(null);
   const [alertDialog, setAlertDialog] = React.useState<{message: string, onClose?: () => void} | null>(null);
 
-  const [newJurulatih, setNewJurulatih] = React.useState({ name: '', icNumber: '', address: '', warrantNumber: '' });
+  const [newJurulatih, setNewJurulatih] = React.useState({ name: '', icNumber: '', address: '', warrantNumber: '', certExpiryDate: '' });
   const [newPenyelia, setNewPenyelia] = React.useState({ name: '', icNumber: '' });
-  const [newPemeriksa, setNewPemeriksa] = React.useState({ name: '', address: '', warrantNumber: '' });
+  const [newPemeriksa, setNewPemeriksa] = React.useState({ name: '', address: '', warrantNumber: '', certExpiryDate: '' });
 
   React.useEffect(() => {
     if (initialExamType) {
@@ -72,7 +75,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
 
   const addJurulatih = () => {
     setForm(prev => ({ ...prev, jurulatih: [...prev.jurulatih, { ...newJurulatih, id: Date.now().toString() }] }));
-    setNewJurulatih({ name: '', icNumber: '', address: '', warrantNumber: '' });
+    setNewJurulatih({ name: '', icNumber: '', address: '', warrantNumber: '', certExpiryDate: '' });
   };
   const removeJurulatih = (id: string) => setForm(prev => ({ ...prev, jurulatih: prev.jurulatih.filter(j => j.id !== id) }));
 
@@ -84,7 +87,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
 
   const addPemeriksa = () => {
     setForm(prev => ({ ...prev, pemeriksa: [...prev.pemeriksa, { ...newPemeriksa, id: Date.now().toString() }] }));
-    setNewPemeriksa({ name: '', address: '', warrantNumber: '' });
+    setNewPemeriksa({ name: '', address: '', warrantNumber: '', certExpiryDate: '' });
   };
   const removePemeriksa = (id: string) => setForm(prev => ({ ...prev, pemeriksa: prev.pemeriksa.filter(p => p.id !== id) }));
 
@@ -456,6 +459,8 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
                <CandidateTable 
                 candidates={form.candidates} 
                 setCandidates={(candidates) => handleInputChange('candidates', candidates)} 
+                examDate={form.examDate}
+                subjectCode={form.subject}
               />
             </div>
           </section>
@@ -465,13 +470,36 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
               {/* Section: Senarai Jurulatih */}
               <section className="card space-y-4 shadow-sm border-gray-200/60">
                 <h3 className="font-bold text-charcoal border-b pb-2">Senarai Jurulatih</h3>
-                <div className="flex gap-2 p-2 bg-gray-50 rounded">
-                   <input placeholder="Nama" className="text-sm p-1 border rounded" value={newJurulatih.name} onChange={e => setNewJurulatih(prev => ({...prev, name: e.target.value}))} />
-                   <input placeholder="No. KP" className="text-sm p-1 border rounded" value={newJurulatih.icNumber} onChange={e => setNewJurulatih(prev => ({...prev, icNumber: e.target.value}))} />
-                   <input placeholder="Alamat" className="text-sm p-1 border rounded" value={newJurulatih.address} onChange={e => setNewJurulatih(prev => ({...prev, address: e.target.value}))} />
-                   <input placeholder="No. Waran" className="text-sm p-1 border rounded" value={newJurulatih.warrantNumber} onChange={e => setNewJurulatih(prev => ({...prev, warrantNumber: e.target.value}))} />
-                   <button onClick={addJurulatih} className="px-2 bg-action-teal text-white rounded text-sm">+</button>
+                <div className="flex flex-wrap gap-2 p-2 bg-gray-50 rounded">
+                   <input placeholder="Nama" className="text-sm p-1 border rounded flex-1 min-w-[120px]" value={newJurulatih.name} onChange={e => setNewJurulatih(prev => ({...prev, name: e.target.value}))} />
+                   <input placeholder="No. KP" className="text-sm p-1 border rounded w-32" value={newJurulatih.icNumber} onChange={e => setNewJurulatih(prev => ({...prev, icNumber: e.target.value}))} />
+                   <input placeholder="Alamat" className="text-sm p-1 border rounded flex-1 min-w-[120px]" value={newJurulatih.address} onChange={e => setNewJurulatih(prev => ({...prev, address: e.target.value}))} />
+                   <input placeholder="No. Waran" className="text-sm p-1 border rounded w-32" value={newJurulatih.warrantNumber} onChange={e => setNewJurulatih(prev => ({...prev, warrantNumber: e.target.value}))} />
+                   <div className="flex flex-col gap-1 w-36">
+                     <span className="text-[10px] font-bold text-gray-500 uppercase">Tarikh Luput Sijil</span>
+                     <input type="date" className="text-sm p-1 border rounded w-full" value={newJurulatih.certExpiryDate} onChange={e => setNewJurulatih(prev => ({...prev, certExpiryDate: e.target.value}))} />
+                   </div>
+                   <button 
+                    onClick={addJurulatih} 
+                    disabled={newJurulatih.certExpiryDate ? !isInstructorEligible(newJurulatih.certExpiryDate).isEligible : false}
+                    className="px-4 bg-action-teal text-white rounded text-sm disabled:opacity-50 mt-4 h-8"
+                   >
+                     +
+                   </button>
                 </div>
+                {newJurulatih.certExpiryDate && (
+                  <div className="text-xs font-bold leading-tight flex items-center gap-1">
+                    {(() => {
+                      const status = isInstructorEligible(newJurulatih.certExpiryDate);
+                      if (!status.isEligible) {
+                        return <span className="text-alert-red flex items-center gap-1"><XCircle className="w-3 h-3" /> {status.message}</span>;
+                      } else if (status.isInGracePeriod) {
+                        return <span className="text-amber-500 flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> {status.message}</span>;
+                      }
+                      return <span className="text-success-green flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> {status.message}</span>;
+                    })()}
+                  </div>
+                )}
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm text-left">
                     <thead>
@@ -480,19 +508,31 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
                         <th className="p-2">No. KP/Pasport</th>
                         <th className="p-2">Alamat</th>
                         <th className="p-2">No. Jurulatih/Waran</th>
+                        <th className="p-2">Tarikh Luput</th>
+                        <th className="p-2">Status</th>
                         <th className="p-2"></th>
                       </tr>
                     </thead>
                     <tbody>
-                      {form.jurulatih.map((j, i) => (
+                      {form.jurulatih.map((j, i) => {
+                        const status = j.certExpiryDate ? isInstructorEligible(j.certExpiryDate) : null;
+                        return (
                         <tr key={j.id} className="border-b">
                           <td className="p-2">{j.name}</td>
                           <td className="p-2">{j.icNumber}</td>
                           <td className="p-2">{j.address}</td>
                           <td className="p-2">{j.warrantNumber}</td>
-                          <td className="p-2"><button onClick={() => removeJurulatih(j.id)} className="text-brand-red text-xs">Delete</button></td>
+                          <td className="p-2">{j.certExpiryDate || '-'}</td>
+                          <td className="p-2">
+                            {status && (
+                              <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded ${status.isEligible ? (status.isInGracePeriod ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700') : 'bg-red-100 text-red-700'}`}>
+                                {status.isEligible ? (status.isInGracePeriod ? 'Tempoh Ihsan' : 'Sah') : 'Tamat Tempoh'}
+                              </span>
+                            )}
+                          </td>
+                          <td className="p-2"><button onClick={() => removeJurulatih(j.id)} className="text-brand-red text-xs font-bold">Padam</button></td>
                         </tr>
-                      ))}
+                      )})}
                     </tbody>
                   </table>
                 </div>
@@ -531,12 +571,35 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
               {/* Section: Senarai Pemeriksa Praktikal */}
               <section className="card space-y-4 shadow-sm border-gray-200/60">
                 <h3 className="font-bold text-charcoal border-b pb-2">Senarai Pemeriksa Praktikal</h3>
-                <div className="flex gap-2 p-2 bg-gray-50 rounded">
-                   <input placeholder="Nama" className="text-sm p-1 border rounded" value={newPemeriksa.name} onChange={e => setNewPemeriksa(prev => ({...prev, name: e.target.value}))} />
-                   <input placeholder="Alamat" className="text-sm p-1 border rounded" value={newPemeriksa.address} onChange={e => setNewPemeriksa(prev => ({...prev, address: e.target.value}))} />
-                   <input placeholder="No. Waran" className="text-sm p-1 border rounded" value={newPemeriksa.warrantNumber} onChange={e => setNewPemeriksa(prev => ({...prev, warrantNumber: e.target.value}))} />
-                   <button onClick={addPemeriksa} className="px-2 bg-action-teal text-white rounded text-sm">+</button>
+                <div className="flex flex-wrap gap-2 p-2 bg-gray-50 rounded">
+                   <input placeholder="Nama" className="text-sm p-1 border rounded flex-1 min-w-[120px]" value={newPemeriksa.name} onChange={e => setNewPemeriksa(prev => ({...prev, name: e.target.value}))} />
+                   <input placeholder="Alamat" className="text-sm p-1 border rounded flex-1 min-w-[120px]" value={newPemeriksa.address} onChange={e => setNewPemeriksa(prev => ({...prev, address: e.target.value}))} />
+                   <input placeholder="No. Waran" className="text-sm p-1 border rounded w-32" value={newPemeriksa.warrantNumber} onChange={e => setNewPemeriksa(prev => ({...prev, warrantNumber: e.target.value}))} />
+                   <div className="flex flex-col gap-1 w-36">
+                     <span className="text-[10px] font-bold text-gray-500 uppercase">Tarikh Luput Sijil</span>
+                     <input type="date" className="text-sm p-1 border rounded w-full" value={newPemeriksa.certExpiryDate} onChange={e => setNewPemeriksa(prev => ({...prev, certExpiryDate: e.target.value}))} />
+                   </div>
+                   <button 
+                    onClick={addPemeriksa}
+                    disabled={newPemeriksa.certExpiryDate ? !isInstructorEligible(newPemeriksa.certExpiryDate).isEligible : false}
+                    className="px-4 bg-action-teal text-white rounded text-sm disabled:opacity-50 mt-4 h-8"
+                   >
+                     +
+                   </button>
                 </div>
+                {newPemeriksa.certExpiryDate && (
+                  <div className="text-xs font-bold leading-tight flex items-center gap-1">
+                    {(() => {
+                      const status = isInstructorEligible(newPemeriksa.certExpiryDate);
+                      if (!status.isEligible) {
+                        return <span className="text-alert-red flex items-center gap-1"><XCircle className="w-3 h-3" /> {status.message}</span>;
+                      } else if (status.isInGracePeriod) {
+                        return <span className="text-amber-500 flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> {status.message}</span>;
+                      }
+                      return <span className="text-success-green flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> {status.message}</span>;
+                    })()}
+                  </div>
+                )}
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm text-left">
                     <thead>
@@ -544,18 +607,30 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
                         <th className="p-2">Nama</th>
                         <th className="p-2">Alamat</th>
                         <th className="p-2">No. Jurulatih/Waran</th>
+                        <th className="p-2">Tarikh Luput</th>
+                        <th className="p-2">Status</th>
                         <th className="p-2"></th>
                       </tr>
                     </thead>
                     <tbody>
-                      {form.pemeriksa.map((p, i) => (
+                      {form.pemeriksa.map((p, i) => {
+                        const status = p.certExpiryDate ? isInstructorEligible(p.certExpiryDate) : null;
+                        return (
                         <tr key={p.id} className="border-b">
                           <td className="p-2">{p.name}</td>
                           <td className="p-2">{p.address}</td>
                           <td className="p-2">{p.warrantNumber}</td>
-                          <td className="p-2"><button onClick={() => removePemeriksa(p.id)} className="text-brand-red text-xs">Delete</button></td>
+                          <td className="p-2">{p.certExpiryDate || '-'}</td>
+                          <td className="p-2">
+                            {status && (
+                              <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded ${status.isEligible ? (status.isInGracePeriod ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700') : 'bg-red-100 text-red-700'}`}>
+                                {status.isEligible ? (status.isInGracePeriod ? 'Tempoh Ihsan' : 'Sah') : 'Tamat Tempoh'}
+                              </span>
+                            )}
+                          </td>
+                          <td className="p-2"><button onClick={() => removePemeriksa(p.id)} className="text-brand-red text-xs font-bold">Padam</button></td>
                         </tr>
-                      ))}
+                      )})}
                     </tbody>
                   </table>
                 </div>
