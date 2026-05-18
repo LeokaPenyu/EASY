@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   LayoutDashboard, 
   Users, 
@@ -10,10 +10,12 @@ import {
   X,
   Settings,
   Award,
-  BarChart
+  BarChart,
+  UserCircle2
 } from 'lucide-react';
 import { ViewType, UserRole } from '../types';
 import { useLanguage } from '../context/LanguageContext';
+import { UserProfileModal, UserProfileData } from './UserProfileModal';
 
 interface SidebarProps {
   activeView: ViewType;
@@ -24,9 +26,18 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isOpen, onClose, role }) => {
-  const [settingsOpen, setSettingsOpen] = React.useState(false);
-  const [examOpen, setExamOpen] = React.useState(false);
-  const [sijilOpen, setSijilOpen] = React.useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [examOpen, setExamOpen] = useState(false);
+  const [sijilOpen, setSijilOpen] = useState(false);
+  
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [userProfile, setUserProfile] = useState<UserProfileData>({
+    name: 'Ahmad bin Razak',
+    email: 'ahmad.razak@example.com',
+    bio: 'Pengurus Peperiksaan Negeri',
+    avatarUrl: null
+  });
+
   const { t } = useLanguage();
 
   const menuItems = [
@@ -45,11 +56,22 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isO
       )}
 
       <div className={`w-72 h-screen bg-white border-r border-gray-200 flex flex-col fixed left-0 top-0 z-50 transition-transform duration-300 transform ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="p-6 border-b border-gray-50 flex items-center justify-between bg-brand-red">
-          <div>
-            <h2 className="text-white font-black text-2xl tracking-tighter leading-none">EASY</h2>
+        <div 
+          onClick={() => setIsProfileModalOpen(true)}
+          className="p-5 border-b border-gray-50 flex items-center justify-between bg-brand-red cursor-pointer hover:bg-red-800 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            {userProfile.avatarUrl ? (
+              <img src={userProfile.avatarUrl} alt="Avatar" className="w-10 h-10 rounded-full border-2 border-white object-cover" />
+            ) : (
+              <UserCircle2 className="w-10 h-10 text-white" />
+            )}
+            <div>
+              <p className="text-sm font-bold text-white">{userProfile.name}</p>
+              <p className="text-[11px] text-red-100 font-medium uppercase tracking-wider">{role}</p>
+            </div>
           </div>
-          <button onClick={onClose} className="lg:hidden p-2 hover:bg-white/10 rounded-full">
+          <button onClick={(e) => { e.stopPropagation(); onClose(); }} className="lg:hidden p-2 hover:bg-white/10 rounded-full">
             <X className="w-5 h-5 text-white" />
           </button>
         </div>
@@ -283,6 +305,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isO
         </div>
       )}
     </div>
+    
+    <UserProfileModal 
+      isOpen={isProfileModalOpen} 
+      onClose={() => setIsProfileModalOpen(false)} 
+      userData={userProfile} 
+      onSave={(data) => setUserProfile(data)} 
+    />
     </>
   );
 };

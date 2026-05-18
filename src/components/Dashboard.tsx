@@ -258,18 +258,18 @@ export const Dashboard: React.FC<DashboardProps> = ({
               key={stat.label}
               className="bg-white border border-gray-100 rounded-xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow"
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-1 min-w-0 overflow-hidden pr-2">
                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${stat.bgColor}`}>
                   {React.createElement(stat.icon, {
                     className: `w-5 h-5 ${stat.color}`
                   })}
                 </div>
-                <span className="text-sm font-medium text-gray-700 leading-snug">
+                <span className="text-sm font-medium text-gray-700 leading-snug break-words">
                   {stat.label}
                 </span>
               </div>
               <span
-                className={`text-xl md:text-2xl font-bold ml-2 ${stat.color}`}
+                className={`text-xl md:text-2xl font-bold shrink-0 ${stat.color}`}
               >
                 {stat.value}
               </span>
@@ -277,11 +277,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
           ))}
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 w-full">
-          {/* Left Column */}
-          <div className="xl:col-span-2 space-y-6">
-            {/* Worklist Panel */}
-            <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+        <div className="flex flex-col xl:grid xl:grid-cols-3 gap-6 w-full">
+          {/* Worklist Panel */}
+          <div className="xl:col-span-2 order-1 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
               <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-white">
                 <span className="font-semibold text-gray-900 text-sm">
                   Senarai Kerja (Worklist)
@@ -301,16 +299,16 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     onClick={() => onViewExam(item.id)}
                     className="px-5 py-3 border-b border-gray-50 flex justify-between items-center hover:bg-slate-50 cursor-pointer group transition-colors last:border-0"
                   >
-                    <div className="flex gap-3 items-center">
-                      <div className="text-gray-400 group-hover:text-action-teal transition-colors flex items-center justify-center">
+                    <div className="flex gap-3 items-center min-w-0 pr-4">
+                      <div className="text-gray-400 flex-shrink-0 group-hover:text-action-teal transition-colors flex items-center justify-center">
                         <FileCheck className="w-4 h-4" />
                       </div>
-                      <span className="font-medium text-gray-700 text-sm group-hover:text-action-teal transition-colors">
+                      <span className="font-medium text-gray-700 text-sm group-hover:text-action-teal transition-colors truncate">
                         {item.label}
                       </span>
                     </div>
-                    <div className="flex gap-2 items-center">
-                      <span className="font-bold text-gray-900 border border-gray-100 rounded px-2 py-0.5 text-xs bg-slate-50">
+                    <div className="flex flex-shrink-0 justify-end w-12">
+                      <span className="font-bold text-gray-900 border border-gray-100 rounded px-2 py-0.5 text-xs bg-slate-50 w-full text-center">
                         {item.count}
                       </span>
                     </div>
@@ -319,8 +317,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </div>
             </div>
 
-            {/* Upcoming Exams (Modern Table) */}
-            <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+          {/* Upcoming Exams (Modern Table) */}
+          <div className="xl:col-span-2 order-3 xl:order-3 bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
               <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-white">
                 <h3 className="font-semibold text-gray-900 text-sm">
                   Peperiksaan yang Akan Datang
@@ -382,12 +380,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 </table>
               </div>
             </div>
-          </div>
 
-          {/* Right Column */}
-          <div className="xl:col-span-1 space-y-6">
-            {/* Notice & Quick Links */}
-            <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+          {/* Notice & Quick Links */}
+          <div className="xl:col-span-1 order-2 xl:order-2 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden self-start">
               <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-200">
                 <span className="font-semibold text-gray-900 text-sm">
                   Notis & Pautan Pantas
@@ -447,7 +442,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 </button>
               </div>
             </div>
-          </div>
         </div>
       </div>
     </div>
