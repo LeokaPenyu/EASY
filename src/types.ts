@@ -103,7 +103,7 @@ export enum Language {
   EN = 'EN'
 }
 
-export type ViewType = 'Dashboard' | 'Calon' | 'ExamProfile' | 'ExamSchedule' | 'Jurulatih' | 'Panduan' | 'NewRequest' | 'ExamApplication' | 'CertificateRenewal' | 'AttendanceCertificate' | 'OnlineExam' | 'ExamResults' | 'QuestionBank' | 'Retest' | 'Reports' | 'ProfilDaerah' | 'ProfilSubjek' | 'ProfilPengguna' | 'PerananPengguna' | 'TetapanAm';
+export type ViewType = 'Dashboard' | 'Calon' | 'ExamProfile' | 'ExamSchedule' | 'Jurulatih' | 'Panduan' | 'NewRequest' | 'ExamApplication' | 'CertificateRenewal' | 'AttendanceCertificate' | 'OnlineExam' | 'ExamResults' | 'QuestionBank' | 'Retest' | 'Reports' | 'ProfilDaerah' | 'ProfilSubjek' | 'ProfilPengguna' | 'PerananPengguna' | 'TetapanAm' | 'PeperiksaanMain';
 
 export const TRANSLATIONS = {
   [Language.BM]: {
@@ -111,7 +111,7 @@ export const TRANSLATIONS = {
     candidates: "Calon",
     exam: "Peperiksaan",
     profile: "Profil Peperiksaan",
-    schedule: "Jadual Peperiksaan",
+    schedule: "Jadual Peperiksaan Pusat",
     trainer: "Jurulatih",
     guide: "Panduan",
     newRequest: "Permohonan Baru",
@@ -215,7 +215,34 @@ export const TRANSLATIONS = {
     statusApproved: "Diluluskan",
     statusRejected: "Ditolak",
     statusLocked: "Dikunci",
-    statusCompleted: "Selesai"
+    statusCompleted: "Selesai",
+    searchExistingCandidate: "Cari Calon Sedia Ada",
+    candidateSearchTitle: "Carian Calon",
+    select: "Pilih",
+    name: "Nama",
+    noRecordFound: "Tiada Rekod Diterima",
+    close: "Tutup",
+    membershipCategory: "Kategori Keahlian",
+    delete: "Hapus",
+    exampleMembershipNo: "Contoh: SWOT-12345",
+    trainerList: "Senarai Jurulatih",
+    addTrainer: "Tambah Jurulatih",
+    trainerName: "Nama Jurulatih",
+    trainerIc: "No. KP/Pasport Jurulatih",
+    noWaranTrainer: "No. Waran/No. Jurulatih",
+    trainerAddress: "Alamat Jurulatih",
+    eksportCsv: "Eksport ke CSV",
+    view: "Papar",
+    update: "Kemaskini",
+    tambahCalon: "Tambah Calon",
+    ubahCalon: "Ubah Calon",
+    ubahJurulatih: "Ubah Jurulatih",
+    padam: "Padam",
+    recordCount: "Jumlah Rekod :",
+    pageOf: "dari",
+    noItemFound: "Tiada rekod dijumpai.",
+    saveTrainer: "Simpan Jurulatih",
+    saveCandidate: "Simpan Calon"
   },
   [Language.EN]: {
     dashboard: "Dashboard",
@@ -327,6 +354,33 @@ export const TRANSLATIONS = {
     statusApproved: "Approved",
     statusRejected: "Rejected",
     statusLocked: "Locked",
-    statusCompleted: "Completed"
+    statusCompleted: "Completed",
+    searchExistingCandidate: "Search Existing Candidate",
+    candidateSearchTitle: "Candidate Search",
+    select: "Select",
+    name: "Name",
+    noRecordFound: "No Record Found",
+    close: "Close",
+    membershipCategory: "Membership Category",
+    delete: "Delete",
+    exampleMembershipNo: "Example: SWOT-12345",
+    trainerList: "Trainer List",
+    addTrainer: "Add Trainer",
+    trainerName: "Trainer Name",
+    trainerIc: "Trainer IC/Passport No.",
+    noWaranTrainer: "Warrant No. / Trainer No.",
+    trainerAddress: "Trainer Address",
+    eksportCsv: "Export to CSV",
+    view: "View",
+    update: "Update",
+    tambahCalon: "Add Candidate",
+    ubahCalon: "Edit Candidate",
+    ubahJurulatih: "Edit Trainer",
+    padam: "Delete",
+    recordCount: "Total Records :",
+    pageOf: "of",
+    noItemFound: "No records found.",
+    saveTrainer: "Save Trainer",
+    saveCandidate: "Save Candidate"
   }
 };

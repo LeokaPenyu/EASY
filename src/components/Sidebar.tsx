@@ -8,7 +8,9 @@ import {
   ChevronDown,
   Plus,
   X,
-  Settings
+  Settings,
+  Award,
+  BarChart
 } from 'lucide-react';
 import { ViewType, UserRole } from '../types';
 import { useLanguage } from '../context/LanguageContext';
@@ -22,8 +24,9 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isOpen, onClose, role }) => {
-  const [examOpen, setExamOpen] = React.useState(false);
   const [settingsOpen, setSettingsOpen] = React.useState(false);
+  const [examOpen, setExamOpen] = React.useState(false);
+  const [sijilOpen, setSijilOpen] = React.useState(false);
   const { t } = useLanguage();
 
   const menuItems = [
@@ -42,7 +45,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isO
       )}
 
       <div className={`w-72 h-screen bg-white border-r border-gray-200 flex flex-col fixed left-0 top-0 z-50 transition-transform duration-300 transform ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="p-8 border-b border-gray-50 flex items-center justify-between bg-brand-red">
+        <div className="p-6 border-b border-gray-50 flex items-center justify-between bg-brand-red">
           <div>
             <h2 className="text-white font-black text-2xl tracking-tighter leading-none">EASY</h2>
           </div>
@@ -51,60 +54,90 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isO
           </button>
         </div>
 
-      <nav className="flex-1 px-5 py-8 space-y-2 overflow-y-auto custom-scrollbar bg-gray-50/20">
+      <nav className="flex-1 px-4 py-4 space-y-0.5 overflow-y-auto custom-scrollbar bg-gray-50/20">
         {menuItems.map((item) => (
           <button
             key={item.id}
             onClick={() => setActiveView(item.id as ViewType)}
-            className={`w-full flex items-center gap-4 px-4 py-3 rounded-[6px] text-sm font-bold transition-all relative group ${
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[6px] text-[13px] font-bold transition-all relative group ${
               activeView === item.id 
               ? 'bg-blush-rose text-brand-red-deep shadow-sm' 
               : 'text-charcoal/80 hover:bg-gray-50'
             }`}
           >
             {activeView === item.id && (
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1/2 bg-brand-red rounded-r-full" />
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-3/4 bg-brand-red rounded-r-full" />
             )}
-            <item.icon className={`w-5 h-5 transition-colors ${activeView === item.id ? 'text-brand-red' : 'text-gray-400 group-hover:text-charcoal'}`} />
+            <item.icon className={`w-[18px] h-[18px] transition-colors ${activeView === item.id ? 'text-brand-red' : 'text-gray-400 group-hover:text-charcoal'}`} />
             {item.label}
           </button>
         ))}
 
-        <div className="space-y-1 pt-1">
+        <div className="space-y-0.5">
           <button
             onClick={() => setExamOpen(!examOpen)}
-            className={`w-full flex items-center justify-between px-4 py-3 rounded-[6px] text-sm font-bold transition-all ${
+            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-[6px] text-[13px] font-bold transition-all ${
               examOpen ? 'text-charcoal' : 'text-charcoal/80'
             } hover:bg-gray-50 group`}
           >
-            <div className="flex items-center gap-4">
-              <ClipboardList className={`w-5 h-5 transition-colors ${examOpen ? 'text-brand-red' : 'text-gray-400 group-hover:text-charcoal'}`} />
+            <div className="flex items-center gap-3">
+              <ClipboardList className={`w-[18px] h-[18px] transition-colors ${examOpen ? 'text-brand-red' : 'text-gray-400 group-hover:text-charcoal'}`} />
               <span>{t('exam')}</span>
             </div>
             <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${examOpen ? 'rotate-180' : ''}`} />
           </button>
 
           {examOpen && (
-            <div className="pl-12 space-y-1">
+            <div className="pl-10 space-y-0.5 pb-1">
               <button
                 onClick={() => setActiveView('ExamProfile')}
-                className={`w-full text-left px-4 py-2.5 rounded-[6px] text-sm font-medium transition-all ${
+                className={`w-full text-left px-3 py-2 rounded-[6px] text-[12px] font-medium transition-all ${
                   activeView === 'ExamProfile' 
-                  ? 'text-brand-red font-bold bg-brand-red/5' 
+                  ? 'text-brand-red font-bold bg-gray-50' 
                   : 'text-charcoal/70 hover:text-charcoal hover:bg-gray-50'
                 }`}
               >
-                {t('profile')}
+                Profil Peperiksaan
               </button>
               <button
                 onClick={() => setActiveView('ExamSchedule')}
-                className={`w-full text-left px-4 py-2.5 rounded-[6px] text-sm font-medium transition-all ${
+                className={`w-full text-left px-3 py-2 rounded-[6px] text-[12px] font-medium transition-all ${
                   activeView === 'ExamSchedule' 
-                  ? 'text-brand-red font-bold bg-brand-red/5' 
+                  ? 'text-brand-red font-bold bg-gray-50' 
                   : 'text-charcoal/70 hover:text-charcoal hover:bg-gray-50'
                 }`}
               >
-                {t('schedule')}
+                Jadual Peperiksaan Pusat
+              </button>
+              <button
+                onClick={() => setActiveView('OnlineExam')}
+                className={`w-full text-left px-3 py-2 rounded-[6px] text-[12px] font-medium transition-all ${
+                  activeView === 'OnlineExam' 
+                  ? 'text-brand-red font-bold bg-gray-50' 
+                  : 'text-charcoal/70 hover:text-charcoal hover:bg-gray-50'
+                }`}
+              >
+                Peperiksaan Dalam Talian
+              </button>
+              <button
+                onClick={() => setActiveView('QuestionBank')}
+                className={`w-full text-left px-3 py-2 rounded-[6px] text-[12px] font-medium transition-all ${
+                  activeView === 'QuestionBank' 
+                  ? 'text-brand-red font-bold bg-gray-50' 
+                  : 'text-charcoal/70 hover:text-charcoal hover:bg-gray-50'
+                }`}
+              >
+                Bank Soalan
+              </button>
+              <button
+                onClick={() => setActiveView('Retest')}
+                className={`w-full text-left px-3 py-2 rounded-[6px] text-[12px] font-medium transition-all ${
+                  activeView === 'Retest' 
+                  ? 'text-brand-red font-bold bg-gray-50' 
+                  : 'text-charcoal/70 hover:text-charcoal hover:bg-gray-50'
+                }`}
+              >
+                Ujian Semula
               </button>
             </div>
           )}
@@ -112,50 +145,90 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isO
 
         <button
           onClick={() => setActiveView('Jurulatih')}
-          className={`w-full flex items-center gap-4 px-4 py-3 rounded-[6px] text-sm font-bold transition-all relative group ${
+          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[6px] text-[13px] font-bold transition-all relative group ${
             activeView === 'Jurulatih' 
             ? 'bg-blush-rose text-brand-red-deep shadow-sm' 
             : 'text-charcoal/80 hover:bg-gray-50'
           }`}
         >
           {activeView === 'Jurulatih' && (
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1/2 bg-brand-red rounded-r-full" />
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-3/4 bg-brand-red rounded-r-full" />
           )}
-          <UserSquare2 className={`w-5 h-5 transition-colors ${activeView === 'Jurulatih' ? 'text-brand-red' : 'text-gray-400 group-hover:text-charcoal'}`} />
+          <UserSquare2 className={`w-[18px] h-[18px] transition-colors ${activeView === 'Jurulatih' ? 'text-brand-red' : 'text-gray-400 group-hover:text-charcoal'}`} />
           {t('trainer')}
         </button>
 
+        <div className="space-y-0.5">
+          <button
+            onClick={() => setSijilOpen(!sijilOpen)}
+            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-[6px] text-[13px] font-bold transition-all ${
+              sijilOpen ? 'text-charcoal' : 'text-charcoal/80'
+            } hover:bg-gray-50 group`}
+          >
+            <div className="flex items-center gap-3">
+              <Award className={`w-[18px] h-[18px] transition-colors ${sijilOpen ? 'text-brand-red' : 'text-gray-400 group-hover:text-charcoal'}`} />
+              <span>Pengurusan Sijil</span>
+            </div>
+            <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${sijilOpen ? 'rotate-180' : ''}`} />
+          </button>
+
+          {sijilOpen && (
+            <div className="pl-10 space-y-0.5 pb-1">
+              <button
+                onClick={() => setActiveView('CertificateRenewal')}
+                className={`w-full text-left px-3 py-2 rounded-[6px] text-[12px] font-medium transition-all ${
+                  activeView === 'CertificateRenewal' 
+                  ? 'text-brand-red font-bold bg-gray-50' 
+                  : 'text-charcoal/70 hover:text-charcoal hover:bg-gray-50'
+                }`}
+              >
+                Pembaharuan Sijil
+              </button>
+              <button
+                onClick={() => setActiveView('AttendanceCertificate')}
+                className={`w-full text-left px-3 py-2 rounded-[6px] text-[12px] font-medium transition-all ${
+                  activeView === 'AttendanceCertificate' 
+                  ? 'text-brand-red font-bold bg-gray-50' 
+                  : 'text-charcoal/70 hover:text-charcoal hover:bg-gray-50'
+                }`}
+              >
+                Sijil Kehadiran
+              </button>
+            </div>
+          )}
+        </div>
+
         <button
           onClick={() => setActiveView('Panduan')}
-          className={`w-full flex items-center gap-4 px-4 py-3 rounded-[6px] text-sm font-bold transition-all relative group ${
+          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[6px] text-[13px] font-bold transition-all relative group ${
             activeView === 'Panduan' 
             ? 'bg-blush-rose text-brand-red-deep shadow-sm' 
             : 'text-charcoal/80 hover:bg-gray-50'
           }`}
         >
           {activeView === 'Panduan' && (
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1/2 bg-brand-red rounded-r-full" />
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-3/4 bg-brand-red rounded-r-full" />
           )}
-          <BookOpen className={`w-5 h-5 transition-colors ${activeView === 'Panduan' ? 'text-brand-red' : 'text-gray-400 group-hover:text-charcoal'}`} />
+          <BookOpen className={`w-[18px] h-[18px] transition-colors ${activeView === 'Panduan' ? 'text-brand-red' : 'text-gray-400 group-hover:text-charcoal'}`} />
           {t('guide')}
         </button>
 
-        <div className="space-y-1 pt-1">
+        <div className="space-y-0.5">
           <button
             onClick={() => setSettingsOpen(!settingsOpen)}
-            className={`w-full flex items-center justify-between px-4 py-3 rounded-[6px] text-sm font-bold transition-all ${
+            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-[6px] text-[13px] font-bold transition-all ${
               settingsOpen ? 'text-charcoal' : 'text-charcoal/80'
             } hover:bg-gray-50 group`}
           >
-            <div className="flex items-center gap-4">
-              <Settings className={`w-5 h-5 transition-colors ${settingsOpen ? 'text-brand-red' : 'text-gray-400 group-hover:text-charcoal'}`} />
+            <div className="flex items-center gap-3">
+              <Settings className={`w-[18px] h-[18px] transition-colors ${settingsOpen ? 'text-brand-red' : 'text-gray-400 group-hover:text-charcoal'}`} />
               <span>Tetapan</span>
             </div>
             <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${settingsOpen ? 'rotate-180' : ''}`} />
           </button>
 
           {settingsOpen && (
-            <div className="pl-12 space-y-1">
+            <div className="pl-10 space-y-0.5 pb-1">
               {['Profil Daerah', 'Profil Subjek', 'Peranan Pengguna', 'Profil Pengguna', 'Tetapan Am', 'Susun Atur Sijil'].map(item => (
                 <button
                   key={item}
@@ -166,7 +239,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isO
                     if (item === 'Peranan Pengguna') setActiveView('PerananPengguna');
                     if (item === 'Tetapan Am') setActiveView('TetapanAm');
                   }}
-                  className={`w-full text-left px-4 py-2.5 rounded-[6px] text-sm font-medium transition-all ${
+                  className={`w-full text-left px-3 py-2 rounded-[6px] text-[12px] font-medium transition-all ${
                     (activeView === 'ProfilDaerah' && item === 'Profil Daerah') ||
                     (activeView === 'ProfilSubjek' && item === 'Profil Subjek') ||
                     (activeView === 'ProfilPengguna' && item === 'Profil Pengguna') ||
@@ -182,43 +255,27 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isO
           )}
         </div>
 
-        <div className="mt-6">
-           <h3 className="px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">New Features / Ciri Baharu</h3>
-           {[
-             { id: 'CertificateRenewal', label: 'Pembaharuan Sijil', badge: 'New' },
-             { id: 'AttendanceCertificate', label: 'Sijil Kehadiran', badge: 'New' },
-             { id: 'OnlineExam', label: 'Peperiksaan Dalam Talian', badge: 'New' },
-             { id: 'Reports', label: 'Laporan & Statistik', badge: 'New' },
-             { id: 'QuestionBank', label: 'Bank Soalan', badge: 'New' },
-             { id: 'Retest', label: 'Ujian Semula (Retest)', badge: 'New' }
-           ].map((mod) => (
-             <button
-               key={mod.id}
-               onClick={() => setActiveView(mod.id as ViewType)}
-               className={`w-full flex items-center justify-between px-4 py-3 rounded-[6px] text-sm font-bold transition-all relative group ${
-                 activeView === mod.id 
-                 ? 'bg-blush-rose text-brand-red-deep shadow-sm' 
-                 : 'text-charcoal/80 hover:bg-gray-50'
-               }`}
-             >
-               {activeView === mod.id && (
-                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1/2 bg-brand-red rounded-r-full" />
-               )}
-               <div className="flex items-center gap-3">
-                 <div className="w-1.5 h-1.5 rounded-full bg-brand-red" />
-                 {mod.label}
-               </div>
-               <span className="text-[9px] uppercase bg-brand-red text-white px-2 py-0.5 rounded-full">{mod.badge}</span>
-             </button>
-           ))}
-        </div>
+        <button
+          onClick={() => setActiveView('Reports')}
+          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[6px] text-[13px] font-bold transition-all relative group ${
+            activeView === 'Reports' 
+            ? 'bg-blush-rose text-brand-red-deep shadow-sm' 
+            : 'text-charcoal/80 hover:bg-gray-50'
+          }`}
+        >
+          {activeView === 'Reports' && (
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-3/4 bg-brand-red rounded-r-full" />
+          )}
+          <BarChart className={`w-[18px] h-[18px] transition-colors ${activeView === 'Reports' ? 'text-brand-red' : 'text-gray-400 group-hover:text-charcoal'}`} />
+          Laporan & Statistik
+        </button>
       </nav>
 
       {(role === UserRole.DEC || role === UserRole.SEC) && (
-        <div className="p-4 border-t border-gray-100 mt-auto">
+        <div className="p-3 border-t border-gray-100 mt-auto">
           <button 
             onClick={() => setActiveView('ExamApplication')}
-            className="w-full btn-primary justify-center text-sm"
+            className="w-full btn-primary justify-center text-[13px] py-2"
           >
             <Plus className="w-4 h-4" />
             {t('examApplication')}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { Search, Edit, Trash2, X, Save, Users, FileDown } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 interface Candidate {
   id: string;
@@ -25,6 +26,7 @@ const initialData: Candidate[] = [
 ];
 
 export const Calon: React.FC = () => {
+  const { t } = useLanguage();
   const [data, setData] = useState<Candidate[]>(initialData);
   
   const [filterNama, setFilterNama] = useState('');
@@ -141,17 +143,17 @@ export const Calon: React.FC = () => {
             <div className="p-2 bg-rose-50 text-brand-red rounded-lg">
               <Users className="w-5 h-5" />
             </div>
-            <h2 className="font-bold text-lg text-gray-900">Senarai Calon</h2>
+            <h2 className="font-bold text-lg text-gray-900">{t('candidateList')}</h2>
           </div>
           <div className="flex items-center gap-3">
             <button 
               onClick={handleAddNew}
               className="bg-action-teal hover:bg-teal-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center gap-2"
             >
-              + Tambah
+              {t('tambahCalon')}
             </button>
             <button className="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center gap-2">
-              <FileDown className="w-4 h-4" /> Eksport ke CSV
+              <FileDown className="w-4 h-4" /> {t('eksportCsv')}
             </button>
           </div>
         </div>
@@ -159,7 +161,7 @@ export const Calon: React.FC = () => {
         {/* Filter Section */}
         <div className="p-6 border-b border-gray-100 bg-gray-50/50 space-y-4 max-w-2xl">
           <div className="flex items-center gap-4">
-            <label className="w-32 text-right font-medium text-gray-700 text-xs">Nama :</label>
+            <label className="w-32 text-right font-medium text-gray-700 text-xs">{t('name')} :</label>
             <input 
               type="text" 
               value={filterNama}
@@ -168,7 +170,7 @@ export const Calon: React.FC = () => {
             />
           </div>
           <div className="flex items-center gap-4">
-            <label className="w-32 text-right font-medium text-gray-700 text-xs">No. KP/Pasport :</label>
+            <label className="w-32 text-right font-medium text-gray-700 text-xs">{t('icNumber')} :</label>
             <input 
               type="text" 
               value={filterNoKp}
@@ -177,7 +179,7 @@ export const Calon: React.FC = () => {
             />
           </div>
           <div className="flex items-center gap-4">
-            <label className="w-32 text-right font-medium text-gray-700 text-xs">No. Ahli BSMM :</label>
+            <label className="w-32 text-right font-medium text-gray-700 text-xs">{t('membershipNumber')} :</label>
             <input 
               type="text" 
               value={filterNoAhli}
@@ -188,7 +190,7 @@ export const Calon: React.FC = () => {
           <div className="flex items-center gap-4 pt-2">
             <div className="w-32"></div>
             <button className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm font-medium hover:bg-gray-50 transition-colors shadow-sm text-gray-700">
-              <Search className="w-4 h-4 text-action-teal" /> Cari
+              <Search className="w-4 h-4 text-action-teal" /> {t('search')}
             </button>
           </div>
         </div>
@@ -200,11 +202,11 @@ export const Calon: React.FC = () => {
               <table className="w-full text-left border-collapse text-sm">
                 <thead className="bg-gray-50 text-gray-500 uppercase text-xs font-semibold tracking-wider border-b border-gray-200">
                   <tr>
-                    <th className="px-4 py-3 border-r border-gray-100 text-center w-12">No.</th>
-                    <th className="px-4 py-3 border-r border-gray-100 text-center uppercase">Nama</th>
-                    <th className="px-4 py-3 border-r border-gray-100 text-center uppercase w-48">No. KP/Pasport</th>
-                    <th className="px-4 py-3 border-r border-gray-100 text-center uppercase w-48">No. Ahli BSMM</th>
-                    <th className="px-4 py-3 text-center uppercase w-24">Tindakan</th>
+                    <th className="px-4 py-3 border-r border-gray-100 text-center w-12">{t('bil')}</th>
+                    <th className="px-4 py-3 border-r border-gray-100 text-center uppercase">{t('name')}</th>
+                    <th className="px-4 py-3 border-r border-gray-100 text-center uppercase w-48">{t('icNumber')}</th>
+                    <th className="px-4 py-3 border-r border-gray-100 text-center uppercase w-48">{t('membershipNumber')}</th>
+                    <th className="px-4 py-3 text-center uppercase w-24">{t('action')}</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white text-center">
@@ -219,21 +221,21 @@ export const Calon: React.FC = () => {
                           <button 
                             onClick={() => handleView(item)}
                             className="p-1.5 rounded-lg text-gray-400 hover:text-action-teal hover:bg-teal-50 transition-colors"
-                            title="Papar"
+                            title={t('view')}
                           >
                             <Search className="w-4 h-4" />
                           </button>
                           <button 
                             onClick={() => handleEdit(item)}
                             className="p-1.5 rounded-lg text-gray-400 hover:text-action-teal hover:bg-teal-50 transition-colors"
-                            title="Kemaskini"
+                            title={t('update')}
                           >
                             <Edit className="w-4 h-4" />
                           </button>
                           <button 
                             onClick={() => handleDelete(item.id)}
                             className="p-1.5 rounded-lg text-gray-400 hover:text-alert-red hover:bg-red-50 transition-colors"
-                            title="Padam"
+                            title={t('padam')}
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -244,7 +246,7 @@ export const Calon: React.FC = () => {
                   {filteredData.length === 0 && (
                     <tr>
                       <td colSpan={5} className="px-4 py-8 text-center text-gray-500 italic">
-                        Tiada rekod dijumpai.
+                        {t('noItemFound')}
                       </td>
                     </tr>
                   )}
@@ -266,7 +268,7 @@ export const Calon: React.FC = () => {
             {/* Modal Header */}
             <div className="px-6 py-4 flex justify-between items-center border-b border-gray-100 bg-gradient-to-r from-gray-800 to-gray-700 text-white">
               <h3 className="font-bold text-base tracking-wide">
-                {editingId ? 'Ubah Calon' : 'Tambah Calon'}
+                {editingId ? t('ubahCalon') : t('tambahCalon')}
               </h3>
               <button 
                 onClick={() => setIsModalOpen(false)} 
@@ -280,7 +282,7 @@ export const Calon: React.FC = () => {
             <div className="p-6 bg-gray-50/50 space-y-4">
               <div className="flex items-center gap-4">
                 <label className="w-40 text-right font-medium text-gray-700 text-sm">
-                  <span className="text-alert-red">*</span>Nama:
+                  <span className="text-alert-red">*</span>{t('name')}:
                 </label>
                 <input 
                   type="text" 
@@ -292,7 +294,7 @@ export const Calon: React.FC = () => {
               
               <div className="flex items-center gap-4">
                 <label className="w-40 text-right font-medium text-gray-700 text-sm">
-                  <span className="text-alert-red">*</span>No. KP/Pasport:
+                  <span className="text-alert-red">*</span>{t('icNumber')}:
                 </label>
                 <input 
                   type="text" 
@@ -304,7 +306,7 @@ export const Calon: React.FC = () => {
 
               <div className="flex items-center gap-4">
                 <label className="w-40 text-right font-medium text-gray-700 text-sm">
-                  No. Ahli BSMM:
+                  {t('membershipNumber')}:
                 </label>
                 <input 
                   type="text" 
@@ -347,13 +349,13 @@ export const Calon: React.FC = () => {
                     onClick={() => setIsModalOpen(false)}
                     className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors shadow-sm text-sm font-medium flex items-center gap-2 bg-white"
                   >
-                    <X className="w-4 h-4" /> Tutup
+                    <X className="w-4 h-4" /> {t('close')}
                   </button>
                   <button 
                     onClick={handleSave}
                     className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-black transition-colors shadow-sm text-sm font-medium flex items-center gap-2"
                   >
-                    <Save className="w-4 h-4" /> Simpan
+                    <Save className="w-4 h-4" /> {t('saveCandidate')}
                   </button>
                 </div>
               </div>
@@ -373,7 +375,7 @@ export const Calon: React.FC = () => {
           >
             {/* Modal Header */}
             <div className="px-6 py-4 flex justify-between items-center border-b border-gray-100 bg-gradient-to-r from-gray-800 to-gray-700 text-white">
-              <h3 className="font-bold text-base tracking-wide">Papar Calon</h3>
+              <h3 className="font-bold text-base tracking-wide">{t('view')} {t('candidates')}</h3>
               <button 
                 onClick={() => setIsViewModalOpen(false)} 
                 className="p-1.5 text-white/70 hover:text-white hover:bg-white/10 transition-colors rounded-lg border border-white/20 bg-black/20"
@@ -385,13 +387,13 @@ export const Calon: React.FC = () => {
             {/* Modal Content */}
             <div className="p-6 bg-gray-50/50 space-y-6">
               <div className="grid grid-cols-[120px_1fr] gap-y-3 text-sm">
-                <div className="text-gray-500 font-medium text-right pr-4">Nama:</div>
+                <div className="text-gray-500 font-medium text-right pr-4">{t('name')}:</div>
                 <div className="font-medium text-gray-900">{viewCandidate.nama}</div>
                 
-                <div className="text-gray-500 font-medium text-right pr-4">No. KP/Pasport:</div>
+                <div className="text-gray-500 font-medium text-right pr-4">{t('icNumber')}:</div>
                 <div className="font-medium text-gray-900">{viewCandidate.noKp}</div>
                 
-                <div className="text-gray-500 font-medium text-right pr-4">No. Ahli BSMM:</div>
+                <div className="text-gray-500 font-medium text-right pr-4">{t('membershipNumber')}:</div>
                 <div className="font-medium text-gray-900">{viewCandidate.noAhli || '-'}</div>
               </div>
 

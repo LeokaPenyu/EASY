@@ -104,7 +104,7 @@ export const JadualPeperiksaan: React.FC = () => {
             <div className="p-2 bg-rose-50 text-brand-red rounded-lg">
               <CalendarDays className="w-5 h-5" />
             </div>
-            <h2 className="font-bold text-lg text-gray-900">Jadual Peperiksaan</h2>
+            <h2 className="font-bold text-lg text-gray-900">Jadual Peperiksaan Pusat</h2>
           </div>
           <button 
             onClick={handleAddNew}

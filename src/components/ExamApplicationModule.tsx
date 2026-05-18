@@ -199,12 +199,13 @@ export const ExamApplicationModule: React.FC<ExamApplicationModuleProps> = ({
             ? 'Sedia untuk Penyediaan Rumusan Peperiksaan' 
             : (role === UserRole.DEC ? t('examApplication') : (role === UserRole.SEC ? 'Permohonan Peperiksaan Baru' : 'Kemasukan Keputusan Peperiksaan')))}
         </h2>
-        {role === UserRole.DEC && !isSummaryReadyMode && activeTab === 'borang' && !isRejectedMode && (
+        {(role === UserRole.DEC || role === UserRole.SEC) && !isSummaryReadyMode && activeTab === 'borang' && !isRejectedMode && (
           <button 
             onClick={onAddNew}
-            className="bg-action-teal text-white px-8 py-2.5 rounded-[6px] font-bold text-sm shadow-lg shadow-action-teal/20 hover:bg-action-teal/90 transition-all flex items-center gap-2"
+            className="bg-action-teal text-white px-6 py-2.5 rounded-[6px] font-bold text-sm shadow-sm hover:bg-teal-700 transition-all flex items-center gap-2"
           >
-            {t('add')}
+            <Plus className="w-4 h-4" />
+            Tambah Permohonan
           </button>
         )}
       </div>

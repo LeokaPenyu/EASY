@@ -178,7 +178,7 @@ export const CandidateTable: React.FC<CandidateTableProps> = ({ candidates, setC
         <div className="flex flex-wrap gap-2">
           <button onClick={() => setIsSearchModalOpen(true)} className="btn-secondary text-[11px] font-bold uppercase tracking-wider flex items-center gap-2 flex-1 justify-center sm:flex-none h-10 px-6">
             <Search className="w-3.5 h-3.5" />
-            Cari Calon Sedia Ada
+            {t('searchExistingCandidate')}
           </button>
           <label className="btn-secondary text-[11px] font-bold uppercase tracking-wider cursor-pointer flex items-center gap-2 flex-1 justify-center sm:flex-none h-10 px-6">
             <Upload className="w-3.5 h-3.5" />
@@ -196,7 +196,7 @@ export const CandidateTable: React.FC<CandidateTableProps> = ({ candidates, setC
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-in fade-in">
           <div className="bg-white rounded-xl shadow-2xl overflow-hidden max-w-2xl w-full mx-auto flex flex-col max-h-[90vh]">
             <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-charcoal text-white rounded-t-xl">
-              <h3 className="text-lg font-bold">Carian Calon</h3>
+              <h3 className="text-lg font-bold">{t('candidateSearchTitle')}</h3>
               <button onClick={() => setIsSearchModalOpen(false)} className="text-gray-300 hover:text-white transition-colors">
                 <X className="w-5 h-5" />
               </button>
@@ -205,15 +205,15 @@ export const CandidateTable: React.FC<CandidateTableProps> = ({ candidates, setC
             <div className="p-4 bg-gray-50 border-b border-gray-100 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Nama</label>
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">{t('name')}</label>
                   <input type="text" value={searchName} onChange={e => setSearchName(e.target.value)} className="w-full px-3 py-2 text-sm border border-gray-200 rounded-[6px] outline-none focus:border-action-teal" />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">No. KP/Pasport</label>
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">{t('icNumber')}</label>
                   <input type="text" value={searchIc} onChange={e => setSearchIc(e.target.value)} className="w-full px-3 py-2 text-sm border border-gray-200 rounded-[6px] outline-none focus:border-action-teal" />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">No. Ahli BSMM</label>
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">{t('membershipNumber')}</label>
                   <input type="text" value={searchMembershipId} onChange={e => setSearchMembershipId(e.target.value)} className="w-full px-3 py-2 text-sm border border-gray-200 rounded-[6px] outline-none focus:border-action-teal" />
                 </div>
               </div>
@@ -223,11 +223,11 @@ export const CandidateTable: React.FC<CandidateTableProps> = ({ candidates, setC
               <table className="w-full text-sm text-left border border-gray-200 rounded-lg overflow-hidden">
                 <thead className="bg-gray-100 text-[10px] uppercase tracking-widest text-gray-500 font-bold border-b border-gray-200">
                   <tr>
-                    <th className="px-4 py-3 w-10">Pilih</th>
-                    <th className="px-4 py-3">No.</th>
-                    <th className="px-4 py-3">Nama</th>
-                    <th className="px-4 py-3">No. KP/Pasport</th>
-                    <th className="px-4 py-3">No. Ahli BSMM</th>
+                    <th className="px-4 py-3 w-10">{t('select')}</th>
+                    <th className="px-4 py-3">{t('bil')}</th>
+                    <th className="px-4 py-3">{t('name')}</th>
+                    <th className="px-4 py-3">{t('icNumber')}</th>
+                    <th className="px-4 py-3">{t('membershipNumber')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -245,7 +245,7 @@ export const CandidateTable: React.FC<CandidateTableProps> = ({ candidates, setC
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={5} className="px-4 py-8 text-center text-gray-400 italic">Tiada Rekod Ditemui</td>
+                      <td colSpan={5} className="px-4 py-8 text-center text-gray-400 italic">{t('noRecordFound')}</td>
                     </tr>
                   )}
                 </tbody>
@@ -254,7 +254,7 @@ export const CandidateTable: React.FC<CandidateTableProps> = ({ candidates, setC
             
             <div className="p-4 border-t border-gray-100 flex justify-end bg-gray-50">
                <button onClick={() => setIsSearchModalOpen(false)} className="px-6 py-2 bg-gray-200 text-charcoal font-bold text-sm rounded shadow-sm hover:bg-gray-300 transition-colors">
-                 Tutup
+                 {t('close')}
                </button>
             </div>
           </div>
@@ -269,7 +269,7 @@ export const CandidateTable: React.FC<CandidateTableProps> = ({ candidates, setC
               <th className="px-6 py-4">{t('fullName')}</th>
               <th className="px-6 py-4">{t('icNumber')}</th>
               <th className="px-6 py-4">{t('membershipNumber')}</th>
-              <th className="px-6 py-4">Kategori Keahlian</th>
+              <th className="px-6 py-4">{t('membershipCategory')}</th>
               <th className="px-6 py-4 text-right w-24">{t('action')}</th>
             </tr>
           </thead>
@@ -309,7 +309,7 @@ export const CandidateTable: React.FC<CandidateTableProps> = ({ candidates, setC
                       type="text"
                       value={c.membershipId}
                       onChange={(e) => updateCandidate(c.id, 'membershipId', e.target.value)}
-                      placeholder="Contoh: SWOT-12345"
+                      placeholder={t('exampleMembershipNo')}
                       className="w-full px-3 py-2 text-sm bg-gray-50/50 border border-gray-100 rounded-[4px] outline-none focus:border-action-teal/40 focus:bg-white transition-all font-medium"
                     />
                   </td>
@@ -330,7 +330,7 @@ export const CandidateTable: React.FC<CandidateTableProps> = ({ candidates, setC
                     <button
                       onClick={() => removeRow(c.id)}
                       className="p-2 text-gray-300 hover:text-alert-red hover:bg-alert-red/5 rounded-md transition-all opacity-0 group-hover:opacity-100"
-                      title="Hapus"
+                      title={t('delete')}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>

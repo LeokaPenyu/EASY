@@ -1,18 +1,23 @@
-import React from 'react';
-import { ExamStatus, UserRole } from '../types';
-import { MockExam } from '../data/mockExams';
-import { 
-  AlertCircle, 
-  ArrowUpRight, 
-  CheckCircle2, 
-  Clock, 
-  FileCheck, 
-  Lock,
+import React, { useState } from "react";
+import { UserRole, ExamStatus } from "../types";
+import { MockExam } from "../data/mockExams";
+import {
+  MoreHorizontal,
+  ChevronLeft,
+  ChevronRight,
+  FileCheck,
   Calendar,
-  BookOpen
-} from 'lucide-react';
-import { motion } from 'motion/react';
-import { useLanguage } from '../context/LanguageContext';
+  BarChart3,
+  AlertCircle,
+  Clock,
+  RefreshCcw,
+  CheckCircle2,
+  Lock,
+  Download,
+  BookOpen,
+  User,
+} from "lucide-react";
+import { useLanguage } from "../context/LanguageContext";
 
 interface DashboardProps {
   role: UserRole;
@@ -20,350 +25,427 @@ interface DashboardProps {
   onViewExam: (id: string) => void;
 }
 
-const ExamListAccordion: React.FC<{ exams: MockExam[] }> = ({ exams }) => {
-  const [isOpen, setIsOpen] = React.useState(false);
-
+const ActionBtn = ({
+  onClick,
+  children,
+  variant = "default",
+}: {
+  onClick?: () => void;
+  children: React.ReactNode;
+  variant?: "default" | "primary" | "danger";
+}) => {
+  const baseStyle =
+    "px-3 py-1.5 text-xs font-medium rounded-md shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1";
+  const variants = {
+    default:
+      "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 focus:ring-gray-200",
+    primary:
+      "bg-action-teal border border-transparent text-white hover:bg-teal-700 focus:ring-action-teal/50",
+    danger:
+      "bg-brand-red border border-transparent text-white hover:bg-red-700 focus:ring-brand-red/50",
+  };
   return (
-    <div className="card shadow-sm border border-gray-100 p-0 overflow-hidden">
-      <button 
-        className="w-full text-left bg-gray-100 p-4 flex justify-between items-center hover:bg-gray-200 transition-colors"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <h3 className="text-lg font-bold text-charcoal">
-          Peperiksaan yang Akan Datang ({exams.length})
-        </h3>
-        <svg className={`w-5 h-5 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
-      {isOpen && (
-        <div className="p-4 bg-white border-t border-gray-200 text-sm">
-          <div className="space-y-2">
-            {exams.map((exam) => {
-              const parts = exam.examDate.split('/');
-              let exDate = new Date();
-              let hariLagi = '';
-              if (parts.length === 3) {
-                 exDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
-                 const today = new Date();
-                 const diffTime = Math.ceil((exDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-                 hariLagi = diffTime >= 0 ? `${diffTime} hari lagi` : `${Math.abs(diffTime)} hari lepas`;
-              }
-              
-              return (
-                <div key={exam.id} className="flex justify-between items-center py-2 border-b border-gray-50 last:border-0 hover:bg-gray-50 px-2 rounded cursor-pointer transition-colors text-[#0066CC] font-medium truncate">
-                  <span>{exam.regNo} - {exam.subject} - {exam.examDate} ({hariLagi})</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-    </div>
+    <button onClick={onClick} className={`${baseStyle} ${variants[variant]}`}>
+      {children}
+    </button>
   );
 };
 
-export const Dashboard: React.FC<DashboardProps> = ({ role, exams, onViewExam }) => {
+export const Dashboard: React.FC<DashboardProps> = ({
+  role,
+  exams,
+  onViewExam,
+}) => {
   const { t } = useLanguage();
 
   const stats = [
-    { label: t('upcomingExams'), value: '4', icon: Calendar, color: 'text-action-teal' },
-    { label: t('pendingVerification'), value: '12', icon: Clock, color: 'text-orange-500' },
-    { label: t('completedMonth'), value: '8', icon: CheckCircle2, color: 'text-success-green' },
-    { label: 'Sijil Tamat Tempoh (30 hari)', value: '3', icon: AlertCircle, color: 'text-amber-500' },
-    { label: 'Calon Retest Tertunda', value: '5', icon: Clock, color: 'text-brand-red' },
-    { label: 'Laporan Dijana', value: '14', icon: FileCheck, color: 'text-[#2D5A8E]' },
+    {
+      label: t("pendingVerification"),
+      value: "12",
+      icon: Clock,
+      color: "text-orange-500",
+      bgColor: "bg-orange-50",
+    },
+    {
+      label: t("completedMonth"),
+      value: "8",
+      icon: CheckCircle2,
+      color: "text-green-600",
+      bgColor: "bg-green-50",
+    },
+    {
+      label: "Sijil Tamat Tempoh",
+      value: "3",
+      icon: AlertCircle,
+      color: "text-amber-500",
+      bgColor: "bg-amber-50",
+    },
+    { 
+      label: "Calon Retest", 
+      value: "5", 
+      icon: RefreshCcw, 
+      color: "text-red-500",
+      bgColor: "bg-red-50",
+    },
+    {
+      label: "Laporan Dijana",
+      value: "14",
+      icon: FileCheck,
+      color: "text-blue-600",
+      bgColor: "bg-blue-50",
+    },
   ];
 
-  const getStatusLabel = (status: ExamStatus) => {
-    switch (status) {
-      case ExamStatus.DRAFT: return t('statusDraft');
-      case ExamStatus.PENDING_VERIFICATION: return t('statusPending');
-      case ExamStatus.APPROVED: return t('statusApproved');
-      case ExamStatus.REJECTED: return t('statusRejected');
-      case ExamStatus.LOCKED: return t('statusLocked');
-      case ExamStatus.SUBMITTED: return t('statusSubmitted') || 'Dihantar';
-      case ExamStatus.COMPLETED: return t('statusCompleted');
-      default: return status;
-    }
+  const decSummaryReadyCount = exams.filter(
+    (e) => e.status === ExamStatus.APPROVED,
+  ).length;
+  const decPendingSubmissionCount = exams.filter(
+    (e) =>
+      e.status === ExamStatus.EXPIRED ||
+      e.status === ExamStatus.LOCKED ||
+      e.status === ExamStatus.UNLOCK_REQUESTED,
+  ).length;
+
+  const secNewApplicationCount = exams.filter(
+    (e) => e.status === ExamStatus.PENDING_VERIFICATION,
+  ).length;
+  const secVerificationCount = exams.filter(
+    (e) => e.status === ExamStatus.SUBMITTED,
+  ).length;
+  const secUnlockRequestCount = exams.filter(
+    (e) => e.status === ExamStatus.UNLOCK_REQUESTED,
+  ).length;
+  const secPrintReadyCount = exams.filter(
+    (e) => e.status === ExamStatus.COMPLETED,
+  ).length;
+
+  const sebcPersonnelInputCount = exams.filter(
+    (e) => e.status === ExamStatus.APPROVED,
+  ).length;
+  const sebcResultsInputCount = exams.filter(
+    (e) => e.status === ExamStatus.APPROVED,
+  ).length;
+
+  const decWorklist = [
+    {
+      id: "menunggu-penyerahan",
+      label: "Menunggu Penyerahan",
+      count: decPendingSubmissionCount,
+      color: "bg-blue-500",
+      group: "Pending",
+    },
+    {
+      id: "borang-list",
+      label: "Ditolak",
+      count: 0,
+      color: "bg-red-500",
+      group: "Alert",
+    },
+    {
+      id: "summary-ready",
+      label: "Sedia untuk Penyediaan Rumusan Peperiksaan",
+      count: decSummaryReadyCount,
+      color: "bg-[#82c91e]",
+      group: "Action",
+    },
+    {
+      id: "attendance-cert",
+      label: "Sijil Kehadiran Perlu Dijana",
+      count: 2,
+      color: "bg-[#3498db]",
+      group: "Action",
+    },
+    {
+      id: "cert-renewal",
+      label: "Sijil Tamat Tempoh (30 hari)",
+      count: 3,
+      color: "bg-[#f39c12]",
+      group: "Alert",
+    },
+  ];
+
+  const secWorklist = [
+    {
+      id: "new-application-list",
+      label: "Permohonan Baru Dihantar",
+      count: secNewApplicationCount,
+      color: "bg-brand-red",
+      group: "New",
+    },
+    {
+      id: "verification-list",
+      label: "Sedia untuk Pengesahan Permohonan",
+      count: secVerificationCount,
+      color: "bg-[#f39c12]",
+      group: "Action",
+    },
+    {
+      id: "unlock-list",
+      label: "Permintaan Membuka Pemarkahan (Unlock)",
+      count: secUnlockRequestCount,
+      color: "bg-orange-500",
+      group: "Alert",
+    },
+    {
+      id: "sedia-cetak-list",
+      label: "Sedia untuk Dicetak",
+      count: secPrintReadyCount,
+      color: "bg-action-teal",
+      group: "Action",
+    },
+    {
+      id: "print-list",
+      label: "Penyata Peperiksaan",
+      count: secPrintReadyCount,
+      color: "bg-[#3498db]",
+      group: "Report",
+    },
+  ];
+
+  const sebcWorklist = [
+    {
+      id: "setup",
+      label: "Sedia untuk Penyediaan Peperiksaan",
+      count: 0,
+      color: "bg-[#2D5A8E]",
+      group: "Pending",
+    },
+    {
+      id: "personnel-input",
+      label: "Sedia untuk memasukkan Senarai Pemeriksa",
+      count: sebcPersonnelInputCount,
+      color: "bg-[#2D5A8E]",
+      group: "Action",
+    },
+    {
+      id: "results-input",
+      label: "Sedia untuk memasukkan Keputusan",
+      count: sebcResultsInputCount,
+      color: "bg-[#2D5A8E]",
+      group: "Action",
+    },
+    {
+      id: "unlock-req",
+      label: "Permintaan untuk Membuka Peperiksaan Terkunci",
+      count: 0,
+      color: "bg-[#f39c12]",
+      group: "Alert",
+    },
+    {
+      id: "online-exam",
+      label: "Peperiksaan Aktif – Masuk Markah",
+      count: 4,
+      color: "bg-[#82c91e]",
+      group: "Active",
+    },
+  ];
+
+  const getWorklist = () => {
+    if (role === UserRole.DEC) return decWorklist;
+    if (role === UserRole.SEC) return secWorklist;
+    return sebcWorklist;
   };
 
-  const decSummaryReadyCount = exams.filter(e => e.status === ExamStatus.APPROVED).length;
-  const decPendingSubmissionCount = exams.filter(e => e.status === ExamStatus.EXPIRED || e.status === ExamStatus.LOCKED || e.status === ExamStatus.UNLOCK_REQUESTED).length;
-
-  const secNewApplicationCount = exams.filter(e => e.status === ExamStatus.PENDING_VERIFICATION).length;
-  const secVerificationCount = exams.filter(e => e.status === ExamStatus.SUBMITTED).length;
-  const secUnlockRequestCount = exams.filter(e => e.status === ExamStatus.UNLOCK_REQUESTED).length;
-  const secPrintReadyCount = exams.filter(e => e.status === ExamStatus.COMPLETED).length;
-
-  const sebcPersonnelInputCount = exams.filter(e => e.status === ExamStatus.APPROVED).length;
-  const sebcResultsInputCount = exams.filter(e => e.status === ExamStatus.APPROVED).length;
+  const worklist = getWorklist();
 
   return (
-    <div className="space-y-8">
-      <header>
-        <h1 className="text-2xl font-bold text-charcoal">{t('welcome')}</h1>
-        <p className="text-gray-500">{t('roleSummary')} {role}.</p>
-      </header>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {stats.map((stat, i) => (
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            key={stat.label} 
-            className="card flex items-center justify-between"
-          >
-            <div className="flex flex-col">
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{stat.label}</p>
-              <h3 className="text-3xl font-black text-charcoal tracking-tight">{stat.value}</h3>
-            </div>
-            <div className={`p-4 rounded-xl bg-gray-50/50 group-hover:bg-white transition-colors shadow-inner ${stat.color}`}>
-              <stat.icon className="w-8 h-8" />
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6">
-          {/* DEC Role Worklist */}
-          {role === UserRole.DEC && (
-            <div className="card border-l-4 border-l-action-teal bg-teal-50/10">
-               <h3 className="text-sm font-black uppercase tracking-widest text-charcoal mb-4 flex items-center gap-2">
-                 <FileCheck className="w-4 h-4 text-action-teal" />
-                 Senarai Kerja (Worklist) - District
-               </h3>
-                <div className="space-y-3">
-                  <button 
-                   onClick={() => onViewExam('menunggu-penyerahan')}
-                   className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-blue-400/30 transition-all group"
-                  >
-                    <span className="text-sm font-medium text-gray-700 group-hover:text-blue-500">Menunggu Penyerahan</span>
-                    <div className="flex items-center gap-3">
-                      <span className="text-blue-500 font-bold">{decPendingSubmissionCount}</span>
-                      <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-blue-500" />
-                    </div>
-                  </button>
-                  <button 
-                   onClick={() => onViewExam('borang-list')}
-                   className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-red-400/30 transition-all group"
-                  >
-                    <span className="text-sm font-medium text-gray-700 group-hover:text-red-500">Ditolak</span>
-                    <div className="flex items-center gap-3">
-                      <span className="text-red-500 font-bold">0</span>
-                      <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-red-500" />
-                    </div>
-                  </button>
-                  <button 
-                   onClick={() => onViewExam('summary-ready')}
-                   className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-action-teal/30 transition-all group"
-                  >
-                    <span className="text-sm font-medium text-gray-700 group-hover:text-action-teal">Sedia untuk Penyediaan Rumusan Peperiksaan</span>
-                    <div className="flex items-center gap-3">
-                      <span className="text-action-teal font-bold">{decSummaryReadyCount}</span>
-                      <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-action-teal" />
-                    </div>
-                  </button>
-                  <button 
-                   onClick={() => console.log('AttendanceCertificate')} // For routing
-                   className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-action-teal/30 transition-all group"
-                  >
-                    <span className="text-sm font-medium text-gray-700 group-hover:text-action-teal">Sijil Kehadiran Perlu Dijana</span>
-                    <div className="flex items-center gap-3">
-                      <span className="text-action-teal font-bold">2</span>
-                      <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-action-teal" />
-                    </div>
-                  </button>
-                  <button 
-                   onClick={() => console.log('CertificateRenewal')}
-                   className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-amber-500/30 transition-all group"
-                  >
-                    <span className="text-sm font-medium text-gray-700 group-hover:text-amber-500">Sijil Tamat Tempoh (30 hari)</span>
-                    <div className="flex items-center gap-3">
-                      <span className="text-amber-500 font-bold">3</span>
-                      <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-amber-500" />
-                    </div>
-                  </button>
+    <div className="bg-slate-50 p-4 md:p-6 lg:p-8 min-h-screen font-sans">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Top Stats Row */}
+        <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-4">
+          {stats.map((stat) => (
+            <div
+              key={stat.label}
+              className="bg-white border border-gray-100 rounded-xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow"
+            >
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${stat.bgColor}`}>
+                  {React.createElement(stat.icon, {
+                    className: `w-5 h-5 ${stat.color}`
+                  })}
                 </div>
+                <span className="text-sm font-medium text-gray-700 leading-snug">
+                  {stat.label}
+                </span>
+              </div>
+              <span
+                className={`text-xl md:text-2xl font-bold ml-2 ${stat.color}`}
+              >
+                {stat.value}
+              </span>
             </div>
-          )}
-
-          {/* SEC Role Worklist */}
-          {role === UserRole.SEC && (
-            <div className="card border-l-4 border-l-brand-red bg-red-50/10">
-               <h3 className="text-sm font-black uppercase tracking-widest text-charcoal mb-4 flex items-center gap-2">
-                 <FileCheck className="w-4 h-4 text-brand-red" />
-                 Senarai Kerja (Worklist) - State
-               </h3>
-               <div className="space-y-3">
-                 <button 
-                  onClick={() => onViewExam('new-application-list')}
-                  className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-brand-red/30 transition-all group"
-                 >
-                   <span className="text-sm font-medium text-gray-700 group-hover:text-brand-red">Permohonan Baru Dihantar</span>
-                   <div className="flex items-center gap-3">
-                     <span className="bg-brand-red text-white px-2 py-0.5 rounded-full text-[10px] font-black">{secNewApplicationCount}</span>
-                     <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-brand-red" />
-                   </div>
-                 </button>
-                 <button 
-                  onClick={() => onViewExam('verification-list')}
-                  className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-brand-red/30 transition-all group"
-                 >
-                   <span className="text-sm font-medium text-gray-700 group-hover:text-brand-red">Sedia untuk Pengesahan Permohonan</span>
-                   <div className="flex items-center gap-3">
-                     <span className="bg-brand-red text-white px-2 py-0.5 rounded-full text-[10px] font-black">{secVerificationCount}</span>
-                     <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-brand-red" />
-                   </div>
-                 </button>
-                 <button 
-                  onClick={() => onViewExam('unlock-list')}
-                  className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-orange-500/30 transition-all group"
-                 >
-                   <span className="text-sm font-medium text-gray-700 group-hover:text-orange-500">Permintaan Membuka Pemeriksa (Unlock)</span>
-                   <div className="flex items-center gap-3">
-                     <span className="bg-orange-500 text-white px-2 py-0.5 rounded-full text-[10px] font-black">{secUnlockRequestCount}</span>
-                     <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-orange-500" />
-                   </div>
-                 </button>
-                 <button 
-                  onClick={() => onViewExam('sedia-cetak-list')}
-                  className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-action-teal/30 transition-all group"
-                 >
-                   <span className="text-sm font-medium text-gray-700 group-hover:text-action-teal">Sedia untuk Dicetak</span>
-                   <div className="flex items-center gap-3">
-                     <span className="bg-action-teal text-white px-2 py-0.5 rounded-full text-[10px] font-black">{secPrintReadyCount}</span>
-                     <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-action-teal" />
-                   </div>
-                 </button>
-                 <button 
-                  onClick={() => onViewExam('print-list')}
-                  className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-action-teal/30 transition-all group"
-                 >
-                   <span className="text-sm font-medium text-gray-700 group-hover:text-action-teal">Penyata Peperiksaan</span>
-                   <div className="flex items-center gap-3">
-                     <span className="bg-action-teal text-white px-2 py-0.5 rounded-full text-[10px] font-black">{secPrintReadyCount}</span>
-                     <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-action-teal" />
-                   </div>
-                 </button>
-               </div>
-            </div>
-          )}
-
-          {/* SEBC Role Worklist */}
-          {role === UserRole.SEBC && (
-            <div className="card border-l-4 border-l-[#2D5A8E] bg-[#2D5A8E]/5">
-               <h3 className="text-sm font-black uppercase tracking-widest text-[#2D5A8E] mb-2 flex items-center gap-2">
-                 <FileCheck className="w-4 h-4 text-[#2D5A8E]" />
-                 Senarai Kerja (Worklist) - Board
-               </h3>
-               <p className="text-xs font-medium text-gray-500 mb-4 px-6 border-b border-gray-200 pb-2 border-dashed">
-                 Pengerusi Lembaga Pengarah Peperiksaan Cawangan
-               </p>
-               <div className="space-y-3">
-                 <button 
-                  className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-[#2D5A8E]/30 transition-all group"
-                 >
-                   <span className="text-sm font-medium text-gray-700 group-hover:text-[#2D5A8E]">Sedia untuk Penyediaan Peperiksaan</span>
-                   <div className="flex items-center gap-3">
-                     <span className="bg-gray-400 group-hover:bg-[#2D5A8E] text-white px-2 py-0.5 rounded-full text-[10px] font-black transition-colors">0</span>
-                     <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-[#2D5A8E]" />
-                   </div>
-                 </button>
-                 <button 
-                  onClick={() => onViewExam('personnel-input')}
-                  className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-[#2D5A8E]/30 transition-all group shadow-sm hover:shadow-md"
-                 >
-                   <span className="text-sm font-medium text-gray-700 group-hover:text-[#2D5A8E]">Sedia untuk memasukkan Senarai Pemeriksa</span>
-                   <div className="flex items-center gap-3">
-                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-black transition-colors ${sebcPersonnelInputCount > 0 ? 'bg-[#2D5A8E] text-white' : 'bg-gray-400 group-hover:bg-[#2D5A8E] text-white'}`}>
-                       {sebcPersonnelInputCount}
-                     </span>
-                     <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-[#2D5A8E]" />
-                   </div>
-                 </button>
-                 <button 
-                  onClick={() => onViewExam('results-input')}
-                  className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-[#2D5A8E]/30 transition-all group shadow-sm hover:shadow-md"
-                 >
-                   <span className="text-sm font-medium text-gray-700 group-hover:text-[#2D5A8E]">Sedia untuk memasukkan Keputusan</span>
-                   <div className="flex items-center gap-3">
-                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-black transition-colors ${sebcResultsInputCount > 0 ? 'bg-[#2D5A8E] text-white' : 'bg-gray-400 group-hover:bg-[#2D5A8E] text-white'}`}>
-                       {sebcResultsInputCount}
-                     </span>
-                     <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-[#2D5A8E]" />
-                   </div>
-                 </button>
-                 <button 
-                  className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-[#2D5A8E]/30 transition-all group"
-                 >
-                   <span className="text-sm font-medium text-gray-700 group-hover:text-[#2D5A8E]">Permintaan untuk Membuka Peperiksaan yang Dikunci</span>
-                   <div className="flex items-center gap-3">
-                     <span className="bg-gray-400 group-hover:bg-[#2D5A8E] text-white px-2 py-0.5 rounded-full text-[10px] font-black transition-colors">0</span>
-                     <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-[#2D5A8E]" />
-                   </div>
-                 </button>
-                 <button 
-                  onClick={() => console.log('OnlineExam')}
-                  className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-100 hover:border-[#2D5A8E]/30 transition-all group shadow-sm hover:shadow-md"
-                 >
-                   <span className="text-sm font-medium text-gray-700 group-hover:text-[#2D5A8E]">Peperiksaan Aktif – Masuk Markah</span>
-                   <div className="flex items-center gap-3">
-                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-black transition-colors bg-[#2D5A8E] text-white`}>
-                       4
-                     </span>
-                     <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-[#2D5A8E]" />
-                   </div>
-                 </button>
-               </div>
-            </div>
-          )}
-
-
+          ))}
         </div>
 
-        <div className="space-y-6">
-          <ExamListAccordion exams={exams} />
-
-          {role === UserRole.DEC && (
-            <div className="card border-l-4 border-l-alert-red bg-red-50/30">
-              <div className="flex gap-4">
-                <AlertCircle className="w-6 h-6 text-alert-red flex-shrink-0" />
-                <div>
-                  <h4 className="font-bold text-alert-red text-sm mb-1">{t('lockedNoticeTitle')}</h4>
-                  <p className="text-xs text-gray-600 leading-relaxed mb-3">
-                    {t('lockedNoticeDesc')}
-                  </p>
-                  <button 
-                    onClick={() => onViewExam('unlock-list')}
-                    className="btn-secondary text-xs py-1.5 w-full flex justify-center gap-2"
-                  >
-                    <Lock className="w-3.5 h-3.5" /> {t('requestUnlock')}
-                  </button>
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 w-full">
+          {/* Left Column */}
+          <div className="xl:col-span-2 space-y-6">
+            {/* Worklist Panel */}
+            <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-white">
+                <span className="font-semibold text-gray-900 text-sm">
+                  Senarai Kerja (Worklist)
+                </span>
+                <div className="flex items-center gap-4 text-blue-500 font-medium text-xs">
+                  <span>Peranan: {role}</span>
                 </div>
+                <button className="text-gray-400 hover:text-gray-600 transition-colors">
+                  <MoreHorizontal className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="flex flex-col py-2">
+                {worklist.map((item) => (
+                  <div
+                    key={item.id}
+                    onClick={() => onViewExam(item.id)}
+                    className="px-5 py-3 border-b border-gray-50 flex justify-between items-center hover:bg-slate-50 cursor-pointer group transition-colors last:border-0"
+                  >
+                    <div className="flex gap-3 items-center">
+                      <div className="text-gray-400 group-hover:text-action-teal transition-colors flex items-center justify-center">
+                        <FileCheck className="w-4 h-4" />
+                      </div>
+                      <span className="font-medium text-gray-700 text-sm group-hover:text-action-teal transition-colors">
+                        {item.label}
+                      </span>
+                    </div>
+                    <div className="flex gap-2 items-center">
+                      <span className="font-bold text-gray-900 border border-gray-100 rounded px-2 py-0.5 text-xs bg-slate-50">
+                        {item.count}
+                      </span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          )}
 
-          <div className="card">
-            <h3 className="text-lg font-bold mb-4">{t('quickLinks')}</h3>
-            <div className="space-y-2">
-              <button className="w-full text-left p-3 rounded-lg border border-gray-100 hover:border-action-teal/30 hover:bg-action-teal/5 transition-all flex items-center justify-between group">
-                <div className="flex items-center gap-3">
-                  <FileCheck className="w-5 h-5 text-gray-400 group-hover:text-action-teal" />
-                  <span className="text-sm font-medium">{t('downloadGuide')}</span>
+            {/* Upcoming Exams (Modern Table) */}
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-white">
+                <h3 className="font-semibold text-gray-900 text-sm">
+                  Peperiksaan yang Akan Datang
+                </h3>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-sm">
+                  <thead className="bg-[#f8fafc] border-b border-gray-100 text-xs text-gray-500 font-semibold uppercase tracking-wider">
+                    <tr>
+                      <th className="px-5 py-3.5 font-medium">Kumpulan</th>
+                      <th className="px-5 py-3.5 font-medium">Subjek</th>
+                      <th className="px-5 py-3.5 font-medium text-right">Tarikh Peperiksaan</th>
+                      <th className="px-5 py-3.5 font-medium text-center">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {exams.slice(0, 5).map((exam) => {
+                      const parts = exam.examDate.split("/");
+                      let desc = "";
+                      let isPast = false;
+                      if (parts.length === 3) {
+                        const exDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+                        const today = new Date();
+                        const diffTime = Math.ceil((exDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+                        desc = diffTime >= 0 ? `${diffTime} hari lagi` : "Selesai";
+                        isPast = diffTime < 0;
+                      }
+                      return (
+                        <tr
+                          key={exam.id}
+                          onClick={() => onViewExam(exam.id)}
+                          className="cursor-pointer hover:bg-[#f1f5f9] transition-colors group"
+                        >
+                          <td className="px-5 py-4 text-gray-600 font-medium whitespace-nowrap">
+                            {exam.regNo}
+                          </td>
+                          <td className="px-5 py-4 text-gray-900 font-medium">
+                            {exam.subject}
+                          </td>
+                          <td className="px-5 py-4 text-gray-600 text-right whitespace-nowrap font-medium">
+                            {exam.examDate}
+                          </td>
+                          <td className="px-5 py-4 flex justify-center whitespace-nowrap">
+                            <span className={`inline-flex items-center px-2.5 py-1 rounded-[4px] text-[11px] font-bold border ${isPast ? 'bg-gray-50 text-gray-600 border-gray-200' : 'bg-teal-50 text-teal-700 border-teal-100'}`}>
+                              {desc}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                    {exams.length === 0 && (
+                      <tr>
+                        <td colSpan={4} className="py-8 text-center text-gray-400 text-sm">
+                          Tiada peperiksaan untuk dipaparkan.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column */}
+          <div className="xl:col-span-1 space-y-6">
+            {/* Notice & Quick Links */}
+            <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+              <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-200">
+                <span className="font-semibold text-gray-900 text-sm">
+                  Notis & Pautan Pantas
+                </span>
+                <button className="text-gray-400 hover:text-gray-600 transition-colors">
+                  <MoreHorizontal className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="p-5 space-y-4">
+                {role === UserRole.DEC && (
+                  <div className="border border-red-200 bg-red-50 p-4 rounded-lg relative overflow-hidden group shadow-sm">
+                    <div className="absolute top-0 right-0 p-1.5 bg-red-200/50 rounded-bl-lg text-red-600">
+                      <AlertCircle className="w-4 h-4" />
+                    </div>
+                    <h4 className="text-red-700 font-bold text-sm mb-1.5 flex items-center gap-1.5">
+                      <Lock className="w-4 h-4" /> Peperiksaan Terkunci
+                    </h4>
+                    <p className="text-xs text-red-900/80 mb-3 leading-relaxed">
+                      {t("lockedNoticeDesc")}
+                    </p>
+                    <ActionBtn
+                      variant="danger"
+                      onClick={() => onViewExam("unlock-list")}
+                    >
+                      {t("requestUnlock")}
+                    </ActionBtn>
+                  </div>
+                )}
+
+                <div className="hover:bg-slate-50 p-3 -mx-3 rounded-lg transition-colors cursor-pointer group">
+                  <h4 className="text-action-teal font-medium text-sm mb-1 flex items-center gap-1.5 group-hover:underline">
+                    <Download className="w-4 h-4" /> Garis Panduan Pengguna
+                  </h4>
+                  <p className="text-xs text-gray-500 leading-relaxed">
+                    Sila muat turun garis panduan terkini untuk modul penjanaan
+                    rumusan peperiksaan.
+                  </p>
                 </div>
-                <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-action-teal" />
-              </button>
-              <button className="w-full text-left p-3 rounded-lg border border-gray-100 hover:border-action-teal/30 hover:bg-action-teal/5 transition-all flex items-center justify-between group">
-                <div className="flex items-center gap-3">
-                  <BookOpen className="w-5 h-5 text-gray-400 group-hover:text-action-teal" />
-                  <span className="text-sm font-medium">{t('summaryForm')}</span>
+
+                <div className="hover:bg-slate-50 p-3 -mx-3 rounded-lg transition-colors cursor-pointer group">
+                  <h4 className="text-success-green font-medium text-sm mb-1 flex items-center gap-1.5 group-hover:underline">
+                    <BookOpen className="w-4 h-4" /> Borang Rumusan Peperiksaan
+                  </h4>
+                  <p className="text-xs text-gray-500 leading-relaxed">
+                    Borang fizikal untuk kegunaan darurat jika sistem
+                    tergendala.
+                  </p>
                 </div>
-                <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-action-teal" />
-              </button>
+              </div>
+              <div className="px-5 py-3.5 bg-slate-50/50 border-t border-gray-100 flex justify-between items-center text-xs">
+                <button className="flex items-center gap-1 text-gray-500 hover:text-gray-900 font-medium transition-colors">
+                  <ChevronLeft className="w-4 h-4" /> Sblm
+                </button>
+                <span className="text-gray-400 font-medium">1 / 5</span>
+                <button className="flex items-center gap-1 text-gray-500 hover:text-gray-900 font-medium transition-colors">
+                  Seterusnya <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
