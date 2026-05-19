@@ -2,6 +2,8 @@ import React from 'react';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { Dashboard } from './components/Dashboard';
+import { FrontPage } from './components/FrontPage';
+import { CandidateDashboard } from './components/CandidateDashboard';
 import { UserRole, ViewType, ExamStatus } from './types';
 import { motion, AnimatePresence } from 'motion/react';
 import { useLanguage } from './context/LanguageContext';
@@ -35,6 +37,7 @@ import { PeperiksaanMain } from './components/PeperiksaanMain';
 
 export default function App() {
   const { t } = useLanguage();
+  const [appMode, setAppMode] = React.useState<'front' | 'coordinator' | 'candidate'>('front');
   const [isLoggedIn, setIsLoggedIn] = React.useState(true);
   const [activeView, setActiveView] = React.useState<ViewType>('Dashboard');
   const [role, setRole] = React.useState<UserRole>(UserRole.DEC);
@@ -84,6 +87,18 @@ export default function App() {
       setIsEditMode(false);
     }
   }, [activeView]);
+
+  if (appMode === 'front') {
+    return (
+      <FrontPage onSelectRole={(role) => setAppMode(role)} />
+    );
+  }
+
+  if (appMode === 'candidate') {
+    return (
+      <CandidateDashboard onLogout={() => setAppMode('front')} />
+    );
+  }
 
   const renderContent = () => {
     switch (activeView) {
@@ -429,6 +444,7 @@ export default function App() {
           role={role} 
           setRole={setRole} 
           onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} 
+          onLogout={() => setAppMode('front')}
         />
         
         <div className="flex-1 p-4 lg:p-6 overflow-y-auto w-full">
@@ -448,7 +464,13 @@ export default function App() {
         </div>
 
         <footer className="p-4 text-center border-t border-gray-100 bg-white/50 backdrop-blur-sm">
-          <p className="text-[10px] text-gray-400 font-medium tracking-widest uppercase">
+          <p className="text-[10px] text-gray-400 font-medium tracking-widest uppercase flex items-center justify-center gap-4">
+            <button 
+              onClick={() => setAppMode('front')} 
+              className="hover:text-red-700 transition-colors bg-gray-100 px-3 py-1 rounded-full font-bold"
+            >
+              KEMBALI KE LAMAN UTAMA
+            </button>
             {t('confidentialNotice')}
           </p>
         </footer>

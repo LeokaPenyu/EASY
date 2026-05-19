@@ -1,36 +1,30 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Lock, FileUp, CheckCircle, Database, Edit2, Trash2, Plus } from 'lucide-react';
+import { Lock, FileUp, CheckCircle, Database, Edit2, Trash2, Plus, Shuffle, Save, Info } from 'lucide-react';
 import Papa from 'papaparse';
-
-interface Question {
-  question: string;
-  options: string[];
-  answer: string;
-}
-
-const mockQuestions: Question[] = [
-  {
-    question: "Apakah prinsip pertama di dalam pergerakan Palang Merah?",
-    options: ["Kemanusiaan", "Kesaksamaan", "Keberkecualian", "Kebebasan"],
-    answer: "Kemanusiaan"
-  },
-  {
-    question: "Berapakah bilangan prinsip asas pergerakan Palang Merah dan Bulan Sabit Merah?",
-    options: ["5", "6", "7", "8"],
-    answer: "7"
-  }
-];
+import { sharedQuestions, updateSharedQuestions, Question } from '../data/mockQuestions';
+import { useLanguage } from '../context/LanguageContext';
 
 export const QuestionBankModule = () => {
   const [locked, setLocked] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [questions, setQuestions] = useState<Question[]>(mockQuestions);
+  const [questions, setQuestions] = useState<Question[]>(sharedQuestions);
+  const { translateContent } = useLanguage();
+
+  // Sync back to shared state so candidates see new updates (simulating a database)
+  React.useEffect(() => {
+    updateSharedQuestions(questions);
+  }, [questions]);
+
   
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editForm, setEditForm] = useState<Question | null>(null);
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [uploadSuccessMsg, setUploadSuccessMsg] = useState(false);
+  
+  const [saveSuccessMsg, setSaveSuccessMsg] = useState(false);
+  const [randomizeSuccessMsg, setRandomizeSuccessMsg] = useState(false);
+  const [isRandomized, setIsRandomized] = useState(false);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -75,6 +69,7 @@ export const QuestionBankModule = () => {
               if (rawAnswer.toUpperCase() === 'D' && optionD) answerText = optionD;
 
               return {
+                id: 'q_' + Math.random().toString(36).substr(2, 9),
                 question: row[0] || 'Soalan Tidak Diketahui',
                 options: options.length > 0 ? options : ['Tiada', 'Pilihan', 'Disertakan'],
                 answer: answerText || options[0] || 'Tiada'
@@ -121,7 +116,7 @@ export const QuestionBankModule = () => {
 
   const handleAddNew = () => {
     setIsAddingNew(true);
-    setEditForm({ question: '', options: ['', '', '', ''], answer: '' });
+    setEditForm({ id: 'q_' + Math.random().toString(36).substr(2, 9), question: '', options: ['', '', '', ''], answer: '' });
     setEditingIndex(-1);
   };
 
@@ -275,10 +270,10 @@ export const QuestionBankModule = () => {
               <button 
                 onClick={handleAddNew}
                 disabled={locked || isAddingNew || editingIndex !== null}
-                className="flex items-center gap-1.5 bg-green-600 text-white px-4 py-2 rounded-md text-sm font-bold hover:bg-green-700 transition-colors disabled:opacity-50 shadow-sm"
+                className="flex items-center gap-1.5 bg-action-teal text-white px-4 py-2 rounded-md text-sm font-bold hover:bg-teal-700 transition-colors disabled:opacity-50 shadow-sm"
               >
                 <Plus className="w-4 h-4" />
-                Tambah Soalan Manual
+                Tambah Soalan
               </button>
             </div>
             
@@ -294,7 +289,7 @@ export const QuestionBankModule = () => {
                       <div className="flex justify-between items-start mb-4">
                         <div className="font-bold text-charcoal text-[15px] pr-8">
                           <span className="text-brand-red mr-2">{i + 1}.</span>
-                          {q.question}
+                          {translateContent(q.question)}
                         </div>
                         {!locked && editingIndex === null && !isAddingNew && (
                           <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -321,7 +316,7 @@ export const QuestionBankModule = () => {
                               }`}>
                                 {String.fromCharCode(65 + optIndex)}
                               </span>
-                              <span className={`${isCorrect ? 'font-semibold' : 'font-medium'} text-sm`}>{opt}</span>
+                              <span className={`${isCorrect ? 'font-semibold' : 'font-medium'} text-sm`}>{translateContent(opt)}</span>
                               {isCorrect && <CheckCircle className="w-5 h-5 ml-auto text-green-500" />}
                             </div>
                           );
@@ -335,15 +330,78 @@ export const QuestionBankModule = () => {
           </div>
         )}
 
+        {/* Action Buttons */}
         <div className="mt-8 pt-6 border-t border-gray-100 flex justify-end gap-3 z-10 relative">
-          <button className="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-5 py-2.5 rounded-[6px] font-bold text-sm shadow-sm transition-all text-center">
-            Jana Kertas Secara Rawak
+          <button 
+            onClick={() => {
+              setIsRandomized(true);
+              setRandomizeSuccessMsg(true);
+              setTimeout(() => setRandomizeSuccessMsg(false), 5000);
+            }}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-[6px] font-bold text-sm shadow-sm transition-all text-center ${
+              isRandomized 
+                ? 'bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100' 
+                : 'bg-white border border-gray-300 hover:bg-gray-50 text-gray-700'
+            }`}
+          >
+            <Shuffle className="w-4 h-4" />
+            {isRandomized ? 'Peperiksaan Telah Dirawak' : 'Jana Kertas Secara Rawak'}
           </button>
-          <button className="bg-action-teal hover:bg-teal-700 text-white px-8 py-2.5 rounded-[6px] font-bold text-sm shadow-sm transition-all text-center">
+          
+          <button 
+            onClick={() => {
+              setSaveSuccessMsg(true);
+              setTimeout(() => setSaveSuccessMsg(false), 5000);
+            }}
+            className="flex items-center gap-2 bg-action-teal hover:bg-teal-700 text-white px-8 py-2.5 rounded-[6px] font-bold text-sm shadow-sm transition-all text-center"
+          >
+            <Save className="w-4 h-4" />
             Simpan Bank Soalan
           </button>
         </div>
       </div>
+      
+      {/* Popups */}
+      <AnimatePresence>
+        {randomizeSuccessMsg && (
+          <motion.div 
+            key="randomize-success"
+            initial={{ opacity: 0, y: 20, x: '-50%' }} 
+            animate={{ opacity: 1, y: 0, x: '-50%' }} 
+            exit={{ opacity: 0, y: 20, x: '-50%' }}
+            className="fixed bottom-10 left-1/2 z-[100] p-4 bg-blue-50 border border-blue-200 rounded-lg flex items-start gap-4 text-blue-800 shadow-xl max-w-md w-full"
+          >
+            <div className="mt-0.5">
+              <Info className="w-5 h-5 text-blue-500" />
+            </div>
+            <div className="flex-1">
+              <h4 className="text-sm font-bold mb-1">Peperiksaan Rawak Berjaya Diaktifkan</h4>
+              <p className="text-sm text-blue-700">Setiap calon akan menerima susunan soalan yang berbeza secara rawak (Cth: Calon A mendapat Soalan 1, Calon B mendapat Soalan 4 sebagai soalan pertama mereka).</p>
+            </div>
+            <button onClick={() => setRandomizeSuccessMsg(false)} className="text-blue-500 hover:text-blue-700">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+          </motion.div>
+        )}
+
+        {saveSuccessMsg && (
+          <motion.div 
+            key="save-success"
+            initial={{ opacity: 0, y: -20, x: '-50%' }} 
+            animate={{ opacity: 1, y: 0, x: '-50%' }} 
+            exit={{ opacity: 0, y: -20, x: '-50%' }}
+            className="fixed top-20 left-1/2 z-[100] p-4 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between text-green-800 shadow-xl min-w-[400px]"
+          >
+            <div className="flex items-center gap-3">
+              <CheckCircle className="w-5 h-5 text-green-500" />
+              <p className="text-sm font-bold">Berjaya! Bank soalan telah disimpan.</p>
+            </div>
+            <button onClick={() => setSaveSuccessMsg(false)} className="text-green-500 hover:text-green-700 ml-4">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };

@@ -116,17 +116,22 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onCl
     setImageSrc(null);
   };
 
-  if (!isOpen) return null;
-
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
+      {isOpen && (
         <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.95 }}
-          className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col my-8"
+          key="user-profile-modal-backdrop"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto"
         >
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col my-8"
+          >
           <div className="bg-brand-red p-4 flex justify-between items-center">
             <h2 className="text-white font-bold text-lg">Profil Pengguna</h2>
             <button onClick={onClose} className="text-white/80 hover:text-white transition-colors">
@@ -239,7 +244,8 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onCl
             </div>
           )}
         </motion.div>
-      </div>
+        </motion.div>
+      )}
     </AnimatePresence>
   );
 };

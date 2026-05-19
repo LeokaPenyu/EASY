@@ -8,9 +8,10 @@ interface HeaderProps {
   role: UserRole;
   setRole: (role: UserRole) => void;
   onMenuClick: () => void;
+  onLogout?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ role, setRole, onMenuClick }) => {
+export const Header: React.FC<HeaderProps> = ({ role, setRole, onMenuClick, onLogout }) => {
   const { language, setLanguage, t } = useLanguage();
   const [showNotification, setShowNotification] = useState(true);
 
@@ -81,6 +82,7 @@ export const Header: React.FC<HeaderProps> = ({ role, setRole, onMenuClick }) =>
           <AnimatePresence>
             {showNotification && (
               <motion.div 
+                key="notification-dropdown"
                 initial={{ opacity: 0, y: 10, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 10, scale: 0.95 }}
@@ -123,7 +125,10 @@ export const Header: React.FC<HeaderProps> = ({ role, setRole, onMenuClick }) =>
         </div>
 
         <div className="flex items-center gap-2 lg:gap-3 ml-2">
-          <button className="text-sm font-bold text-gray-500 hover:text-brand-red transition-colors flex items-center gap-2">
+          <button 
+            onClick={onLogout}
+            className="text-sm font-bold text-gray-500 hover:text-brand-red transition-colors flex items-center gap-2"
+          >
             <LogOut className="w-5 h-5" />
             <span className="hidden sm:inline">Log Keluar</span>
           </button>
