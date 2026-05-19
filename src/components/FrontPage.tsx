@@ -118,11 +118,16 @@ export const FrontPage: React.FC<FrontPageProps> = ({ onSelectRole }) => {
         >
           
           {/* Logo */}
-          <div className="w-12 h-12 bg-gradient-to-br from-red-600 to-red-800 rounded-full flex items-center justify-center mb-4 shadow-md relative overflow-hidden border-2 border-white">
-            <div className="w-8 h-8 bg-white rounded-full flex flex-col items-center justify-center">
-              <div className="w-5 h-1.5 bg-red-700 absolute"></div>
-              <div className="w-1.5 h-5 bg-red-700 absolute"></div>
-            </div>
+          <div className="w-28 h-28 bg-transparent flex items-center justify-center mb-5 relative">
+            <img 
+              src="https://api.mrcscommunity.org.my/uploads/event/20241025-5d0jbb-mrcs-logo-roundel.png" 
+              alt="MRCS Logo" 
+              className="w-full h-full object-contain drop-shadow-sm"
+              onError={(e) => {
+                // Fallback if the URL breaks
+                (e.target as HTMLImageElement).src = 'https://mrcscommunity.org.my/images/logo.svg';
+              }} 
+            />
           </div>
           
           <h2 className="text-lg font-bold text-gray-900 mb-6 tracking-tight">Red Crescent</h2>
