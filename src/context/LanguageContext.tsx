@@ -39,6 +39,62 @@ const MOCK_DICTIONARY: Record<string, { BM: string; EN: string }> = {
   "System Online": {
     BM: "Sistem Dalam Talian",
     EN: "System Online"
+  },
+  "Masa yang diperuntukkan adalah 45 minit.": {
+    BM: "Masa yang diperuntukkan adalah 45 minit.",
+    EN: "The time allocated is 45 minutes."
+  },
+  "Terdapat 40 soalan objektif yang perlu dijawab.": {
+    BM: "Terdapat 40 soalan objektif yang perlu dijawab.",
+    EN: "There are 40 objective questions to be answered."
+  },
+  "Sila pastikan sambungan internet anda stabil.": {
+    BM: "Sila pastikan sambungan internet anda stabil.",
+    EN: "Please ensure your internet connection is stable."
+  },
+  "Jangan tutup (close) atau muat semula (refresh) pelayar web web semasa peperiksaan sedang berjalan. Jawapan anda mungkin tidak akan direkodkan.": {
+    BM: "Jangan tutup (close) atau muat semula (refresh) pelayar web web semasa peperiksaan sedang berjalan. Jawapan anda mungkin tidak akan direkodkan.",
+    EN: "Do not close or refresh the web browser while the exam is running. Your answers may not be recorded."
+  },
+  "Arahan Penting": {
+    BM: "Arahan Penting",
+    EN: "Important Instructions"
+  },
+  "Mula Peperiksaan Sekarang": {
+    BM: "Mula Peperiksaan Sekarang",
+    EN: "Start Exam Now"
+  },
+  "Sila baca arahan di bawah sebelum memulakan peperiksaan anda.": {
+    BM: "Sila baca arahan di bawah sebelum memulakan peperiksaan anda.",
+    EN: "Please read the instructions below before starting your exam."
+  },
+  "Peperiksaan Selesai": {
+    BM: "Peperiksaan Selesai",
+    EN: "Exam Completed"
+  },
+  "Terima kasih kerana melengkapkan peperiksaan. Jawapan anda telah direkodkan. Sila rujuk Penyelaras Peperiksaan untuk maklumat lanjut.": {
+    BM: "Terima kasih kerana melengkapkan peperiksaan. Jawapan anda telah direkodkan. Sila rujuk Penyelaras Peperiksaan untuk maklumat lanjut.",
+    EN: "Thank you for completing the exam. Your answers have been recorded. Please refer to the Exam Coordinator for further information."
+  },
+  "Kembali ke Papan Pemuka": {
+    BM: "Kembali ke Papan Pemuka",
+    EN: "Return to Dashboard"
+  },
+  "Soalan": {
+    BM: "Soalan",
+    EN: "Question"
+  },
+  "Sebelumnya": {
+    BM: "Sebelumnya",
+    EN: "Previous"
+  },
+  "Seterusnya": {
+    BM: "Seterusnya",
+    EN: "Next"
+  },
+  "Hantar Jawapan": {
+    BM: "Hantar Jawapan",
+    EN: "Submit Answers"
   }
 };
 
