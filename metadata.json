@@ -1,6 +1,8 @@
 {
   "name": "EASY - Exam Administration System",
   "description": "Examination Administration System for the Malaysian Red Crescent Society, managing the exam lifecycle from application to result printing.",
-  "requestFramePermissions": [],
+  "requestFramePermissions": [
+    "camera"
+  ],
   "majorCapabilities": []
 }

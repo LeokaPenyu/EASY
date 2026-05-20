@@ -12,10 +12,15 @@ import {
   Info, 
   X,
   Wifi,
-  Globe
+  Globe,
+  Bell,
+  FileText
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { Language } from '../types';
+import { calculateCandidateFee } from '../utils/feeCalculator';
+import { calculateRenewalExpiry } from '../utils/certificateUtils';
+import { UserProfileModal, UserProfileData } from './UserProfileModal';
 
 // --- INTERFACES ---
 interface UserSession {
@@ -32,8 +37,9 @@ interface ExamItem {
   title: string;
   date: string;
   startTime: string; 
-  type: 'upcoming' | 'retest';
+  type: 'upcoming' | 'retest' | 'completed';
   retestReason?: string;
+  result?: 'Pass' | 'Fail' | 'Absent';
 }
 
 interface CertificateItem {
@@ -79,7 +85,39 @@ const populatedCerts: CertificateItem[] = [
     title: 'Pentadbiran dan Pengurusan BSMM',
     dateIssued: '2025-10-15',
     grade: 'Lulus'
+  },
+  {
+    id: 'c2',
+    code: '800/2',
+    title: 'Bantuan Bencana Alam',
+    dateIssued: '2023-01-15', // Need renewal
+    grade: 'Lulus'
+  },
+  {
+    id: 'c3',
+    code: '800/1',
+    title: 'Pendidikan Kesihatan Asas',
+    dateIssued: '2024-05-18',
+    grade: 'Lulus'
   }
+];
+
+const completedExams: ExamItem[] = [
+  {
+    id: 'e3',
+    code: '800/3',
+    title: 'Pentadbiran dan Pengurusan BSMM',
+    date: '2025-09-10',
+    startTime: '10:00',
+    type: 'completed',
+    result: 'Pass'
+  }
+];
+
+const mockNotifications = [
+  { id: 'n1', type: 'info', message: 'Exam tomorrow: Pertolongan Cemas Asas — 13:30', time: '2h ago', read: false },
+  { id: 'n2', type: 'warning', message: 'Certificate 800/3 expires in 45 days — Renew now', time: '1d ago', read: false },
+  { id: 'n3', type: 'success', message: 'Your application for 800/2 was approved', time: '2d ago', read: true }
 ];
 
 import { CandidateExamRoom } from './CandidateExamRoom';
@@ -96,10 +134,37 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
   const { t, language, setLanguage, translateContent } = useLanguage();
   const [takingExamId, setTakingExamId] = useState<string | null>(null);
   
-  const exams = isPopulated ? populatedExams : [];
+  const [activeTab, setActiveTab] = useState<'active' | 'history' | 'certificates' | 'renewal' | 'status'>('active');
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [userProfileData, setUserProfileData] = useState<UserProfileData>({
+    name: mockUser.name,
+    email: 'ahmad.faiz@example.com',
+    bio: 'Candidate Member - ' + mockUser.category,
+    avatarUrl: mockUser.avatarUrl || null
+  });
+  const [notifications, setNotifications] = useState(mockNotifications);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const unreadCount = notifications.filter(n => !n.read).length;
+  const [selectedCertForRenewal, setSelectedCertForRenewal] = useState<string>('');
+
+  const handleDownloadCert = (certName: string) => {
+    const text = `Certificate of Completion\n\nThis is to certify that you have passed the ${certName} examination.\n\nMalaysian Red Crescent Society`;
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Certificate_${certName.replace(/\s+/g, '_')}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const exams = isPopulated ? [...populatedExams, ...completedExams] : [];
   const certs = isPopulated ? populatedCerts : [];
   const upcomingExams = exams.filter(e => e.type === 'upcoming');
   const retestExams = exams.filter(e => e.type === 'retest');
+  const historyExams = exams.filter(e => e.type === 'completed');
 
   // Live Clock
   useEffect(() => {
@@ -167,6 +232,60 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
             ))}
           </div>
 
+          <div className="h-6 w-px bg-slate-200 hidden sm:block"></div>
+
+          {/* Notification Center */}
+          <div className="relative">
+            <button 
+              onClick={() => setShowNotifications(!showNotifications)}
+              className="w-10 h-10 rounded-full flex items-center justify-center bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 transition-colors relative"
+            >
+              <Bell className="w-5 h-5" />
+              {unreadCount > 0 && (
+                <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-brand-red rounded-full border-2 border-white"></span>
+              )}
+            </button>
+
+            <AnimatePresence>
+              {showNotifications && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden z-50 flex flex-col"
+                >
+                  <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                    <h3 className="font-bold text-charcoal">{translateContent('Notifications')}</h3>
+                    <button onClick={() => setShowNotifications(false)}><X className="w-4 h-4 text-slate-400" /></button>
+                  </div>
+                  <div className="max-h-80 overflow-y-auto">
+                    {notifications.length > 0 ? notifications.map(notif => (
+                      <div key={notif.id} className={`p-4 border-b border-slate-50 flex gap-3 ${notif.read ? 'opacity-60' : 'bg-white'}`}>
+                        <div className={`mt-0.5 shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-slate-50 border border-slate-100`}>
+                          {notif.type === 'info' && <Bell className="w-4 h-4 text-action-teal" />}
+                          {notif.type === 'warning' && <AlertCircle className="w-4 h-4 text-amber-500" />}
+                          {notif.type === 'success' && <CheckCircle className="w-4 h-4 text-emerald-500" />}
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-charcoal mb-1 leading-snug">{translateContent(notif.message)}</p>
+                          <span className="text-[10px] font-bold text-slate-400">{notif.time}</span>
+                        </div>
+                        <button 
+                          onClick={() => setNotifications(notifications.filter(n => n.id !== notif.id))}
+                          className="shrink-0 text-slate-300 hover:text-brand-red"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )) : (
+                      <div className="p-8 text-center text-slate-500 text-sm">{translateContent('No notifications')}</div>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
           {/* Live Clock */}
           <div className="hidden sm:flex items-center gap-1.5 text-sm font-mono font-medium text-slate-600 bg-slate-50 px-3 py-1.5 rounded-md border border-slate-200">
             <Clock className="w-4 h-4 text-brand-red" />
@@ -185,13 +304,16 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
               </div>
             </div>
             
-            <div className="w-10 h-10 rounded-full bg-slate-100 border-2 border-white shadow-sm flex items-center justify-center text-slate-600 font-bold overflow-hidden ring-1 ring-slate-200">
-              {mockUser.avatarUrl ? (
-                <img src={mockUser.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+            <button 
+              onClick={() => setIsProfileModalOpen(true)}
+              className="w-10 h-10 rounded-full bg-slate-100 border-2 border-white shadow-sm flex items-center justify-center text-slate-600 font-bold overflow-hidden ring-1 ring-slate-200 hover:ring-brand-red transition-all cursor-pointer outline-none focus:ring-brand-red"
+            >
+              {userProfileData.avatarUrl ? (
+                <img src={userProfileData.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
               ) : (
                 <User className="w-5 h-5 text-slate-400" />
               )}
-            </div>
+            </button>
             
             <button 
               onClick={onLogout}
@@ -244,9 +366,69 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
           {/* --- LEFT COLUMN (65% -> col-span-8) --- */}
-          <div className="lg:col-span-8 space-y-8">
-            
-            {/* Active/Upcoming Exams */}
+          <div className={`${activeTab === 'active' ? 'lg:col-span-8' : 'lg:col-span-12'} space-y-8`}>
+
+            {upcomingExams.some(e => {
+              const d = new Date(e.date);
+              const diffMs = d.getTime() - new Date().getTime();
+              return diffMs > 0 && diffMs < 48 * 60 * 60 * 1000;
+            }) && (
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-2 flex flex-col md:flex-row md:items-start gap-4">
+                <div className="bg-amber-100 text-amber-600 p-2 rounded-lg shrink-0">
+                  <AlertCircle className="w-5 h-5" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-amber-800 font-bold text-sm mb-2">{translateContent("Exam Readiness Checklist (Next 48 Hours)")}</h4>
+                  <ul className="space-y-2 text-sm text-amber-700/90 font-medium">
+                    <li className="flex items-center gap-2 text-emerald-600"><CheckCircle className="w-4 h-4"/> {translateContent("Stable internet connection confirmed")}</li>
+                    <li className="flex items-center gap-2 text-amber-600/70"><div className="w-4 h-4 rounded border-2 border-amber-400 flex items-center justify-center"></div> {translateContent("Identity document ready")}</li>
+                    <li className="flex items-center gap-2 text-amber-600/70"><div className="w-4 h-4 rounded border-2 border-amber-400 flex items-center justify-center"></div> {translateContent("Exam time confirmed (13:30)")}</li>
+                    <li className="flex items-center gap-2 text-amber-600/70"><div className="w-4 h-4 rounded border-2 border-amber-400 flex items-center justify-center"></div> {translateContent("Device charged and ready")}</li>
+                  </ul>
+                </div>
+              </div>
+            )}
+
+            <div className="flex items-center gap-6 border-b border-slate-200 mb-6 overflow-x-auto pb-1">
+              <button 
+                onClick={() => setActiveTab('active')}
+                className={`pb-2 text-sm font-bold transition-colors relative whitespace-nowrap ${activeTab === 'active' ? 'text-brand-red' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                {translateContent('Active')}
+                {activeTab === 'active' && <div className="absolute bottom-[-5px] left-0 right-0 h-0.5 bg-brand-red rounded-t-full"></div>}
+              </button>
+              <button 
+                onClick={() => setActiveTab('history')}
+                className={`pb-2 text-sm font-bold transition-colors relative whitespace-nowrap ${activeTab === 'history' ? 'text-brand-red' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                {translateContent('History')}
+                {activeTab === 'history' && <div className="absolute bottom-[-5px] left-0 right-0 h-0.5 bg-brand-red rounded-t-full"></div>}
+              </button>
+              <button 
+                onClick={() => setActiveTab('certificates')}
+                className={`pb-2 text-sm font-bold transition-colors relative whitespace-nowrap ${activeTab === 'certificates' ? 'text-brand-red' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                {translateContent('Certificates')}
+                {activeTab === 'certificates' && <div className="absolute bottom-[-5px] left-0 right-0 h-0.5 bg-brand-red rounded-t-full"></div>}
+              </button>
+              <button 
+                onClick={() => setActiveTab('renewal')}
+                className={`pb-2 text-sm font-bold transition-colors relative whitespace-nowrap ${activeTab === 'renewal' ? 'text-brand-red' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                {translateContent('Renewal')}
+                {activeTab === 'renewal' && <div className="absolute bottom-[-5px] left-0 right-0 h-0.5 bg-brand-red rounded-t-full"></div>}
+              </button>
+              <button 
+                onClick={() => setActiveTab('status')}
+                className={`pb-2 text-sm font-bold transition-colors relative whitespace-nowrap ${activeTab === 'status' ? 'text-brand-red' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                {translateContent('Status')}
+                {activeTab === 'status' && <div className="absolute bottom-[-5px] left-0 right-0 h-0.5 bg-brand-red rounded-t-full"></div>}
+              </button>
+            </div>
+
+            {activeTab === 'active' ? (
+              <>
             <section>
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2.5">
@@ -288,6 +470,17 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
                               </span>
                             </div>
                             <h3 className="text-xl font-bold text-charcoal mb-2 leading-snug group-hover:text-brand-red transition-colors">{exam.title}</h3>
+                            <div className="mt-2 mb-4">
+                              {(() => {
+                                const feeDetails = calculateCandidateFee(exam.date, new Date().toISOString().split('T')[0], mockUser.category as any);
+                                const isLate = feeDetails.isLate;
+                                return isLate ? (
+                                  <span className="text-xs font-bold text-amber-600 flex items-center gap-1.5"><AlertCircle className="w-3.5 h-3.5"/> ⚠ {translateContent("Late Application: RM14 (merged with other late applicants)")}</span>
+                                ) : (
+                                  <span className="text-xs font-bold text-emerald-600 flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5"/> ✓ {translateContent("Standard Fee: RM")}{feeDetails.fee}</span>
+                                )
+                              })()}
+                            </div>
                             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-slate-500 font-medium mt-4">
                               <div className="flex items-center gap-2">
                                 <Clock className="w-4 h-4 text-slate-400" /> 
@@ -327,7 +520,7 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
                                 : 'bg-action-teal hover:bg-teal-700 text-white shadow-md hover:shadow-xl hover:shadow-teal-900/20 active:scale-[0.98]'
                             }`}
                           >
-                            {isLocked ? 'Locked' : 'Enter Exam Room'}
+                            {isLocked ? 'Locked' : translateContent('Attend Exam')}
                           </button>
                         </div>
                       </motion.div>
@@ -345,102 +538,73 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
               )}
             </section>
 
-            {/* Retest Area */}
-            {retestExams.length > 0 && (
-              <section className="pt-2">
-                <div className="flex items-center gap-2.5 mb-5">
-                  <div className="bg-amber-100 p-2 rounded-lg">
-                    <AlertCircle className="w-5 h-5 text-amber-600" />
-                  </div>
-                  <h2 className="text-xl font-bold text-charcoal tracking-tight">Required Retests</h2>
-                </div>
-                
-                <div className="space-y-4">
-                  {retestExams.map((exam) => (
-                    <motion.div 
-                      key={exam.id}
-                      initial={{ opacity: 0, scale: 0.99 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="bg-amber-50/50 rounded-2xl border border-amber-200/60 overflow-hidden relative group hover:border-amber-300 transition-colors"
-                    >
-                      <div className="absolute top-0 left-0 bottom-0 w-2 bg-gradient-to-b from-amber-400 to-amber-500"></div>
-                      <div className="p-6 pl-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                        <div>
-                          <div className="flex items-center gap-3 mb-2">
-                            <span className="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-lg text-[10px] font-black uppercase tracking-widest">
-                              Mandatory Retest
-                            </span>
-                            <span className="text-xs font-bold text-amber-700/70 border border-amber-200 px-2 py-0.5 rounded">{exam.code}</span>
-                          </div>
-                          <h3 className="font-bold text-charcoal text-lg">{exam.title}</h3>
-                          <p className="text-sm text-slate-600 mt-2 font-medium flex items-center gap-2">
-                            <Info className="w-4 h-4 text-amber-500" />
-                            Reason: {exam.retestReason}
-                          </p>
-                        </div>
-                        <button className="w-full md:w-auto px-6 py-3 bg-white border border-amber-200 text-slate-800 hover:text-amber-800 hover:bg-amber-50 hover:border-amber-300 rounded-xl text-sm font-bold transition-all shadow-sm whitespace-nowrap active:scale-[0.98]">
-                          Review Requirements
-                        </button>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </section>
-            )}
-          </div>
-
-          {/* --- RIGHT COLUMN (35% -> col-span-4) --- */}
-          <div className="lg:col-span-4 space-y-8">
-            
-            {/* Profile Summary Widget */}
+            </>
+            ) : activeTab === 'history' ? (
             <section>
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-visible relative">
-                <div className="p-6 pb-8 bg-charcoal rounded-t-2xl relative overflow-hidden">
-                  <div className="absolute top-0 right-0 -mr-12 -mt-12 opacity-5 pointer-events-none">
-                    <Shield className="w-48 h-48 text-white" />
-                  </div>
-                  <h3 className="text-xs font-bold tracking-widest uppercase text-gray-400 mb-4">Membership Profile</h3>
-                  
-                  <div className="flex items-center justify-between group">
-                    <div>
-                      <div className="flex items-end gap-3 mb-1">
-                        <h4 className="text-3xl font-black text-white">{mockUser.category}</h4>
-                      </div>
-                      <span className="text-sm font-medium text-slate-300 block">Verified Tier</span>
-                    </div>
-                    
-                    {/* Tooltip trigger */}
-                    <div className="relative flex flex-col items-center cursor-help">
-                      <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center border border-slate-700 hover:bg-slate-700 transition-colors">
-                        <Info className="w-5 h-5 text-slate-300" />
-                      </div>
-                      {/* Tooltip Content */}
-                      <div className="absolute top-full right-0 mt-3 w-64 bg-slate-800 text-slate-200 text-xs rounded-xl p-4 shadow-xl border border-slate-700 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 font-medium leading-relaxed">
-                        <div className="absolute -top-2 right-4 w-4 h-4 bg-slate-800 border-l border-t border-slate-700 rotate-45"></div>
-                        <span className="relative z-10"><strong className="text-white">Fee Structure:</strong> As a registered {mockUser.category} member, your examination fees are subsidized according to the state branch charter.</span>
-                      </div>
-                    </div>
-                  </div>
+              <div className="flex items-center gap-2.5 mb-5">
+                <div className="bg-slate-100 p-2 rounded-lg">
+                  <FileText className="w-5 h-5 text-slate-600" />
                 </div>
-                
-                <div className="p-6 bg-white rounded-b-2xl">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-500 font-medium">Account Status</span>
-                    <span className="font-bold text-emerald-600 flex items-center gap-1.5 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-100">
-                      <CheckCircle className="w-4 h-4" /> Active
-                    </span>
-                  </div>
+                <h2 className="text-xl font-bold text-charcoal tracking-tight">{translateContent("Application History")}</h2>
+              </div>
+              
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm text-slate-600">
+                    <thead className="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-widest">
+                      <tr>
+                        <th className="px-6 py-4">{translateContent('Exam')}</th>
+                        <th className="px-6 py-4">{translateContent('Date')}</th>
+                        <th className="px-6 py-4">{translateContent('Result')}</th>
+                        <th className="px-6 py-4 text-right">{translateContent('Certificate')}</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {historyExams.length > 0 ? historyExams.map(exam => (
+                        <tr key={exam.id} className="hover:bg-slate-50/50 transition-colors">
+                          <td className="px-6 py-4">
+                            <div className="font-bold text-charcoal">{exam.title}</div>
+                            <div className="font-mono text-[10px] text-slate-400 mt-0.5">{exam.code}</div>
+                          </td>
+                          <td className="px-6 py-4 font-medium">{new Date(exam.date).toLocaleDateString('en-GB')}</td>
+                          <td className="px-6 py-4">
+                            <span className={`px-2.5 py-1 rounded-md text-xs font-bold ${
+                              exam.result === 'Pass' ? 'bg-emerald-100 text-emerald-700' : 
+                              exam.result === 'Fail' ? 'bg-brand-red/10 text-brand-red' : 
+                              'bg-slate-100 text-slate-600'
+                            }`}>
+                              {translateContent(exam.result || 'Pending')}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            {exam.result === 'Pass' && (
+                              <button 
+                                onClick={() => handleDownloadCert(exam.title)}
+                                className="text-action-teal hover:text-teal-700 font-bold text-xs flex items-center justify-end gap-1.5 ml-auto"
+                              >
+                                <Download className="w-3.5 h-3.5" />
+                                {translateContent('Download')}
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      )) : (
+                        <tr>
+                          <td colSpan={4} className="px-6 py-8 text-center text-slate-500">{translateContent('No history found')}</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </section>
-
-            {/* My Digital Certificates */}
+            ) : activeTab === 'certificates' ? (
             <section>
               <div className="flex items-center gap-2.5 mb-5">
                 <div className="bg-yellow-100 p-2 rounded-lg">
                   <Award className="w-5 h-5 text-yellow-600" />
                 </div>
-                <h3 className="text-xl font-bold text-charcoal tracking-tight">Digital Certificates</h3>
+                <h3 className="text-xl font-bold text-charcoal tracking-tight">{translateContent("Digital Certificates")}</h3>
               </div>
               
               {certs.length > 0 ? (
@@ -461,9 +625,12 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
                         <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">
                           Issued: <span className="text-slate-700">{cert.dateIssued}</span>
                         </span>
-                        <button className="text-slate-600 hover:text-action-teal text-xs font-bold flex items-center justify-center gap-1.5 bg-slate-50 hover:bg-teal-50 border border-slate-200 hover:border-action-teal/30 px-3 py-2 rounded-lg transition-all active:scale-[0.98]">
+                        <button 
+                          onClick={() => handleDownloadCert(cert.title)}
+                          className="text-slate-600 hover:text-action-teal text-xs font-bold flex items-center justify-center gap-1.5 bg-slate-50 hover:bg-teal-50 border border-slate-200 hover:border-action-teal/30 px-3 py-2 rounded-lg transition-all active:scale-[0.98]"
+                        >
                           <Download className="w-3.5 h-3.5" />
-                          Cetak Sijil
+                          {translateContent("Cetak Sijil")}
                         </button>
                       </div>
                     </div>
@@ -472,16 +639,172 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
               ) : (
                 <div className="bg-surface-cream rounded-2xl border border-slate-200 border-dashed p-8 text-center">
                   <Award className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-                  <p className="text-charcoal font-bold mb-1">No Certificates Yet</p>
-                  <p className="text-sm text-slate-500 max-w-[200px] mx-auto leading-relaxed">Complete an exam to earn your digital certificate.</p>
+                  <p className="text-charcoal font-bold mb-1">{translateContent("No Certificates Yet")}</p>
+                  <p className="text-sm text-slate-500 max-w-[200px] mx-auto leading-relaxed">{translateContent("Complete an exam to earn your digital certificate.")}</p>
                 </div>
               )}
             </section>
+            ) : activeTab === 'renewal' ? (
+              <div className="space-y-8">
+                {/* Certificate Renewal Calculator */}
+                <section>
+                  <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 max-w-xl">
+                    <h3 className="text-sm font-bold text-charcoal mb-4 flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-action-teal" />
+                      {translateContent("Certificate Renewal Calculator")}
+                    </h3>
+                    <div className="space-y-4">
+                      <p className="text-xs text-amber-600 font-bold bg-amber-50 p-2 rounded border border-amber-100">
+                        {translateContent("Renewal starts from original expiry date — not today's date")}
+                      </p>
+                      
+                      <div>
+                        <label className="text-xs font-bold text-slate-500 block mb-1">{translateContent("Select Certificate")}</label>
+                        <select 
+                          className="w-full text-sm border-slate-200 rounded-lg outline-none focus:border-action-teal py-2 px-3 bg-slate-50"
+                          value={selectedCertForRenewal}
+                          onChange={(e) => setSelectedCertForRenewal(e.target.value)}
+                        >
+                          <option value="">{translateContent('-- Select --')}</option>
+                          {populatedCerts.map(c => {
+                            const d = new Date(c.dateIssued);
+                            d.setFullYear(d.getFullYear() + 3);
+                            const expired = d.getTime() < new Date().getTime();
+                            return (
+                              <option key={c.id} value={c.id}>
+                                {c.code} - {c.title} {expired ? translateContent('(Needs Renewal)') : translateContent('(Active)')}
+                              </option>
+                            );
+                          })}
+                        </select>
+                      </div>
+
+                      {selectedCertForRenewal && (
+                        <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 text-sm">
+                          <div className="flex justify-between mb-1">
+                            <span className="text-slate-500">{translateContent('Current Expiry:')}</span>
+                            <span className="font-medium text-charcoal">
+                              {(() => {
+                                const cert = populatedCerts.find(c => c.id === selectedCertForRenewal);
+                                if (!cert) return '';
+                                const d = new Date(cert.dateIssued);
+                                d.setFullYear(d.getFullYear() + 3);
+                                return d.toISOString().split('T')[0];
+                              })()}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-500">{translateContent('New Expiry:')}</span>
+                            <span className="font-bold text-action-teal">
+                              {(() => {
+                                const cert = populatedCerts.find(c => c.id === selectedCertForRenewal);
+                                if (!cert) return '';
+                                const d = new Date(cert.dateIssued);
+                                d.setFullYear(d.getFullYear() + 3);
+                                const currentExp = d.toISOString().split('T')[0];
+                                return calculateRenewalExpiry(currentExp, 3);
+                              })()}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+
+                      <button className="w-full py-2 bg-slate-100 hover:bg-slate-200 text-charcoal text-sm font-bold rounded-lg transition-colors border border-slate-200">
+                        {translateContent("Request Renewal")}
+                      </button>
+                    </div>
+                  </div>
+                </section>
+              </div>
+            ) : activeTab === 'status' ? (
+              <div className="space-y-8">
+                <section>
+                  <div className="flex items-center gap-2.5 mb-5">
+                    <div className="bg-blue-100 p-2 rounded-lg">
+                      <Info className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <h3 className="text-xl font-bold text-charcoal tracking-tight">{translateContent("Renewal Status")}</h3>
+                  </div>
+                  
+                  <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden max-w-xl">
+                    <div className="p-6 border-b border-slate-100 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                      <div>
+                        <span className="text-xs font-bold text-slate-400 mb-1 block">800/2</span>
+                        <h4 className="font-bold text-charcoal text-sm">Bantuan Bencana Alam</h4>
+                      </div>
+                      <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700">
+                        {translateContent('Needs Renewal')}
+                      </span>
+                    </div>
+                    <div className="p-6 border-b border-slate-100 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                      <div>
+                        <span className="text-xs font-bold text-slate-400 mb-1 block">800/1</span>
+                        <h4 className="font-bold text-charcoal text-sm">Pendidikan Kesihatan Asas</h4>
+                      </div>
+                      <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700">
+                        {translateContent('Pending Approval')}
+                      </span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+            ) : null}
 
           </div>
+
+          {/* --- RIGHT COLUMN (35% -> col-span-4) --- */}
+          {activeTab === 'active' && (
+          <div className="lg:col-span-4 space-y-8">
+
+
+            {/* Retest Area */}
+            {retestExams.length > 0 && (
+              <div className="bg-amber-50 rounded-2xl border border-amber-200 p-6 shadow-sm">
+                <h3 className="text-sm font-bold text-amber-900 mb-4 flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 text-amber-600" />
+                  {translateContent("Required Retests")}
+                </h3>
+                <div className="space-y-3">
+                  {retestExams.map((exam) => (
+                    <div 
+                      key={exam.id}
+                      className="bg-white rounded-xl border border-amber-100 p-4 shadow-sm"
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="px-2 py-0.5 bg-amber-100 text-amber-800 rounded text-[10px] font-black uppercase tracking-widest leading-none">
+                          {translateContent('Retest')}
+                        </span>
+                        <span className="text-xs font-bold text-slate-500">{exam.code}</span>
+                      </div>
+                      <h4 className="font-bold text-charcoal text-sm mb-2">{exam.title}</h4>
+                      <p className="text-xs text-slate-600 mb-3 flex gap-1.5">
+                        <Info className="w-4 h-4 text-amber-500 shrink-0" />
+                        <span>{translateContent('Reason:')} {exam.retestReason}</span>
+                      </p>
+                      <button className="w-full py-2 bg-amber-100 hover:bg-amber-200 active:bg-amber-300 text-amber-900 rounded-lg text-xs font-bold transition-colors">
+                        {translateContent('Review Requirements')}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+          )}
         </div>
       </main>
       )}
+      
+      <UserProfileModal 
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+        userData={userProfileData}
+        onSave={(data) => {
+          setUserProfileData(data);
+          setIsProfileModalOpen(false);
+          // show a mock toast or just let it close
+        }}
+      />
     </div>
   );
 };

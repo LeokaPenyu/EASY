@@ -125,7 +125,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
         
       if (translated === text && text.length > 3) {
          // Fake translation suffix if we don't know the phrase
-         return `${text} [EN]`;
+         return text;
       }
       return translated;
     } else if (language === Language.BM && !text.match(/^[0-9]+$/)) {
@@ -136,11 +136,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
         .replace(/Included/gi, "Disertakan");
 
       if (translated === text && text.length > 3 && !text.match(/[a-zA-Z]/i) === false) {
-         // Just append a [BM] marker for strings we didn't explicitly translate
-         // to prove to the user that translation ran through the whole system
-         if (!text.includes('[BM]') && !text.includes('?')) {
-           return `${text} [BM]`;
-         }
+         return text;
       }
       return translated;
     }
