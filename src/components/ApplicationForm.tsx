@@ -17,7 +17,8 @@ import {
   Stethoscope, 
   UserSquare2,
   AlertTriangle,
-  XCircle
+  XCircle,
+  UserCheck
 } from 'lucide-react';
 
 interface ApplicationFormProps {
@@ -29,7 +30,6 @@ interface ApplicationFormProps {
 
 export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamType, goBack, onSubmit, onSaveDraft }) => {
   const { t } = useLanguage();
-  const [activeTab, setActiveTab] = React.useState<'permohonan' | 'rumusan' | 'keputusan'>('permohonan');
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [form, setForm] = React.useState<ApplicationFormState>({
     district: '',
@@ -73,22 +73,31 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
     }
   }, [initialExamType]);
 
-  const addJurulatih = () => {
-    setForm(prev => ({ ...prev, jurulatih: [...prev.jurulatih, { ...newJurulatih, id: Date.now().toString() }] }));
-    setNewJurulatih({ name: '', icNumber: '', address: '', warrantNumber: '', certExpiryDate: '' });
+  const updateJurulatih = (id: string, field: string, value: string) => {
+    setForm(prev => ({
+      ...prev,
+      jurulatih: prev.jurulatih.map(j => j.id === id ? { ...j, [field]: value } : j)
+    }));
   };
+  const addJurulatihRow = () => setForm(prev => ({ ...prev, jurulatih: [...prev.jurulatih, { id: Math.random().toString(36).substr(2, 9), name: '', icNumber: '', address: '', warrantNumber: '', certExpiryDate: '' }] }));
   const removeJurulatih = (id: string) => setForm(prev => ({ ...prev, jurulatih: prev.jurulatih.filter(j => j.id !== id) }));
 
-  const addPenyelia = () => {
-    setForm(prev => ({ ...prev, penyelia: [...prev.penyelia, { ...newPenyelia, id: Date.now().toString() }] }));
-    setNewPenyelia({ name: '', icNumber: '' });
+  const updatePenyelia = (id: string, field: string, value: string) => {
+    setForm(prev => ({
+      ...prev,
+      penyelia: prev.penyelia.map(p => p.id === id ? { ...p, [field]: value } : p)
+    }));
   };
+  const addPenyeliaRow = () => setForm(prev => ({ ...prev, penyelia: [...prev.penyelia, { id: Math.random().toString(36).substr(2, 9), name: '', icNumber: '' }] }));
   const removePenyelia = (id: string) => setForm(prev => ({ ...prev, penyelia: prev.penyelia.filter(p => p.id !== id) }));
 
-  const addPemeriksa = () => {
-    setForm(prev => ({ ...prev, pemeriksa: [...prev.pemeriksa, { ...newPemeriksa, id: Date.now().toString() }] }));
-    setNewPemeriksa({ name: '', address: '', warrantNumber: '', certExpiryDate: '' });
+  const updatePemeriksa = (id: string, field: string, value: string) => {
+    setForm(prev => ({
+      ...prev,
+      pemeriksa: prev.pemeriksa.map(p => p.id === id ? { ...p, [field]: value } : p)
+    }));
   };
+  const addPemeriksaRow = () => setForm(prev => ({ ...prev, pemeriksa: [...prev.pemeriksa, { id: Math.random().toString(36).substr(2, 9), name: '', address: '', warrantNumber: '', certExpiryDate: '' }] }));
   const removePemeriksa = (id: string) => setForm(prev => ({ ...prev, pemeriksa: prev.pemeriksa.filter(p => p.id !== id) }));
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -192,12 +201,6 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
     });
   };
 
-  const tabs = [
-    { id: 'permohonan', label: t('tabApplication') },
-    { id: 'rumusan', label: t('tabSummary') },
-    { id: 'keputusan', label: t('tabResult') },
-  ];
-
   return (
     <div className="max-w-[1200px] mx-auto space-y-8 pb-20">
       {/* Confirm Dialog */}
@@ -217,7 +220,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
                   confirmDialog.onConfirm();
                   setConfirmDialog(null);
                 }}
-                className="px-6 py-2 bg-action-teal text-white rounded shadow-md font-bold text-sm hover:bg-teal-700"
+                className="btn-primary shadow-md text-sm justify-center"
               >
                 Teruskan
               </button>
@@ -241,7 +244,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
                   if (alertDialog.onClose) alertDialog.onClose();
                   setAlertDialog(null);
                 }}
-                className="px-8 py-2 bg-action-teal text-white rounded shadow-md font-bold text-sm hover:bg-teal-700"
+                className="btn-primary shadow-md text-sm px-8 justify-center"
               >
                 Tutup
               </button>
@@ -250,43 +253,35 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
         </div>
       )}
 
-      {/* Header & Tabs */}
-      <div className="flex flex-col gap-6">
-        <div className="flex items-center gap-4">
-          <button onClick={goBack} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">{t('registrationTitle')}</h1>
-            <p className="text-gray-500 text-sm">{t('systemSubtitle')}</p>
-          </div>
-        </div>
-
-        <div className="flex border-b border-gray-200 overflow-x-auto no-scrollbar">
-          <div className="flex min-w-max">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`px-6 md:px-8 py-3 text-sm font-bold transition-all border-b-2 relative ${
-                  activeTab === tab.id
-                    ? 'border-brand-red text-brand-red'
-                    : 'border-transparent text-gray-400 hover:text-gray-600'
-                }`}
-              >
-                {tab.label}
-                {activeTab === tab.id && (
-                  <div className="absolute -bottom-[2px] left-0 w-full h-[2px] bg-brand-red rounded-full" />
-                )}
-              </button>
-            ))}
-          </div>
+      <div className="flex items-center gap-4 border-b border-gray-200 pb-4 mb-4">
+        <button onClick={goBack} className="p-2 hover:bg-gray-100 rounded-full transition-colors group">
+          <ChevronLeft className="w-6 h-6 text-gray-500 group-hover:text-charcoal" />
+        </button>
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">{t('registrationTitle')}</h1>
+          <p className="text-gray-500 text-sm">{t('systemSubtitle')}</p>
         </div>
       </div>
 
-      {activeTab === 'permohonan' ? (
-        <div className="max-w-[1100px] mx-auto space-y-8">
-          <div className="card bg-brand-red/[0.02] border-l-4 border-brand-red shadow-sm">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        {/* Form Header */}
+        <div className="bg-white border-b border-gray-200 px-6 py-5">
+          <h1 className="text-xl font-bold text-charcoal mb-3">Borang Permohonan untuk Peperiksaan</h1>
+          <div className="flex flex-wrap gap-4 text-gray-600 text-sm">
+            <div className="flex items-center gap-1.5">
+              <span className="text-gray-500">No. Pendaftaran:</span>
+              <span className="font-bold text-charcoal px-2 py-0.5 bg-gray-100 rounded">(Akan dijana)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-gray-500">Status:</span>
+              <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-[4px] text-xs font-bold uppercase tracking-wider">Baru</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 md:p-8 space-y-10">
+
+          <div className="bg-brand-red/[0.02] border-l-4 border-brand-red shadow-sm border-y border-r border-gray-100 rounded-r-lg p-5">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-1.5 h-1.5 rounded-full bg-brand-red" />
               <h4 className="font-bold text-brand-red text-sm uppercase tracking-widest">{t('registrationInstructions')}</h4>
@@ -299,29 +294,13 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
           </div>
 
           {/* Section 1: Maklumat Cawangan */}
-          <section className="card space-y-8 shadow-sm border-gray-200/60">
-            <div className="flex items-center justify-between border-b border-gray-50 pb-5">
-              <h3 className="font-bold text-charcoal flex items-center gap-3">
-                <div className="p-2 bg-brand-red/5 rounded-lg">
-                  <Building2 className="w-5 h-5 text-brand-red" />
-                </div>
-                <span className="tracking-tight">{t('organizerInfo')}</span>
-              </h3>
-              <span className="text-[10px] font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">SECTION 01</span>
-            </div>
-
-            <div className="flex flex-col sm:flex-row sm:gap-12 gap-6 items-start sm:items-center mb-8 p-4 bg-gray-50/50 rounded-[8px] border border-gray-100">
-              <div className="space-y-1">
-                <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">No. Pendaftaran</div>
-                <div className="font-bold text-lg text-charcoal">(Akan dijana)</div>
-              </div>
-              <div className="space-y-1">
-                <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Status</div>
-                <div className="font-semibold text-charcoal bg-gray-200 px-3 py-1 rounded text-xs inline-block">Baru</div>
-              </div>
-            </div>
+          <section className="space-y-4">
+            <h2 className="text-[14px] font-bold text-charcoal border-b border-gray-100 pb-2 flex items-center gap-2">
+              <Building2 className="w-4 h-4 text-action-teal" />
+              1. {t('organizerInfo')}
+            </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">{t('districtLabel')} <span className="text-brand-red">*</span></label>
                 <select 
@@ -394,16 +373,11 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
           </section>
 
           {/* Section 2: Jurulatih / Pegawai */}
-          <section className="card space-y-8 shadow-sm border-gray-200/60">
-            <div className="flex items-center justify-between border-b border-gray-50 pb-5">
-              <h3 className="font-bold text-charcoal flex items-center gap-3">
-                <div className="p-2 bg-brand-red/5 rounded-lg">
-                  <Stethoscope className="w-5 h-5 text-brand-red" />
-                </div>
-                <span className="tracking-tight">{t('officerInfo')}</span>
-              </h3>
-              <span className="text-[10px] font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">SECTION 02</span>
-            </div>
+          <section className="space-y-4">
+            <h2 className="text-[14px] font-bold text-charcoal border-b border-gray-100 pb-2 flex items-center gap-2">
+              <Stethoscope className="w-4 h-4 text-action-teal" />
+              2. {t('officerInfo')} & Maklumat Peperiksaan
+            </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-2">
@@ -453,9 +427,177 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
             </div>
           </section>
 
-          {/* Section 3: Senarai Calon Table */}
-          <section className="card shadow-sm border-gray-200/60 p-0 overflow-hidden">
-            <div className="p-6 border-b border-gray-50 bg-gray-50/30">
+          {/* Section 3: Senarai Jurulatih */}
+          <section className="space-y-4">
+            <h2 className="text-[14px] font-bold text-charcoal border-b border-gray-100 pb-2 flex items-center gap-2">
+              <UserCheck className="w-4 h-4 text-action-teal" />
+              3. Senarai Jurulatih
+            </h2>
+                <div className="overflow-x-auto border border-gray-100 rounded-lg">
+                  <table className="w-full text-sm text-left">
+                    <thead>
+                      <tr className="bg-gray-100 text-gray-500 uppercase text-[10px] tracking-widest border-b border-gray-100">
+                        <th className="p-3 w-10 text-center">X</th>
+                        <th className="p-3">Nama</th>
+                        <th className="p-3">No. KP/Pasport</th>
+                        <th className="p-3">Alamat</th>
+                        <th className="p-3">No. Jurulatih/Waran</th>
+                        <th className="p-3">Tarikh Luput</th>
+                        <th className="p-3">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {form.jurulatih.length === 0 ? (
+                        <tr>
+                          <td colSpan={7} className="p-4 text-center text-gray-400 italic text-xs">Tiada Rekod</td>
+                        </tr>
+                      ) : (
+                        form.jurulatih.map((j) => {
+                          const status = j.certExpiryDate ? isInstructorEligible(j.certExpiryDate) : null;
+                          return (
+                            <tr key={j.id} className="border-b border-gray-50 hover:bg-gray-50/50">
+                              <td className="p-3 text-center">
+                                <button onClick={() => removeJurulatih(j.id)} className="p-1 text-gray-400 hover:text-alert-red rounded-md text-lg font-bold transition-colors">×</button>
+                              </td>
+                              <td className="p-2"><input type="text" placeholder="Nama" value={j.name} onChange={(e) => updateJurulatih(j.id, 'name', e.target.value)} className="w-full px-2 py-1.5 text-sm bg-transparent border-none outline-none focus:bg-white focus:ring-1 focus:ring-action-teal/40 rounded transition-all font-semibold text-charcoal" /></td>
+                              <td className="p-2"><input type="text" placeholder="No. KP" value={j.icNumber} onChange={(e) => updateJurulatih(j.id, 'icNumber', e.target.value)} className="w-full px-2 py-1.5 text-sm bg-transparent border-none outline-none focus:bg-white focus:ring-1 focus:ring-action-teal/40 rounded transition-all font-medium text-charcoal" /></td>
+                              <td className="p-2"><input type="text" placeholder="Alamat" value={j.address} onChange={(e) => updateJurulatih(j.id, 'address', e.target.value)} className="w-full px-2 py-1.5 text-sm bg-transparent border-none outline-none focus:bg-white focus:ring-1 focus:ring-action-teal/40 rounded transition-all font-medium text-charcoal min-w-[120px]" /></td>
+                              <td className="p-2"><input type="text" placeholder="No. Waran" value={j.warrantNumber} onChange={(e) => updateJurulatih(j.id, 'warrantNumber', e.target.value)} className="w-full px-2 py-1.5 text-sm bg-transparent border-none outline-none focus:bg-white focus:ring-1 focus:ring-action-teal/40 rounded transition-all font-medium text-charcoal" /></td>
+                              <td className="p-2"><input type="date" value={j.certExpiryDate} onChange={(e) => updateJurulatih(j.id, 'certExpiryDate', e.target.value)} className="w-full px-2 py-1.5 text-sm bg-transparent border-none outline-none focus:bg-white focus:ring-1 focus:ring-action-teal/40 rounded transition-all font-medium text-charcoal" /></td>
+                              <td className="p-3">
+                                {status && (
+                                  <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded ${status.isEligible ? (status.isInGracePeriod ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700') : 'bg-red-100 text-red-700'}`}>
+                                    {status.isEligible ? (status.isInGracePeriod ? 'Tempoh Ihsan' : 'Sah') : 'Tamat Tempoh'}
+                                  </span>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="flex items-center mt-2">
+                  <button onClick={addJurulatihRow} type="button" className="group flex items-center gap-1.5 px-4 py-2 border border-gray-200 rounded-[4px] bg-gray-50 hover:bg-gray-100 transition-colors text-sm font-bold text-action-teal shadow-sm">
+                    <span className="text-action-teal group-hover:scale-110 transition-transform font-black">+</span>
+                    Tambah
+                  </button>
+                </div>
+              </section>
+
+              {/* Section 4: Senarai Penyelia */}
+              <section className="space-y-4">
+                <h2 className="text-[14px] font-bold text-charcoal border-b border-gray-100 pb-2 flex items-center gap-2">
+                  <UserCheck className="w-4 h-4 text-action-teal" />
+                  4. Senarai Penyelia
+                </h2>
+                
+                <div className="overflow-x-auto border border-gray-100 rounded-lg">
+                  <table className="w-full text-sm text-left">
+                    <thead>
+                      <tr className="bg-gray-100 text-gray-500 uppercase text-[10px] tracking-widest border-b border-gray-100">
+                        <th className="p-3 font-bold border-b border-gray-200 w-10 text-center">X</th>
+                        <th className="p-3 font-bold border-b border-gray-200">Nama</th>
+                        <th className="p-3 font-bold border-b border-gray-200">No. KP/Pasport</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {form.penyelia.length === 0 ? (
+                        <tr>
+                          <td colSpan={3} className="p-4 text-center text-gray-400 italic text-xs">Tiada Rekod</td>
+                        </tr>
+                      ) : (
+                        form.penyelia.map((p) => (
+                          <tr key={p.id} className="hover:bg-gray-50 transition-colors">
+                            <td className="p-3 text-center">
+                              <button onClick={() => removePenyelia(p.id)} className="p-1 text-gray-400 hover:text-alert-red rounded-md text-lg font-bold transition-colors">×</button>
+                            </td>
+                            <td className="p-2"><input type="text" placeholder="Nama" value={p.name} onChange={(e) => updatePenyelia(p.id, 'name', e.target.value)} className="w-full px-2 py-1.5 text-sm bg-transparent border-none outline-none focus:bg-white focus:ring-1 focus:ring-action-teal/40 rounded transition-all font-semibold text-charcoal" /></td>
+                            <td className="p-2"><input type="text" placeholder="No. KP" value={p.icNumber} onChange={(e) => updatePenyelia(p.id, 'icNumber', e.target.value)} className="w-full px-2 py-1.5 text-sm bg-transparent border-none outline-none focus:bg-white focus:ring-1 focus:ring-action-teal/40 rounded transition-all font-medium text-charcoal" /></td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="flex items-center mt-2">
+                  <button onClick={addPenyeliaRow} type="button" className="group flex items-center gap-1.5 px-4 py-2 border border-gray-200 rounded-[4px] bg-gray-50 hover:bg-gray-100 transition-colors text-sm font-bold text-action-teal shadow-sm">
+                    <span className="text-action-teal group-hover:scale-110 transition-transform font-black">+</span>
+                    Tambah
+                  </button>
+                </div>
+              </section>
+
+              {/* Section 5: Senarai Pemeriksa Praktikal */}
+              <section className="space-y-4">
+                <h2 className="text-[14px] font-bold text-charcoal border-b border-gray-100 pb-2 flex items-center gap-2">
+                  <UserCheck className="w-4 h-4 text-action-teal" />
+                  5. Senarai Pemeriksa Praktikal
+                </h2>
+
+                <div className="overflow-x-auto border border-gray-100 rounded-lg">
+                  <table className="w-full text-sm text-left">
+                    <thead>
+                      <tr className="bg-gray-100 text-gray-500 uppercase text-[10px] tracking-widest border-b border-gray-100">
+                        <th className="p-3 font-bold border-b border-gray-200 w-10 text-center">X</th>
+                        <th className="p-3 font-bold border-b border-gray-200">Nama</th>
+                        <th className="p-3 font-bold border-b border-gray-200">Alamat</th>
+                        <th className="p-3 font-bold border-b border-gray-200">No. Jurulatih/Waran</th>
+                        <th className="p-3 font-bold border-b border-gray-200">Tarikh Luput</th>
+                        <th className="p-3 font-bold border-b border-gray-200">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {form.pemeriksa.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className="p-4 text-center text-gray-400 italic text-xs">Tiada Rekod</td>
+                        </tr>
+                      ) : (
+                        form.pemeriksa.map((p) => {
+                          const status = p.certExpiryDate ? isInstructorEligible(p.certExpiryDate) : null;
+                          return (
+                            <tr key={p.id} className="hover:bg-gray-50 transition-colors border-b border-gray-50">
+                              <td className="p-3 text-center">
+                                <button onClick={() => removePemeriksa(p.id)} className="p-1 text-gray-400 hover:text-alert-red rounded-md text-lg font-bold transition-colors">×</button>
+                              </td>
+                              <td className="p-2"><input type="text" placeholder="Nama" value={p.name} onChange={(e) => updatePemeriksa(p.id, 'name', e.target.value)} className="w-full px-2 py-1.5 text-sm bg-transparent border-none outline-none focus:bg-white focus:ring-1 focus:ring-action-teal/40 rounded transition-all font-semibold text-charcoal" /></td>
+                              <td className="p-2"><input type="text" placeholder="Alamat" value={p.address} onChange={(e) => updatePemeriksa(p.id, 'address', e.target.value)} className="w-full px-2 py-1.5 text-sm bg-transparent border-none outline-none focus:bg-white focus:ring-1 focus:ring-action-teal/40 rounded transition-all font-medium text-charcoal min-w-[120px]" /></td>
+                              <td className="p-2"><input type="text" placeholder="No. Waran" value={p.warrantNumber} onChange={(e) => updatePemeriksa(p.id, 'warrantNumber', e.target.value)} className="w-full px-2 py-1.5 text-sm bg-transparent border-none outline-none focus:bg-white focus:ring-1 focus:ring-action-teal/40 rounded transition-all font-medium text-charcoal" /></td>
+                              <td className="p-2"><input type="date" value={p.certExpiryDate} onChange={(e) => updatePemeriksa(p.id, 'certExpiryDate', e.target.value)} className="w-full px-2 py-1.5 text-sm bg-transparent border-none outline-none focus:bg-white focus:ring-1 focus:ring-action-teal/40 rounded transition-all font-medium text-charcoal" /></td>
+                              <td className="p-3">
+                                {status && (
+                                  <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded ${status.isEligible ? (status.isInGracePeriod ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700') : 'bg-red-100 text-red-700'}`}>
+                                    {status.isEligible ? (status.isInGracePeriod ? 'Tempoh Ihsan' : 'Sah') : 'Tamat Tempoh'}
+                                  </span>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="flex items-center mt-2">
+                  <button onClick={addPemeriksaRow} type="button" className="group flex items-center gap-1.5 px-4 py-2 border border-gray-200 rounded-[4px] bg-gray-50 hover:bg-gray-100 transition-colors text-sm font-bold text-action-teal shadow-sm">
+                    <span className="text-action-teal group-hover:scale-110 transition-transform font-black">+</span>
+                    Tambah
+                  </button>
+                </div>
+              </section>
+
+          {/* Section 6: Senarai Calon Table */}
+          <section className="space-y-4">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+              <h2 className="text-[14px] font-bold text-charcoal flex items-center gap-2">
+                <Globe className="w-4 h-4 text-action-teal" />
+                6. Senarai Calon
+              </h2>
+            </div>
+            <div className="p-0 border border-gray-200 rounded-lg overflow-hidden">
                <CandidateTable 
                 candidates={form.candidates} 
                 setCandidates={(candidates) => handleInputChange('candidates', candidates)} 
@@ -465,192 +607,14 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
             </div>
           </section>
 
-          {activeTab === 'rumusan' && (
-            <>
-              {/* Section: Senarai Jurulatih */}
-              <section className="card space-y-4 shadow-sm border-gray-200/60">
-                <h3 className="font-bold text-charcoal border-b pb-2">Senarai Jurulatih</h3>
-                <div className="flex flex-wrap gap-2 p-2 bg-gray-50 rounded">
-                   <input placeholder="Nama" className="text-sm p-1 border rounded flex-1 min-w-[120px]" value={newJurulatih.name} onChange={e => setNewJurulatih(prev => ({...prev, name: e.target.value}))} />
-                   <input placeholder="No. KP" className="text-sm p-1 border rounded w-32" value={newJurulatih.icNumber} onChange={e => setNewJurulatih(prev => ({...prev, icNumber: e.target.value}))} />
-                   <input placeholder="Alamat" className="text-sm p-1 border rounded flex-1 min-w-[120px]" value={newJurulatih.address} onChange={e => setNewJurulatih(prev => ({...prev, address: e.target.value}))} />
-                   <input placeholder="No. Waran" className="text-sm p-1 border rounded w-32" value={newJurulatih.warrantNumber} onChange={e => setNewJurulatih(prev => ({...prev, warrantNumber: e.target.value}))} />
-                   <div className="flex flex-col gap-1 w-36">
-                     <span className="text-[10px] font-bold text-gray-500 uppercase">Tarikh Luput Sijil</span>
-                     <input type="date" className="text-sm p-1 border rounded w-full" value={newJurulatih.certExpiryDate} onChange={e => setNewJurulatih(prev => ({...prev, certExpiryDate: e.target.value}))} />
-                   </div>
-                   <button 
-                    onClick={addJurulatih} 
-                    disabled={newJurulatih.certExpiryDate ? !isInstructorEligible(newJurulatih.certExpiryDate).isEligible : false}
-                    className="px-4 bg-action-teal text-white rounded text-sm disabled:opacity-50 mt-4 h-8"
-                   >
-                     +
-                   </button>
-                </div>
-                {newJurulatih.certExpiryDate && (
-                  <div className="text-xs font-bold leading-tight flex items-center gap-1">
-                    {(() => {
-                      const status = isInstructorEligible(newJurulatih.certExpiryDate);
-                      if (!status.isEligible) {
-                        return <span className="text-alert-red flex items-center gap-1"><XCircle className="w-3 h-3" /> {status.message}</span>;
-                      } else if (status.isInGracePeriod) {
-                        return <span className="text-amber-500 flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> {status.message}</span>;
-                      }
-                      return <span className="text-success-green flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> {status.message}</span>;
-                    })()}
-                  </div>
-                )}
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm text-left">
-                    <thead>
-                      <tr className="bg-gray-100 text-gray-500 uppercase text-[10px] tracking-widest">
-                        <th className="p-2">Nama</th>
-                        <th className="p-2">No. KP/Pasport</th>
-                        <th className="p-2">Alamat</th>
-                        <th className="p-2">No. Jurulatih/Waran</th>
-                        <th className="p-2">Tarikh Luput</th>
-                        <th className="p-2">Status</th>
-                        <th className="p-2"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {form.jurulatih.map((j, i) => {
-                        const status = j.certExpiryDate ? isInstructorEligible(j.certExpiryDate) : null;
-                        return (
-                        <tr key={j.id} className="border-b">
-                          <td className="p-2">{j.name}</td>
-                          <td className="p-2">{j.icNumber}</td>
-                          <td className="p-2">{j.address}</td>
-                          <td className="p-2">{j.warrantNumber}</td>
-                          <td className="p-2">{j.certExpiryDate || '-'}</td>
-                          <td className="p-2">
-                            {status && (
-                              <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded ${status.isEligible ? (status.isInGracePeriod ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700') : 'bg-red-100 text-red-700'}`}>
-                                {status.isEligible ? (status.isInGracePeriod ? 'Tempoh Ihsan' : 'Sah') : 'Tamat Tempoh'}
-                              </span>
-                            )}
-                          </td>
-                          <td className="p-2"><button onClick={() => removeJurulatih(j.id)} className="text-brand-red text-xs font-bold">Padam</button></td>
-                        </tr>
-                      )})}
-                    </tbody>
-                  </table>
-                </div>
-              </section>
-
-              {/* Section: Senarai Penyelia */}
-              <section className="card space-y-4 shadow-sm border-gray-200/60">
-                <h3 className="font-bold text-charcoal border-b pb-2">Senarai Penyelia</h3>
-                <div className="flex gap-2 p-2 bg-gray-50 rounded">
-                   <input placeholder="Nama" className="text-sm p-1 border rounded" value={newPenyelia.name} onChange={e => setNewPenyelia(prev => ({...prev, name: e.target.value}))} />
-                   <input placeholder="No. KP" className="text-sm p-1 border rounded" value={newPenyelia.icNumber} onChange={e => setNewPenyelia(prev => ({...prev, icNumber: e.target.value}))} />
-                   <button onClick={addPenyelia} className="px-2 bg-action-teal text-white rounded text-sm">+</button>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm text-left">
-                    <thead>
-                      <tr className="bg-gray-100 text-gray-500 uppercase text-[10px] tracking-widest">
-                        <th className="p-2">Nama</th>
-                        <th className="p-2">No. KP/Pasport</th>
-                        <th className="p-2"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {form.penyelia.map((p, i) => (
-                        <tr key={p.id} className="border-b">
-                          <td className="p-2">{p.name}</td>
-                          <td className="p-2">{p.icNumber}</td>
-                          <td className="p-2"><button onClick={() => removePenyelia(p.id)} className="text-brand-red text-xs">Delete</button></td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </section>
-
-              {/* Section: Senarai Pemeriksa Praktikal */}
-              <section className="card space-y-4 shadow-sm border-gray-200/60">
-                <h3 className="font-bold text-charcoal border-b pb-2">Senarai Pemeriksa Praktikal</h3>
-                <div className="flex flex-wrap gap-2 p-2 bg-gray-50 rounded">
-                   <input placeholder="Nama" className="text-sm p-1 border rounded flex-1 min-w-[120px]" value={newPemeriksa.name} onChange={e => setNewPemeriksa(prev => ({...prev, name: e.target.value}))} />
-                   <input placeholder="Alamat" className="text-sm p-1 border rounded flex-1 min-w-[120px]" value={newPemeriksa.address} onChange={e => setNewPemeriksa(prev => ({...prev, address: e.target.value}))} />
-                   <input placeholder="No. Waran" className="text-sm p-1 border rounded w-32" value={newPemeriksa.warrantNumber} onChange={e => setNewPemeriksa(prev => ({...prev, warrantNumber: e.target.value}))} />
-                   <div className="flex flex-col gap-1 w-36">
-                     <span className="text-[10px] font-bold text-gray-500 uppercase">Tarikh Luput Sijil</span>
-                     <input type="date" className="text-sm p-1 border rounded w-full" value={newPemeriksa.certExpiryDate} onChange={e => setNewPemeriksa(prev => ({...prev, certExpiryDate: e.target.value}))} />
-                   </div>
-                   <button 
-                    onClick={addPemeriksa}
-                    disabled={newPemeriksa.certExpiryDate ? !isInstructorEligible(newPemeriksa.certExpiryDate).isEligible : false}
-                    className="px-4 bg-action-teal text-white rounded text-sm disabled:opacity-50 mt-4 h-8"
-                   >
-                     +
-                   </button>
-                </div>
-                {newPemeriksa.certExpiryDate && (
-                  <div className="text-xs font-bold leading-tight flex items-center gap-1">
-                    {(() => {
-                      const status = isInstructorEligible(newPemeriksa.certExpiryDate);
-                      if (!status.isEligible) {
-                        return <span className="text-alert-red flex items-center gap-1"><XCircle className="w-3 h-3" /> {status.message}</span>;
-                      } else if (status.isInGracePeriod) {
-                        return <span className="text-amber-500 flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> {status.message}</span>;
-                      }
-                      return <span className="text-success-green flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> {status.message}</span>;
-                    })()}
-                  </div>
-                )}
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm text-left">
-                    <thead>
-                      <tr className="bg-gray-100 text-gray-500 uppercase text-[10px] tracking-widest">
-                        <th className="p-2">Nama</th>
-                        <th className="p-2">Alamat</th>
-                        <th className="p-2">No. Jurulatih/Waran</th>
-                        <th className="p-2">Tarikh Luput</th>
-                        <th className="p-2">Status</th>
-                        <th className="p-2"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {form.pemeriksa.map((p, i) => {
-                        const status = p.certExpiryDate ? isInstructorEligible(p.certExpiryDate) : null;
-                        return (
-                        <tr key={p.id} className="border-b">
-                          <td className="p-2">{p.name}</td>
-                          <td className="p-2">{p.address}</td>
-                          <td className="p-2">{p.warrantNumber}</td>
-                          <td className="p-2">{p.certExpiryDate || '-'}</td>
-                          <td className="p-2">
-                            {status && (
-                              <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded ${status.isEligible ? (status.isInGracePeriod ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700') : 'bg-red-100 text-red-700'}`}>
-                                {status.isEligible ? (status.isInGracePeriod ? 'Tempoh Ihsan' : 'Sah') : 'Tamat Tempoh'}
-                              </span>
-                            )}
-                          </td>
-                          <td className="p-2"><button onClick={() => removePemeriksa(p.id)} className="text-brand-red text-xs font-bold">Padam</button></td>
-                        </tr>
-                      )})}
-                    </tbody>
-                  </table>
-                </div>
-              </section>
-            </>
-          )}
-
-          {/* Section 4: Bahas & Lampiran */}
-          <section className="card space-y-8 shadow-sm border-gray-200/60 pb-8">
-            <div className="flex items-center justify-between border-b border-gray-50 pb-5">
-              <h3 className="font-bold text-charcoal flex items-center gap-3">
-                <div className="p-2 bg-brand-red/5 rounded-lg">
-                  <Globe className="w-5 h-5 text-brand-red" />
-                </div>
-                <span className="tracking-tight">{t('languageOptionLabel')} & {t('paymentProofLabel')}</span>
-              </h3>
-              <span className="text-[10px] font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">SECTION 04</span>
-            </div>
+          {/* Section 7: Bahas & Lampiran */}
+          <section className="space-y-4 pb-8">
+            <h2 className="text-[14px] font-bold text-charcoal border-b border-gray-100 pb-2 flex items-center gap-2">
+              <Globe className="w-4 h-4 text-action-teal" />
+              7. Bahasa Peperiksaan & Bukti Pembayaran
+            </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 pt-2">
               <div className="space-y-8">
                 <div className="space-y-4">
                   <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Pilihan bahasa dalam peperiksaan <span className="text-brand-red">*</span></label>
@@ -745,7 +709,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
           </section>
 
           {/* Action Buttons at Bottom */}
-          <div className="flex flex-col md:flex-row items-center justify-end gap-4 pt-10 border-t border-gray-200">
+          <div className="bg-gray-50 border-t border-gray-200 p-4 md:px-8 py-5 flex flex-wrap gap-3 items-center justify-end -mx-6 md:-mx-8 -mb-6 md:-mb-8 mt-10">
             <button 
               onClick={goBack}
               className="w-full md:w-auto px-8 py-3 text-sm font-bold text-gray-400 hover:text-charcoal transition-colors tracking-wide uppercase"
@@ -768,15 +732,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
             </button>
           </div>
         </div>
-      ) : (
-        <div className="card flex flex-col items-center justify-center p-20 text-center space-y-4">
-          <div className="bg-gray-100 p-8 rounded-full">
-            <FileText className="w-16 h-16 text-gray-300" />
-          </div>
-          <h2 className="text-xl font-bold">{t('moduleLocked')}</h2>
-          <p className="text-gray-500 max-w-sm">{t('modulePendingTitle')}</p>
-        </div>
-      )}
+      </div>
     </div>
   );
 };

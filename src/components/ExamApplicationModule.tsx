@@ -202,9 +202,9 @@ export const ExamApplicationModule: React.FC<ExamApplicationModuleProps> = ({
         {(role === UserRole.DEC || role === UserRole.SEC) && !isSummaryReadyMode && activeTab === 'borang' && !isRejectedMode && (
           <button 
             onClick={onAddNew}
-            className="bg-action-teal text-white px-6 py-2.5 rounded-[6px] font-bold text-sm shadow-sm hover:bg-teal-700 transition-all flex items-center gap-2"
+            className="btn-primary shadow-sm"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 mr-1" />
             Tambah Permohonan
           </button>
         )}

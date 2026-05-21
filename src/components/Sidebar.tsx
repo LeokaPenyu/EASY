@@ -11,7 +11,8 @@ import {
   Settings,
   Award,
   BarChart,
-  UserCircle2
+  UserCircle2,
+  Shield // ensure Shield is imported
 } from 'lucide-react';
 import { ViewType, UserRole } from '../types';
 import { useLanguage } from '../context/LanguageContext';

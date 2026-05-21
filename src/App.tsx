@@ -149,6 +149,7 @@ export default function App() {
                 setInitialModuleStatus(ExamStatus.PENDING_VERIFICATION);
                 setViewTitle('Permohonan Baru Dihantar');
               } else if (key === 'verification-list') {
+                // Kept for fallback in case it's triggered from somewhere else
                 setExamStep('list');
                 setIsSummaryReadyView(false);
                 setIsVerificationListView(true);
@@ -218,40 +219,56 @@ export default function App() {
           />
         );
       case 'ExamApplication':
-        if (examStep === 'list') {
+        if (examStep === 'list' || examStep === 'select') {
           return (
-            <ExamApplicationModule 
-              key={`module-${navigationId}`}
-              role={role}
-              exams={exams}
-              isSummaryReadyMode={isSummaryReadyView}
-              isUnlockRequestMode={isUnlockListView}
-              isPendingSubmissionMode={isPendingSubmissionView}
-              isRejectedMode={isRejectedView}
-              isNewApplicationListMode={initialModuleTab === 'borang' && initialModuleStatus === ExamStatus.PENDING_VERIFICATION}
-              isVerificationListMode={isVerificationListView && initialModuleStatus === ExamStatus.SUBMITTED}
-              isPrintListMode={isPrintListView}
-              isSebcListMode={initialModuleTab === 'keputusan' && (initialModuleStatus === ExamStatus.SUBMITTED || initialModuleStatus === ExamStatus.APPROVED)}
-              headerTitle={viewTitle}
-              initialTab={initialModuleTab}
-              initialStatusFilter={initialModuleStatus}
-              onTabChange={(tab) => setInitialModuleTab(tab)}
-              onStatusFilterChange={(status) => setInitialModuleStatus(status)}
-              onAddNew={() => setExamStep('select')} 
-              onView={(id) => {
-                setSelectedExamId(id);
-                setIsEditMode(false);
-                setExamStep('summary');
-              }}
-              onEdit={(id) => {
-                setSelectedExamId(id);
-                setIsEditMode(true);
-                setExamStep('summary');
-              }}
-              onDelete={(id) => {
-                setExams(prev => prev.filter(e => e.id !== id));
-              }}
-            />
+            <>
+              <ExamApplicationModule 
+                key={`module-${navigationId}`}
+                role={role}
+                exams={exams}
+                isSummaryReadyMode={isSummaryReadyView}
+                isUnlockRequestMode={isUnlockListView}
+                isPendingSubmissionMode={isPendingSubmissionView}
+                isRejectedMode={isRejectedView}
+                isNewApplicationListMode={initialModuleTab === 'borang' && initialModuleStatus === ExamStatus.PENDING_VERIFICATION}
+                isVerificationListMode={isVerificationListView && initialModuleStatus === ExamStatus.SUBMITTED}
+                isPrintListMode={isPrintListView}
+                isSebcListMode={initialModuleTab === 'keputusan' && (initialModuleStatus === ExamStatus.SUBMITTED || initialModuleStatus === ExamStatus.APPROVED)}
+                headerTitle={viewTitle}
+                initialTab={initialModuleTab}
+                initialStatusFilter={initialModuleStatus}
+                onTabChange={(tab) => setInitialModuleTab(tab)}
+                onStatusFilterChange={(status) => setInitialModuleStatus(status)}
+                onAddNew={() => setExamStep('select')} 
+                onView={(id) => {
+                  setSelectedExamId(id);
+                  setIsEditMode(false);
+                  setExamStep('summary');
+                }}
+                onEdit={(id) => {
+                  setSelectedExamId(id);
+                  setIsEditMode(true);
+                  setExamStep('summary');
+                }}
+                onDelete={(id) => {
+                  setExams(prev => prev.filter(e => e.id !== id));
+                }}
+              />
+              {examStep === 'select' && (
+                <ExamTypeSelection 
+                  onBack={() => setExamStep('list')} 
+                  onSelect={(type) => { 
+                    setSelectedExamType(type); 
+                    if (type === 'sijil') {
+                      setActiveView('CertificateRenewal');
+                      setExamStep('list'); // Reset step for next time
+                    } else {
+                      setExamStep('form'); 
+                    }
+                  }} 
+                />
+              )}
+            </>
           );
         }
         if (examStep === 'summary' && selectedExamId) {
@@ -274,9 +291,6 @@ export default function App() {
               initialTab={initialModuleTab}
             />
           );
-        }
-        if (examStep === 'select') {
-          return <ExamTypeSelection onBack={() => setExamStep('list')} onSelect={(type) => { setSelectedExamType(type); setExamStep('form'); }} />;
         }
         if (examStep === 'success' && submittedExam) {
           return (
@@ -388,7 +402,7 @@ export default function App() {
       case 'ExamSchedule':
         return <JadualPeperiksaan />;
       case 'CertificateRenewal':
-        return <CertificateRenewalModule />;
+        return <CertificateRenewalModule role={role} onBack={() => setActiveView('ExamApplication')} />;
       case 'AttendanceCertificate':
         return <AttendanceCertificateModule />;
       case 'OnlineExam':
@@ -424,7 +438,7 @@ export default function App() {
           setActiveView(view);
           setIsSidebarOpen(false);
           if (view === 'ExamApplication') {
-            setExamStep('list');
+            setExamStep('select');
             setIsSummaryReadyView(false);
             setIsPendingSubmissionView(false);
             setIsRejectedView(false);

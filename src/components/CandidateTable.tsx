@@ -262,84 +262,72 @@ export const CandidateTable: React.FC<CandidateTableProps> = ({ candidates, setC
       )}
 
       <div className="overflow-x-auto border border-gray-100 rounded-[8px] bg-white shadow-sm">
-        <table className="w-full text-left min-w-[840px]">
-          <thead className="bg-gray-100/50 text-[10px] uppercase tracking-widest text-gray-500 font-bold border-b border-gray-100 italic">
+        <table className="w-full text-left min-w-[600px]">
+          <thead className="bg-gray-100/50 text-[10px] uppercase tracking-widest text-gray-500 font-bold border-b border-gray-100">
             <tr>
-              <th className="px-6 py-4 w-16">{t('bil')}</th>
-              <th className="px-6 py-4">{t('fullName')}</th>
-              <th className="px-6 py-4">{t('icNumber')}</th>
-              <th className="px-6 py-4">{t('membershipNumber')}</th>
-              <th className="px-6 py-4">{t('membershipCategory')}</th>
-              <th className="px-6 py-4 text-right w-24">{t('action')}</th>
+              <th className="px-3 py-3 w-10 text-center">X</th>
+              <th className="px-3 py-3">{t('fullName')}</th>
+              <th className="px-3 py-3 w-48">{t('icNumber')}</th>
+              <th className="px-3 py-3 w-48">{t('membershipNumber')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
             {candidates.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-6 py-12 text-center text-gray-400 text-sm italic font-medium">
+                <td colSpan={4} className="px-6 py-12 text-center text-gray-400 text-sm italic font-medium">
                   {t('noCandidates')}
                 </td>
               </tr>
             ) : (
               candidates.map((c, index) => (
                 <tr key={c.id} className="hover:bg-gray-50/50 transition-colors group">
-                  <td className="px-6 py-3 text-xs text-gray-400 font-bold">
-                    {String(index + 1).padStart(2, '0')}
+                  <td className="px-3 py-2 text-center">
+                    <button
+                      onClick={() => removeRow(c.id)}
+                      className="p-1 text-gray-400 hover:text-alert-red rounded-md transition-all font-bold text-lg"
+                      title={t('delete')}
+                    >
+                      ×
+                    </button>
                   </td>
-                  <td className="px-6 py-3">
+                  <td className="px-3 py-2">
                     <input
                       type="text"
                       value={c.name}
                       onChange={(e) => updateCandidate(c.id, 'name', e.target.value)}
                       placeholder={t('fullName')}
-                      className="w-full px-3 py-2 text-sm bg-gray-50/50 border border-gray-100 rounded-[4px] outline-none focus:border-action-teal/40 focus:bg-white transition-all font-semibold"
+                      className="w-full px-2 py-1.5 text-sm bg-transparent border-none outline-none focus:bg-white focus:ring-1 focus:ring-action-teal/40 rounded transition-all font-semibold text-charcoal"
                     />
                   </td>
-                  <td className="px-6 py-3">
+                  <td className="px-3 py-2">
                     <input
                       type="text"
                       value={c.icNumber}
                       onChange={(e) => updateCandidate(c.id, 'icNumber', e.target.value)}
                       placeholder={t('icNumber')}
-                      className="w-full px-3 py-2 text-sm bg-gray-50/50 border border-gray-100 rounded-[4px] outline-none focus:border-action-teal/40 focus:bg-white transition-all font-medium"
+                      className="w-full px-2 py-1.5 text-sm bg-transparent border-none outline-none focus:bg-white focus:ring-1 focus:ring-action-teal/40 rounded transition-all font-medium text-charcoal"
                     />
                   </td>
-                  <td className="px-6 py-3">
+                  <td className="px-3 py-2">
                     <input
                       type="text"
                       value={c.membershipId}
                       onChange={(e) => updateCandidate(c.id, 'membershipId', e.target.value)}
                       placeholder={t('exampleMembershipNo')}
-                      className="w-full px-3 py-2 text-sm bg-gray-50/50 border border-gray-100 rounded-[4px] outline-none focus:border-action-teal/40 focus:bg-white transition-all font-medium"
+                      className="w-full px-2 py-1.5 text-sm bg-transparent border-none outline-none focus:bg-white focus:ring-1 focus:ring-action-teal/40 rounded transition-all font-medium text-charcoal"
                     />
-                  </td>
-                  <td className="px-6 py-3">
-                    <select
-                      value={c.membershipCategory || ''}
-                      onChange={(e) => updateCandidate(c.id, 'membershipCategory', e.target.value as any)}
-                      className="w-full px-3 py-2 text-sm bg-gray-50/50 border border-gray-100 rounded-[4px] outline-none focus:border-action-teal/40 focus:bg-white transition-all font-medium"
-                    >
-                      <option value="" disabled>Pilih Kategori</option>
-                      <option value="Cadet">Cadet</option>
-                      <option value="VAD">VAD</option>
-                      <option value="Member">Member</option>
-                      <option value="Public">Public</option>
-                    </select>
-                  </td>
-                  <td className="px-6 py-3 text-right">
-                    <button
-                      onClick={() => removeRow(c.id)}
-                      className="p-2 text-gray-300 hover:text-alert-red hover:bg-alert-red/5 rounded-md transition-all opacity-0 group-hover:opacity-100"
-                      title={t('delete')}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
                   </td>
                 </tr>
               ))
             )}
           </tbody>
         </table>
+      </div>
+      <div className="flex items-center">
+        <button onClick={addRow} className="group flex items-center gap-1.5 px-4 py-2 border border-gray-200 rounded-[4px] bg-gray-50 hover:bg-gray-100 transition-colors text-sm font-bold text-action-teal shadow-sm">
+          <Plus className="w-4 h-4 text-action-teal group-hover:scale-110 transition-transform" />
+          {t('addCandidate')}
+        </button>
       </div>
 
       <div className="card bg-brand-red/[0.01] border-l-4 border-brand-red shadow-sm mt-8 p-8">

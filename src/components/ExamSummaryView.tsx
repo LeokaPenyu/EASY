@@ -535,11 +535,11 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
             </div>
 
             <div className="flex items-center justify-center gap-2 pt-6 border-t border-gray-300 flex-wrap">
-              <button onClick={onBack} className="btn-footer flex items-center gap-1.5 px-3 py-1 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-charcoal">
-                <ArrowLeft className="w-3.5 h-3.5 text-blue-600" /> Kembali
+              <button onClick={onBack} className="btn-outline text-[11px] py-1 px-3 shadow-sm">
+                <ArrowLeft className="w-3.5 h-3.5" /> Kembali
               </button>
-              <button onClick={handlePrint} className="btn-footer flex items-center gap-1.5 px-3 py-1 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-charcoal">
-                <Printer className="w-3.5 h-3.5 text-blue-600" /> Cetak
+              <button onClick={handlePrint} className="btn-outline text-[11px] py-1 px-3 shadow-sm">
+                <Printer className="w-3.5 h-3.5" /> Cetak
               </button>
               
               {role === UserRole.DEC && localStatus === ExamStatus.DRAFT && (
@@ -564,15 +564,15 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                       }
                     });
                   }}
-                  className="flex items-center gap-1.5 px-4 py-1 border border-gray-400 rounded bg-white hover:bg-green-50 font-bold text-[11px] shadow-sm text-action-teal transition-all uppercase"
+                  className="btn-primary uppercase text-[11px] py-1 px-4 shadow-sm"
                 >
-                  <Send className="w-3.5 h-3.5 text-action-teal" />
+                  <Send className="w-3.5 h-3.5" />
                   {t('submit')}
                 </button>
               )}
               
               {role === UserRole.SEC && (localStatus === ExamStatus.PENDING_VERIFICATION || localStatus === ExamStatus.SUBMITTED) && (
-                <div className="flex border border-gray-400 rounded overflow-hidden">
+                <div className="flex gap-2">
                   <button 
                     onClick={() => {
                       if (onUpdateStatus) onUpdateStatus(examId, ExamStatus.APPROVED);
@@ -582,9 +582,9 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                         onClose: () => onBack()
                       });
                     }}
-                    className="flex items-center gap-1.5 px-3 py-1 bg-white hover:bg-green-50 font-bold text-[11px] text-charcoal hover:text-green-700 transition-all uppercase border-r border-gray-400"
+                    className="btn-success uppercase text-[11px] py-1 px-3 shadow-sm"
                   >
-                    <ThumbsUp className="w-4 h-4 text-green-600 fill-green-600/10" />
+                    <ThumbsUp className="w-4 h-4 fill-white flex-shrink-0" />
                     Lulus
                   </button>
                   <button 
@@ -596,21 +596,21 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                         onClose: () => onBack()
                       });
                     }}
-                    className="flex items-center gap-1.5 px-3 py-1 bg-white hover:bg-red-50 font-bold text-[11px] text-charcoal hover:text-red-700 transition-all uppercase"
+                    className="btn-danger uppercase text-[11px] py-1 px-3 shadow-sm"
                   >
-                    <ThumbsDown className="w-4 h-4 text-red-600 fill-red-600/10" />
+                    <ThumbsDown className="w-4 h-4 fill-white flex-shrink-0" />
                     Tolak
                   </button>
                 </div>
               )}
 
               {role === UserRole.SEC && localStatus === ExamStatus.UNLOCK_REQUESTED && (
-                <div className="flex border border-gray-400 rounded overflow-hidden">
+                <div className="flex gap-2">
                   <button 
                     onClick={handleUnlockApprove}
-                    className="flex items-center gap-1.5 px-3 py-1 bg-white hover:bg-green-50 font-bold text-[11px] text-charcoal hover:text-green-700 transition-all uppercase"
+                    className="btn-success uppercase text-[11px] py-1 px-3 shadow-sm"
                   >
-                    <Unlock className="w-4 h-4 text-green-600 fill-green-600/10" />
+                    <Unlock className="w-4 h-4 fill-white flex-shrink-0" />
                     Buka Kunci
                   </button>
                 </div>

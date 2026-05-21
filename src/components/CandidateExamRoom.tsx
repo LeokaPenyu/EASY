@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { CheckCircle, Clock, AlertTriangle, ArrowRight, ArrowLeft, Info, Play, AlertCircle, Camera, CheckSquare, Square } from 'lucide-react';
 import { sharedQuestions, Question } from '../data/mockQuestions';
@@ -15,42 +15,10 @@ export const CandidateExamRoom = ({ examTitle, onFinish }: { examTitle: string, 
   // Verification State
   const [checks, setChecks] = useState({
     doc: false,
-    id: false,
-    cam: false,
-    net: false,
-    noCamAck: false
+    id: false
   });
-  const [streamActive, setStreamActive] = useState(false);
-  const [camError, setCamError] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
-  useEffect(() => {
-    let stream: MediaStream | null = null;
-    if (!hasStarted && !submitted) {
-      navigator.mediaDevices.getUserMedia({ video: true })
-        .then(s => {
-          stream = s;
-          if (videoRef.current) {
-            videoRef.current.srcObject = s;
-          }
-          setStreamActive(true);
-          setCamError(false);
-        })
-        .catch(err => {
-          console.error("Webcam error:", err);
-          setCamError(true);
-          setStreamActive(false);
-        });
-    }
-
-    return () => {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-      }
-    };
-  }, [hasStarted, submitted]);
-
-  const allChecksPassed = checks.doc && checks.id && checks.net && (streamActive ? checks.cam : checks.noCamAck);
+  const allChecksPassed = checks.doc && checks.id;
 
   useEffect(() => {
     let timer: any;
@@ -139,8 +107,8 @@ export const CandidateExamRoom = ({ examTitle, onFinish }: { examTitle: string, 
 
           <div className="border-t border-slate-200 pt-6">
             <h3 className="text-lg font-bold text-charcoal mb-4 flex items-center gap-2">
-              <Camera className="w-5 h-5 text-action-teal" />
-              {translateContent('Langkah 1: Pengesahan Identiti & Kamera')}
+              <CheckSquare className="w-5 h-5 text-action-teal" />
+              {translateContent('Langkah 1: Pengesahan Identiti')}
             </h3>
 
             <div className="flex flex-col md:flex-row gap-6">
@@ -153,39 +121,6 @@ export const CandidateExamRoom = ({ examTitle, onFinish }: { examTitle: string, 
                   <input type="checkbox" checked={checks.id} onChange={e => setChecks({...checks, id: e.target.checked})} className="mt-1 w-5 h-5 text-action-teal rounded border-gray-300 focus:ring-action-teal" />
                   <span className="text-sm text-gray-700 group-hover:text-charcoal">{translateContent('I confirm I am the registered candidate (Name: Ahmad Faiz, IC: 880101-13-XXXX)')}</span>
                 </label>
-                <label className="flex items-start gap-3 cursor-pointer group">
-                  <input type="checkbox" checked={checks.net} onChange={e => setChecks({...checks, net: e.target.checked})} className="mt-1 w-5 h-5 text-action-teal rounded border-gray-300 focus:ring-action-teal" />
-                  <span className="text-sm text-gray-700 group-hover:text-charcoal">{translateContent('My internet connection is stable')}</span>
-                </label>
-                
-                {streamActive && (
-                  <label className="flex items-start gap-3 cursor-pointer group pt-2 border-t border-slate-200 mt-2">
-                    <input type="checkbox" checked={checks.cam} onChange={e => setChecks({...checks, cam: e.target.checked})} className="mt-1 w-5 h-5 text-action-teal rounded border-gray-300 focus:ring-action-teal" />
-                    <span className="text-sm font-semibold text-charcoal">{translateContent('My webcam is active and I can be seen clearly')}</span>
-                  </label>
-                )}
-                {camError && (
-                  <label className="flex items-start gap-3 cursor-pointer group pt-2 border-t border-slate-200 mt-2">
-                    <input type="checkbox" checked={checks.noCamAck} onChange={e => setChecks({...checks, noCamAck: e.target.checked})} className="mt-1 w-5 h-5 text-brand-red rounded border-brand-red focus:ring-brand-red" />
-                    <span className="text-sm font-semibold text-brand-red">{translateContent('I acknowledge my webcam is unavailable, and I proceed at my own risk.')}</span>
-                  </label>
-                )}
-              </div>
-
-              <div className="w-full md:w-[200px] shrink-0 flex flex-col items-center">
-                <div className="w-full h-[150px] bg-gray-900 rounded-xl overflow-hidden relative border-2 border-slate-200 shadow-inner flex items-center justify-center">
-                  <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
-                  {!streamActive && !camError && (
-                    <span className="absolute text-white text-xs text-center px-4 font-medium animate-pulse">{translateContent('Starting camera...')}</span>
-                  )}
-                  {camError && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-4 bg-gray-900">
-                      <AlertTriangle className="w-8 h-8 text-amber-500 mb-2" />
-                      <span className="text-white text-xs leading-tight font-medium pb-2 text-amber-400">{translateContent('Webcam access required. Please allow camera permissions.')}</span>
-                    </div>
-                  )}
-                </div>
-                <span className="text-xs text-gray-500 font-bold mt-2 uppercase tracking-wide">{translateContent('Live Webcam — Exam Board can see you')}</span>
               </div>
             </div>
           </div>
@@ -208,10 +143,13 @@ export const CandidateExamRoom = ({ examTitle, onFinish }: { examTitle: string, 
 
   return (
     <div className="max-w-2xl mx-auto py-6 px-4">
+      
       <div className="mb-4 flex items-center justify-between bg-white p-3 rounded-xl shadow-sm border border-brand-red/10">
-        <div>
-          <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">{translateContent(examTitle)}</p>
-          <p className="font-medium text-brand-red">{translateContent('Soalan')} {currentQIndex + 1} / {sharedQuestions.length}</p>
+        <div className="flex items-center gap-3">
+          <div>
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">{translateContent(examTitle)}</p>
+            <p className="font-medium text-brand-red">{translateContent('Soalan')} {currentQIndex + 1} / {sharedQuestions.length}</p>
+          </div>
         </div>
         <div className={`flex items-center gap-2 px-3 py-1.5 rounded border ${timeLeft < 300 ? 'bg-red-50 border-red-200 text-red-700 animate-pulse' : 'bg-slate-50 border-gray-200 text-charcoal'}`}>
           <Clock className={`w-4 h-4 ${timeLeft < 300 ? 'text-red-600' : 'text-brand-red'}`} />

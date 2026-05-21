@@ -173,13 +173,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
       group: "New",
     },
     {
-      id: "verification-list",
-      label: "Sedia untuk Pengesahan Permohonan",
-      count: secVerificationCount,
-      color: "bg-[#f39c12]",
-      group: "Action",
-    },
-    {
       id: "unlock-list",
       label: "Permintaan Membuka Pemarkahan (Unlock)",
       count: secUnlockRequestCount,
@@ -277,9 +270,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
           ))}
         </div>
 
-        <div className="flex flex-col xl:grid xl:grid-cols-3 gap-6 w-full">
+        <div className="flex flex-col xl:grid xl:grid-cols-2 gap-6 w-full">
           {/* Worklist Panel */}
-          <div className="xl:col-span-2 order-1 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+          <div className="xl:col-span-1 order-1 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden self-start">
               <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-white">
                 <span className="font-semibold text-gray-900 text-sm">
                   Senarai Kerja (Worklist)

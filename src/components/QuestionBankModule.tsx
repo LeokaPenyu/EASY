@@ -1,11 +1,31 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Lock, FileUp, CheckCircle, Database, Edit2, Trash2, Plus, Shuffle, Save, Info } from 'lucide-react';
+import { Lock, FileUp, CheckCircle, Database, Edit2, Trash2, Plus, Shuffle, Save, Info, ArrowLeft, Settings, Edit } from 'lucide-react';
 import Papa from 'papaparse';
 import { sharedQuestions, updateSharedQuestions, Question } from '../data/mockQuestions';
 import { useLanguage } from '../context/LanguageContext';
 
+interface Subjek {
+  id: string;
+  name: string;
+  code: string;
+  duration: string;
+  languages: string[];
+}
+
+const initialSubjek: Subjek[] = [
+  { id: '1', name: 'Pertolongan Cemas Asas dan CPR', code: '800/2', duration: '14', languages: ['BI', 'BM'] },
+  { id: '2', name: 'Pertolongan Cemas Asas, CPR dan AED', code: 'CBFA1021', duration: '14', languages: ['BI', 'BM', 'BC'] },
+  { id: '3', name: 'Pendidikan Palang Merah dan Bulan Sabit Merah', code: 'CERC1011', duration: '8', languages: ['BI', 'BM'] },
+  { id: '4', name: 'Pendidikan Kesihatan', code: 'CHED1031', duration: '8', languages: ['BI', 'BM'] },
+  { id: '5', name: 'Rawatan Rumah', code: 'CHNU1041', duration: '8', languages: ['BI', 'BM'] },
+  { id: '6', name: 'PERTOLONGAN CEMAS LANJUTAN, CPR & AED', code: 'PAFA1042', duration: '18 JAM', languages: ['BI', 'BM'] },
+  { id: '7', name: 'PENGENALAN PERTOLONGAN CEMAS, CPR & AED', code: 'PIFA 1021', duration: '8 JAM', languages: ['BI', 'BM'] },
+];
+
 export const QuestionBankModule = () => {
+  const [selectedSubject, setSelectedSubject] = useState<Subjek | null>(null);
+
   const [locked, setLocked] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [questions, setQuestions] = useState<Question[]>(sharedQuestions);
@@ -187,21 +207,81 @@ export const QuestionBankModule = () => {
     );
   };
 
+  if (!selectedSubject) {
+    return (
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden bg-white">
+          <div className="p-6 flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-100 mb-2 gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-rose-50 text-brand-red rounded-lg">
+                <Database className="w-5 h-5" />
+              </div>
+              <h2 className="font-bold text-lg text-gray-900">Pilih Subjek untuk Bank Soalan</h2>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left border-collapse">
+              <thead className="bg-gray-50 text-gray-500 uppercase text-xs font-semibold tracking-wider border-b border-gray-100">
+                <tr>
+                  <th className="px-6 py-4 text-center w-12 border-b border-gray-100">No.</th>
+                  <th className="px-6 py-4 border-b border-gray-100">Nama Subjek</th>
+                  <th className="px-6 py-4 text-center whitespace-nowrap border-b border-gray-100">Kod Subjek</th>
+                  <th className="px-6 py-4 text-center whitespace-nowrap border-b border-gray-100">Waktu Subjek</th>
+                  <th className="px-6 py-4 text-center whitespace-nowrap border-b border-gray-100">Bahasa Subjek</th>
+                  <th className="px-6 py-4 text-center w-28 border-b border-gray-100">Tindakan</th>
+                </tr>
+              </thead>
+              <tbody>
+                {initialSubjek.map((subjek, index) => (
+                  <tr key={subjek.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors cursor-pointer" onClick={() => setSelectedSubject(subjek)}>
+                    <td className="px-6 py-4 text-center font-medium text-gray-500">{index + 1}</td>
+                    <td className="px-6 py-4 font-medium text-gray-900">{subjek.name}</td>
+                    <td className="px-6 py-4 text-center text-gray-600">{subjek.code}</td>
+                    <td className="px-6 py-4 text-center text-gray-600 truncate max-w-[100px]">{subjek.duration}</td>
+                    <td className="px-6 py-4 text-center text-gray-600">{subjek.languages.join(', ')}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center justify-center gap-3">
+                        <button onClick={(e) => { e.stopPropagation(); setSelectedSubject(subjek); }} className="bg-action-teal text-white w-full py-1.5 px-3 rounded text-xs font-bold hover:bg-teal-700 transition shadow-sm whitespace-nowrap">
+                          Pilih
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-      <div className="card shadow-sm border border-gray-100 p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-black text-charcoal flex items-center gap-2">
-            <Database className="w-6 h-6 text-brand-red" />
-            Bank Soalan
-          </h2>
+      <div className="card shadow-sm border border-gray-100 p-6 bg-white rounded-xl">
+        <div className="mb-6 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setSelectedSubject(null)}
+              className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-500 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <div>
+              <h2 className="text-xl font-black text-charcoal flex items-center gap-2">
+                <Database className="w-6 h-6 text-brand-red" />
+                Bank Soalan
+              </h2>
+              <p className="text-xs font-bold text-gray-500 mt-1.5 flex items-center gap-1.5"><span className="text-action-teal uppercase tracking-widest">{selectedSubject.code}</span> - {selectedSubject.name}</p>
+            </div>
+          </div>
           {locked ? (
             <span className="bg-amber-100 text-amber-700 px-3 py-1 text-xs font-bold rounded-full flex items-center gap-1">
               <Lock className="w-3 h-3" /> Dikunci
             </span>
           ) : (
-            <button onClick={() => setLocked(true)} className="btn-secondary text-xs p-2">Kunci Soalan</button>
+            <button onClick={() => setLocked(true)} className="px-4 py-2 bg-gray-100 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-200 text-sm font-bold shadow-sm transition-colors">Kunci Soalan</button>
           )}
         </div>
         
@@ -248,7 +328,7 @@ export const QuestionBankModule = () => {
                <button 
                  onClick={handleUploadClick}
                  disabled={locked} 
-                 className="bg-brand-red text-white px-6 py-2.5 rounded-[6px] font-bold text-sm shadow-sm hover:bg-red-700 disabled:opacity-50 transition-all"
+                 className="bg-brand-red text-white px-6 py-2.5 rounded-[6px] font-bold text-sm shadow-sm hover:bg-red-700 disabled:opacity-50 transition-all cursor-pointer"
                >
                  Tarik fail atau Klik untuk Muat Naik
                </button>
@@ -270,7 +350,7 @@ export const QuestionBankModule = () => {
               <button 
                 onClick={handleAddNew}
                 disabled={locked || isAddingNew || editingIndex !== null}
-                className="flex items-center gap-1.5 bg-action-teal text-white px-4 py-2 rounded-md text-sm font-bold hover:bg-teal-700 transition-colors disabled:opacity-50 shadow-sm"
+                className="flex items-center gap-1.5 bg-action-teal text-white px-4 py-2 rounded-md text-sm font-bold hover:bg-teal-700 transition-colors disabled:opacity-50 shadow-sm cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 Tambah Soalan
@@ -293,10 +373,10 @@ export const QuestionBankModule = () => {
                         </div>
                         {!locked && editingIndex === null && !isAddingNew && (
                           <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button onClick={() => handleEdit(i)} className="p-1.5 text-gray-400 hover:text-action-teal rounded hover:bg-teal-50" title="Kemaskini">
+                            <button onClick={() => handleEdit(i)} className="p-1.5 text-gray-400 hover:text-action-teal rounded hover:bg-teal-50 cursor-pointer" title="Kemaskini">
                               <Edit2 className="w-4 h-4" />
                             </button>
-                            <button onClick={() => handleDelete(i)} className="p-1.5 text-gray-400 hover:text-brand-red rounded hover:bg-red-50" title="Padam">
+                            <button onClick={() => handleDelete(i)} className="p-1.5 text-gray-400 hover:text-brand-red rounded hover:bg-red-50 cursor-pointer" title="Padam">
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
@@ -338,7 +418,7 @@ export const QuestionBankModule = () => {
               setRandomizeSuccessMsg(true);
               setTimeout(() => setRandomizeSuccessMsg(false), 5000);
             }}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-[6px] font-bold text-sm shadow-sm transition-all text-center ${
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-[6px] font-bold text-sm shadow-sm transition-all text-center cursor-pointer ${
               isRandomized 
                 ? 'bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100' 
                 : 'bg-white border border-gray-300 hover:bg-gray-50 text-gray-700'
@@ -353,7 +433,7 @@ export const QuestionBankModule = () => {
               setSaveSuccessMsg(true);
               setTimeout(() => setSaveSuccessMsg(false), 5000);
             }}
-            className="flex items-center gap-2 bg-action-teal hover:bg-teal-700 text-white px-8 py-2.5 rounded-[6px] font-bold text-sm shadow-sm transition-all text-center"
+            className="flex items-center gap-2 bg-action-teal hover:bg-teal-700 text-white px-8 py-2.5 rounded-[6px] font-bold text-sm shadow-sm transition-all text-center cursor-pointer"
           >
             <Save className="w-4 h-4" />
             Simpan Bank Soalan
@@ -378,7 +458,7 @@ export const QuestionBankModule = () => {
               <h4 className="text-sm font-bold mb-1">Peperiksaan Rawak Berjaya Diaktifkan</h4>
               <p className="text-sm text-blue-700">Setiap calon akan menerima susunan soalan yang berbeza secara rawak (Cth: Calon A mendapat Soalan 1, Calon B mendapat Soalan 4 sebagai soalan pertama mereka).</p>
             </div>
-            <button onClick={() => setRandomizeSuccessMsg(false)} className="text-blue-500 hover:text-blue-700">
+            <button onClick={() => setRandomizeSuccessMsg(false)} className="text-blue-500 hover:text-blue-700 cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
             </button>
           </motion.div>
@@ -396,7 +476,7 @@ export const QuestionBankModule = () => {
               <CheckCircle className="w-5 h-5 text-green-500" />
               <p className="text-sm font-bold">Berjaya! Bank soalan telah disimpan.</p>
             </div>
-            <button onClick={() => setSaveSuccessMsg(false)} className="text-green-500 hover:text-green-700 ml-4">
+            <button onClick={() => setSaveSuccessMsg(false)} className="text-green-500 hover:text-green-700 ml-4 cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
             </button>
           </motion.div>
@@ -405,3 +485,4 @@ export const QuestionBankModule = () => {
     </motion.div>
   );
 };
+
