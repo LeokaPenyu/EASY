@@ -32,7 +32,7 @@ export const ExamTypeSelection: React.FC<ExamTypeSelectionProps> = ({ onBack, on
       <motion.div 
         initial={{ opacity: 0, scale: 0.98, y: 5 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="bg-[#FDF8F8] rounded-lg shadow-2xl w-full max-w-[480px] overflow-hidden border border-gray-200"
+        className="bg-surface-cream rounded-lg shadow-2xl w-full max-w-[480px] overflow-hidden border border-gray-200"
       >
         {/* Header - Windows 7/Modern Hybrid */}
         <div className="bg-gradient-to-b from-gray-800 to-gray-900 text-white px-4 py-3 flex items-center justify-between border-b-[4px] border-brand-red">
@@ -98,7 +98,7 @@ export const ExamTypeSelection: React.FC<ExamTypeSelectionProps> = ({ onBack, on
         </div>
 
         {/* Footer */}
-        <div className="bg-[#FDF8F8] px-6 py-4 flex items-center justify-center gap-3">
+        <div className="bg-surface-cream px-6 py-4 flex items-center justify-center gap-3">
           <button 
             onClick={onBack}
             className="btn-outline min-w-[100px] shadow-sm text-sm"

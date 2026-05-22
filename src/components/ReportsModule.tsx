@@ -1,6 +1,37 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { BarChart3, Download, FileText, Loader2, CheckCircle } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, LineChart, Line, AreaChart, Area } from 'recharts';
+
+const dummyDataStatistik = [
+  { name: 'P Pendidikan Kesihatan', calon: 120 },
+  { name: 'P Pertolongan Cemas', calon: 98 },
+  { name: 'P Pendidikan Palang Merah', calon: 86 },
+  { name: 'Rawatan Rumah', calon: 65 },
+];
+
+const dummyDataKeputusan = [
+  { name: 'Jan', lulus: 400, gagal: 240 },
+  { name: 'Feb', lulus: 300, gagal: 139 },
+  { name: 'Mac', lulus: 200, gagal: 980 },
+  { name: 'Apr', lulus: 278, gagal: 390 },
+  { name: 'Mei', lulus: 189, gagal: 480 },
+  { name: 'Jun', lulus: 239, gagal: 380 },
+];
+
+const dummyDataYuran = [
+  { name: 'Suku 1', jumlah: 4000 },
+  { name: 'Suku 2', jumlah: 3000 },
+  { name: 'Suku 3', jumlah: 2000 },
+  { name: 'Suku 4', jumlah: 2780 },
+];
+
+const dummyDataPembaharuan = [
+  { name: 'Johor', permohonan: 40 },
+  { name: 'Kedah', permohonan: 30 },
+  { name: 'Sabah', permohonan: 20 },
+  { name: 'Sarawak', permohonan: 27 },
+];
 
 export const ReportsModule = () => {
   const [selectedReport, setSelectedReport] = useState<string>('Statistik Subjek');
@@ -21,6 +52,69 @@ export const ReportsModule = () => {
         setDownloadComplete(null);
       }, 4000);
     }, 1500);
+  };
+
+  const renderChart = () => {
+    switch (selectedReport) {
+      case 'Statistik Subjek':
+        return (
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={dummyDataStatistik} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+              <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#6B7280' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 12, fill: '#6B7280' }} axisLine={false} tickLine={false} />
+              <RechartsTooltip cursor={{ fill: '#F3F4F6' }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }} />
+              <Bar dataKey="calon" fill="#008B8B" radius={[4, 4, 0, 0]} name="Jumlah Calon" />
+            </BarChart>
+          </ResponsiveContainer>
+        );
+      case 'Rumusan Keputusan':
+        return (
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={dummyDataKeputusan} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+              <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#6B7280' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 12, fill: '#6B7280' }} axisLine={false} tickLine={false} />
+              <RechartsTooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }} />
+              <Legend wrapperStyle={{ fontSize: '12px' }} />
+              <Line type="monotone" dataKey="lulus" stroke="#28A745" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} name="Lulus" />
+              <Line type="monotone" dataKey="gagal" stroke="#ED1C24" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} name="Gagal" />
+            </LineChart>
+          </ResponsiveContainer>
+        );
+      case 'Pembaharuan Sijil':
+        return (
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={dummyDataPembaharuan} layout="vertical" margin={{ top: 20, right: 30, left: 40, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E5E7EB" />
+              <XAxis type="number" tick={{ fontSize: 12, fill: '#6B7280' }} axisLine={false} tickLine={false} />
+              <YAxis dataKey="name" type="category" tick={{ fontSize: 12, fill: '#6B7280' }} axisLine={false} tickLine={false} />
+              <RechartsTooltip cursor={{ fill: '#F3F4F6' }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }} />
+              <Bar dataKey="permohonan" fill="#F5E6E8" stroke="#8B0F1D" radius={[0, 4, 4, 0]} name="Jumlah Permohonan" />
+            </BarChart>
+          </ResponsiveContainer>
+        );
+      case 'Kutipan Yuran':
+        return (
+          <ResponsiveContainer width="100%" height={300}>
+            <AreaChart data={dummyDataYuran} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <defs>
+                <linearGradient id="colorYuran" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#008B8B" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#008B8B" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+              <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#6B7280' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 12, fill: '#6B7280' }} axisLine={false} tickLine={false} />
+              <RechartsTooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }} />
+              <Area type="monotone" dataKey="jumlah" stroke="#008B8B" fillOpacity={1} fill="url(#colorYuran)" name="Jumlah Kutipan (RM)" />
+            </AreaChart>
+          </ResponsiveContainer>
+        );
+      default:
+        return null;
+    }
   };
 
   return (
@@ -46,6 +140,11 @@ export const ReportsModule = () => {
                 <p className={`font-bold text-sm ${selectedReport === type ? 'text-teal-900' : 'text-charcoal'}`}>{type}</p>
              </div>
            ))}
+        </div>
+
+        <div className="mb-8 p-4 border border-gray-100 rounded-xl bg-white shadow-sm">
+          <h3 className="font-bold text-gray-700 mb-4 ml-4">{selectedReport}</h3>
+          {renderChart()}
         </div>
         
         <div className="flex flex-col gap-4">

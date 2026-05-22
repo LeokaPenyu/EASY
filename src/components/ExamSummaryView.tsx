@@ -283,6 +283,11 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
   };
 
   const confirmUnlock = () => {
+    if (isSecondUnlock && !paymentFile) {
+      triggerNotification('Sila muat naik Lampiran Pembayaran (DEC).');
+      return;
+    }
+
     setShowUnlockDialog(false);
     setIsUnlockRequested(true);
     setLocalStatus(ExamStatus.UNLOCK_REQUESTED);
@@ -1220,7 +1225,14 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                     <div className="flex-1 flex items-center gap-2 p-2 border border-blue-200 bg-blue-50/30 rounded focus-within:ring-2 focus-within:ring-action-teal/50 focus-within:border-action-teal transition-all">
                        <FileText className="w-5 h-5 text-blue-500 ml-1" />
                        <span className="text-sm text-charcoal truncate flex-1">{paymentFile || 'Tiada fail dipilih'}</span>
-                       <button className="px-3 py-1 bg-white border border-gray-300 rounded text-xs font-bold text-gray-700 hover:bg-gray-50 shadow-sm whitespace-nowrap">Cari Fail...</button>
+                       <label className="px-3 py-1 bg-white border border-gray-300 rounded text-xs font-bold text-gray-700 hover:bg-gray-50 shadow-sm whitespace-nowrap cursor-pointer">
+                         Cari Fail...
+                         <input 
+                           type="file" 
+                           className="hidden" 
+                           onChange={(e) => setPaymentFile(e.target.files?.[0]?.name || '')} 
+                         />
+                       </label>
                     </div>
                   </div>
                   <input type="text" placeholder="Sila masukkan deskripsi pembayaran (pilihan)..." className="w-full text-sm p-2.5 border border-gray-300 rounded focus:ring-2 focus:ring-action-teal/50 focus:border-action-teal outline-none transition-all mt-2" />

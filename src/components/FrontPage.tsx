@@ -17,7 +17,7 @@ export const FrontPage: React.FC<FrontPageProps> = ({ onSelectRole }) => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row selection:bg-red-100">
+    <div className="min-h-screen bg-surface-cream flex flex-col md:flex-row selection:bg-red-100">
       
       {/* Left Panel - Branding */}
       <div 
@@ -106,7 +106,7 @@ export const FrontPage: React.FC<FrontPageProps> = ({ onSelectRole }) => {
       </div>
 
       {/* Right Panel - Login Form */}
-      <div className="w-full md:w-7/12 lg:w-1/2 bg-slate-50 flex items-center justify-center p-6 md:p-8 relative overflow-hidden">
+      <div className="w-full md:w-7/12 lg:w-1/2 bg-surface-cream flex items-center justify-center p-6 md:p-8 relative overflow-hidden">
         {/* Subtle background element */}
         <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-red-100/30 rounded-full blur-3xl pointer-events-none"></div>
 

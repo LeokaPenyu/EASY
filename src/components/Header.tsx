@@ -16,11 +16,16 @@ export const Header: React.FC<HeaderProps> = ({ role, setRole, onMenuClick, onLo
   const [showNotification, setShowNotification] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowNotification(false);
-    }, 8000);
-    return () => clearTimeout(timer);
-  }, []);
+    let timer: NodeJS.Timeout;
+    if (showNotification) {
+      timer = setTimeout(() => {
+        setShowNotification(false);
+      }, 2000);
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [showNotification]);
 
   return (
     <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-20">
