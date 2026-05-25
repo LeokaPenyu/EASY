@@ -224,13 +224,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
       color: "bg-[#f39c12]",
       group: "Alert",
     },
-    {
-      id: "online-exam",
-      label: "Peperiksaan Aktif – Masuk Markah",
-      count: 4,
-      color: "bg-[#82c91e]",
-      group: "Active",
-    },
   ];
 
   const getWorklist = () => {

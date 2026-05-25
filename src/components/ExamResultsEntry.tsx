@@ -3,13 +3,13 @@ import { motion } from 'motion/react';
 import { Save } from 'lucide-react';
 
 export const ExamResultsEntry = () => {
-  const [candidates, setCandidates] = useState([
-    { id: 1, name: 'Ali Bin Abu', theory: 0, practical: 0 },
-    { id: 2, name: 'Muthu A/L Samy', theory: 0, practical: 0 }
+  const [candidates, setCandidates] = useState<{id: number, name: string, theory: number | string, practical: number | string}[]>([
+    { id: 1, name: 'Ali Bin Abu', theory: '', practical: '' },
+    { id: 2, name: 'Muthu A/L Samy', theory: '', practical: '' }
   ]);
 
   const updateMark = (id: number, field: 'theory' | 'practical', val: string) => {
-    setCandidates(prev => prev.map(c => c.id === id ? { ...c, [field]: Number(val) } : c));
+    setCandidates(prev => prev.map(c => c.id === id ? { ...c, [field]: val === '' ? '' : Number(val) } : c));
   };
 
   return (

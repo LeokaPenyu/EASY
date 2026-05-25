@@ -122,15 +122,38 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
     candidates: selectedMock.candidates as Candidate[]
   };
 
-  const [candidates, setCandidates] = useState<Candidate[]>(examData.candidates);
+  const [candidates, setCandidates] = useState<Candidate[]>(() => {
+    return examData.candidates.map(c => {
+      if (c.scores) {
+        return {
+          ...c,
+          scores: {
+            theory: c.scores.theory === 0 ? '' : c.scores.theory,
+            oral: c.scores.oral === 0 ? '' : c.scores.oral,
+            practical: c.scores.practical === 0 ? '' : c.scores.practical
+          }
+        };
+      }
+      return c;
+    });
+  });
   
   const handleScoreChange = (id: string, type: 'theory' | 'oral' | 'practical', value: string) => {
-    const numValue = value === '' ? 0 : parseInt(value, 10);
+    // Allows empty string, or parses as number, avoiding padded zeroes
+    const parsedValue = value === '' ? '' : parseInt(value, 10);
+    const numValue = Number.isNaN(parsedValue as number) ? '' : parsedValue;
+    
     setCandidates(prev => prev.map(c => {
       if (c.id === id) {
-        const currentScores = c.scores || { theory: 0, oral: 0, practical: 0 };
+        const currentScores = c.scores || { theory: '', oral: '', practical: '' };
         const newScores = { ...currentScores, [type]: numValue };
-        const newStatus = (newScores.theory >= 50 && newScores.oral >= 20 && newScores.practical >= 30) ? 'Pass' : 'Fail';
+        
+        // Calculate status correctly treating empty string as 0 for calculation
+        const tScore = newScores.theory === '' ? 0 : Number(newScores.theory);
+        const oScore = newScores.oral === '' ? 0 : Number(newScores.oral);
+        const pScore = newScores.practical === '' ? 0 : Number(newScores.practical);
+        
+        const newStatus = (tScore >= 50 && oScore >= 20 && pScore >= 30) ? 'Pass' : 'Fail';
         return { ...c, scores: newScores, status: newStatus };
       }
       return c;
@@ -471,16 +494,6 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                       </tr>
                     ))}
                   </tbody>
-                  <tfoot className="bg-white border-t border-gray-300">
-                    <tr className="divide-x divide-gray-300">
-                      <td colSpan={1} className="px-3 py-1.5 text-right font-bold bg-gray-50 uppercase">Kehadiran</td>
-                      <td colSpan={2} className="px-3 py-1.5 text-center font-bold text-gray-500 italic block sm:flex sm:gap-4 justify-around">
-                        <span>0/{totals.totalCount}</span>
-                        <span>0/{totals.totalCount}</span>
-                        <span>0/{totals.totalCount}</span>
-                      </td>
-                    </tr>
-                  </tfoot>
                 </table>
               </div>
             </div>

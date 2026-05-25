@@ -122,9 +122,31 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
+  const getDistrictCode = (districtName: string): string => {
+    const defaultCode = districtName ? districtName.substring(0, 3).toUpperCase() : 'XXX';
+    if (!districtName) return defaultCode;
+
+    const mapping: Record<string, string> = {
+      'BETONG': 'BTG',
+      'BINTULU': 'BTU',
+      'CAWANGAN': 'CAW',
+      'KAPIT': 'KPT',
+      'KUCHING': 'KCH',
+      'LIMBANG': 'LBG',
+      'LUNDU': 'LDU',
+      'MARUDI': 'MRD',
+      'MIRI': 'MYY',
+      'SAMARAHAN': 'SHN',
+    };
+    
+    const normalized = districtName.toUpperCase().trim();
+    return mapping[normalized] || defaultCode;
+  };
+
   const generateNewExam = (status: ExamStatus): MockExam => {
     const id = `EXAM-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
-    const regNo = `${form.district.substring(0, 3).toUpperCase()}/2026/${Math.floor(1000 + Math.random() * 9000)}`;
+    const districtCode = getDistrictCode(form.district);
+    const regNo = `${districtCode}/2026/${Math.floor(1000 + Math.random() * 9000)}`;
     const now = new Date();
     const formattedDate = now.toISOString().split('T')[0];
     
@@ -181,7 +203,6 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
     if (!form.organizationName) missingFields.push('Nama Organisasi');
     if (!form.examAddress) missingFields.push('Alamat Peperiksaan');
     if (!form.trainingOfficerName) missingFields.push('Nama Pegawai');
-    if (!form.trainingOfficerId) missingFields.push('No. Kad Ahli Pegawai');
 
     if (missingFields.length > 0) {
       setAlertDialog({ message: `Sila lengkapkan maklumat berikut: ${missingFields.join(', ')}` });
@@ -422,182 +443,20 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
               </div>
               <div className="space-y-2">
                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Subjek <span className="text-brand-red">*</span></label>
-                 <div className="w-full p-3 bg-gray-50 border border-gray-200 rounded-[6px] text-sm font-bold text-charcoal">{form.subject}</div>
-              </div>
+                  <div className="w-full p-3 bg-gray-50 border border-gray-200 rounded-[6px] text-sm font-bold text-charcoal">{form.subject}</div>
+               </div>
             </div>
           </section>
 
-          {/* Section 3: Senarai Jurulatih */}
-          <section className="space-y-4">
-            <h2 className="text-[14px] font-bold text-charcoal border-b border-gray-100 pb-2 flex items-center gap-2">
-              <UserCheck className="w-4 h-4 text-action-teal" />
-              3. Senarai Jurulatih
-            </h2>
-                <div className="overflow-x-auto border border-gray-100 rounded-lg">
-                  <table className="w-full text-sm text-left">
-                    <thead>
-                      <tr className="bg-gray-100 text-gray-500 uppercase text-[10px] tracking-widest border-b border-gray-100">
-                        <th className="p-3 w-10 text-center">X</th>
-                        <th className="p-3">Nama</th>
-                        <th className="p-3">No. KP/Pasport</th>
-                        <th className="p-3">Alamat</th>
-                        <th className="p-3">No. Jurulatih/Waran</th>
-                        <th className="p-3">Tarikh Luput</th>
-                        <th className="p-3">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {form.jurulatih.length === 0 ? (
-                        <tr>
-                          <td colSpan={7} className="p-4 text-center text-gray-400 italic text-xs">Tiada Rekod</td>
-                        </tr>
-                      ) : (
-                        form.jurulatih.map((j) => {
-                          const status = j.certExpiryDate ? isInstructorEligible(j.certExpiryDate) : null;
-                          return (
-                            <tr key={j.id} className="border-b border-gray-50 hover:bg-gray-50/50">
-                              <td className="p-3 text-center">
-                                <button onClick={() => removeJurulatih(j.id)} className="p-1 text-gray-400 hover:text-alert-red rounded-md text-lg font-bold transition-colors">×</button>
-                              </td>
-                              <td className="p-2"><input type="text" placeholder="Nama" value={j.name} onChange={(e) => updateJurulatih(j.id, 'name', e.target.value)} className="w-full px-2 py-1.5 text-sm bg-transparent border-none outline-none focus:bg-white focus:ring-1 focus:ring-action-teal/40 rounded transition-all font-semibold text-charcoal" /></td>
-                              <td className="p-2"><input type="text" placeholder="No. KP" value={j.icNumber} onChange={(e) => updateJurulatih(j.id, 'icNumber', e.target.value)} className="w-full px-2 py-1.5 text-sm bg-transparent border-none outline-none focus:bg-white focus:ring-1 focus:ring-action-teal/40 rounded transition-all font-medium text-charcoal" /></td>
-                              <td className="p-2"><input type="text" placeholder="Alamat" value={j.address} onChange={(e) => updateJurulatih(j.id, 'address', e.target.value)} className="w-full px-2 py-1.5 text-sm bg-transparent border-none outline-none focus:bg-white focus:ring-1 focus:ring-action-teal/40 rounded transition-all font-medium text-charcoal min-w-[120px]" /></td>
-                              <td className="p-2"><input type="text" placeholder="No. Waran" value={j.warrantNumber} onChange={(e) => updateJurulatih(j.id, 'warrantNumber', e.target.value)} className="w-full px-2 py-1.5 text-sm bg-transparent border-none outline-none focus:bg-white focus:ring-1 focus:ring-action-teal/40 rounded transition-all font-medium text-charcoal" /></td>
-                              <td className="p-2"><input type="date" value={j.certExpiryDate} onChange={(e) => updateJurulatih(j.id, 'certExpiryDate', e.target.value)} className="w-full px-2 py-1.5 text-sm bg-transparent border-none outline-none focus:bg-white focus:ring-1 focus:ring-action-teal/40 rounded transition-all font-medium text-charcoal" /></td>
-                              <td className="p-3">
-                                {status && (
-                                  <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded ${status.isEligible ? (status.isInGracePeriod ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700') : 'bg-red-100 text-red-700'}`}>
-                                    {status.isEligible ? (status.isInGracePeriod ? 'Tempoh Ihsan' : 'Sah') : 'Tamat Tempoh'}
-                                  </span>
-                                )}
-                              </td>
-                            </tr>
-                          );
-                        })
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-                <div className="flex items-center mt-2">
-                  <button onClick={addJurulatihRow} type="button" className="group flex items-center gap-1.5 px-4 py-2 border border-gray-200 rounded-[4px] bg-gray-50 hover:bg-gray-100 transition-colors text-sm font-bold text-action-teal shadow-sm">
-                    <span className="text-action-teal group-hover:scale-110 transition-transform font-black">+</span>
-                    Tambah
-                  </button>
-                </div>
-              </section>
-
-              {/* Section 4: Senarai Penyelia */}
-              <section className="space-y-4">
-                <h2 className="text-[14px] font-bold text-charcoal border-b border-gray-100 pb-2 flex items-center gap-2">
-                  <UserCheck className="w-4 h-4 text-action-teal" />
-                  4. Senarai Penyelia
-                </h2>
-                
-                <div className="overflow-x-auto border border-gray-100 rounded-lg">
-                  <table className="w-full text-sm text-left">
-                    <thead>
-                      <tr className="bg-gray-100 text-gray-500 uppercase text-[10px] tracking-widest border-b border-gray-100">
-                        <th className="p-3 font-bold border-b border-gray-200 w-10 text-center">X</th>
-                        <th className="p-3 font-bold border-b border-gray-200">Nama</th>
-                        <th className="p-3 font-bold border-b border-gray-200">No. KP/Pasport</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                      {form.penyelia.length === 0 ? (
-                        <tr>
-                          <td colSpan={3} className="p-4 text-center text-gray-400 italic text-xs">Tiada Rekod</td>
-                        </tr>
-                      ) : (
-                        form.penyelia.map((p) => (
-                          <tr key={p.id} className="hover:bg-gray-50 transition-colors">
-                            <td className="p-3 text-center">
-                              <button onClick={() => removePenyelia(p.id)} className="p-1 text-gray-400 hover:text-alert-red rounded-md text-lg font-bold transition-colors">×</button>
-                            </td>
-                            <td className="p-2"><input type="text" placeholder="Nama" value={p.name} onChange={(e) => updatePenyelia(p.id, 'name', e.target.value)} className="w-full px-2 py-1.5 text-sm bg-transparent border-none outline-none focus:bg-white focus:ring-1 focus:ring-action-teal/40 rounded transition-all font-semibold text-charcoal" /></td>
-                            <td className="p-2"><input type="text" placeholder="No. KP" value={p.icNumber} onChange={(e) => updatePenyelia(p.id, 'icNumber', e.target.value)} className="w-full px-2 py-1.5 text-sm bg-transparent border-none outline-none focus:bg-white focus:ring-1 focus:ring-action-teal/40 rounded transition-all font-medium text-charcoal" /></td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-
-                <div className="flex items-center mt-2">
-                  <button onClick={addPenyeliaRow} type="button" className="group flex items-center gap-1.5 px-4 py-2 border border-gray-200 rounded-[4px] bg-gray-50 hover:bg-gray-100 transition-colors text-sm font-bold text-action-teal shadow-sm">
-                    <span className="text-action-teal group-hover:scale-110 transition-transform font-black">+</span>
-                    Tambah
-                  </button>
-                </div>
-              </section>
-
-              {/* Section 5: Senarai Pemeriksa Praktikal */}
-              <section className="space-y-4">
-                <h2 className="text-[14px] font-bold text-charcoal border-b border-gray-100 pb-2 flex items-center gap-2">
-                  <UserCheck className="w-4 h-4 text-action-teal" />
-                  5. Senarai Pemeriksa Praktikal
-                </h2>
-
-                <div className="overflow-x-auto border border-gray-100 rounded-lg">
-                  <table className="w-full text-sm text-left">
-                    <thead>
-                      <tr className="bg-gray-100 text-gray-500 uppercase text-[10px] tracking-widest border-b border-gray-100">
-                        <th className="p-3 font-bold border-b border-gray-200 w-10 text-center">X</th>
-                        <th className="p-3 font-bold border-b border-gray-200">Nama</th>
-                        <th className="p-3 font-bold border-b border-gray-200">Alamat</th>
-                        <th className="p-3 font-bold border-b border-gray-200">No. Jurulatih/Waran</th>
-                        <th className="p-3 font-bold border-b border-gray-200">Tarikh Luput</th>
-                        <th className="p-3 font-bold border-b border-gray-200">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                      {form.pemeriksa.length === 0 ? (
-                        <tr>
-                          <td colSpan={6} className="p-4 text-center text-gray-400 italic text-xs">Tiada Rekod</td>
-                        </tr>
-                      ) : (
-                        form.pemeriksa.map((p) => {
-                          const status = p.certExpiryDate ? isInstructorEligible(p.certExpiryDate) : null;
-                          return (
-                            <tr key={p.id} className="hover:bg-gray-50 transition-colors border-b border-gray-50">
-                              <td className="p-3 text-center">
-                                <button onClick={() => removePemeriksa(p.id)} className="p-1 text-gray-400 hover:text-alert-red rounded-md text-lg font-bold transition-colors">×</button>
-                              </td>
-                              <td className="p-2"><input type="text" placeholder="Nama" value={p.name} onChange={(e) => updatePemeriksa(p.id, 'name', e.target.value)} className="w-full px-2 py-1.5 text-sm bg-transparent border-none outline-none focus:bg-white focus:ring-1 focus:ring-action-teal/40 rounded transition-all font-semibold text-charcoal" /></td>
-                              <td className="p-2"><input type="text" placeholder="Alamat" value={p.address} onChange={(e) => updatePemeriksa(p.id, 'address', e.target.value)} className="w-full px-2 py-1.5 text-sm bg-transparent border-none outline-none focus:bg-white focus:ring-1 focus:ring-action-teal/40 rounded transition-all font-medium text-charcoal min-w-[120px]" /></td>
-                              <td className="p-2"><input type="text" placeholder="No. Waran" value={p.warrantNumber} onChange={(e) => updatePemeriksa(p.id, 'warrantNumber', e.target.value)} className="w-full px-2 py-1.5 text-sm bg-transparent border-none outline-none focus:bg-white focus:ring-1 focus:ring-action-teal/40 rounded transition-all font-medium text-charcoal" /></td>
-                              <td className="p-2"><input type="date" value={p.certExpiryDate} onChange={(e) => updatePemeriksa(p.id, 'certExpiryDate', e.target.value)} className="w-full px-2 py-1.5 text-sm bg-transparent border-none outline-none focus:bg-white focus:ring-1 focus:ring-action-teal/40 rounded transition-all font-medium text-charcoal" /></td>
-                              <td className="p-3">
-                                {status && (
-                                  <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded ${status.isEligible ? (status.isInGracePeriod ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700') : 'bg-red-100 text-red-700'}`}>
-                                    {status.isEligible ? (status.isInGracePeriod ? 'Tempoh Ihsan' : 'Sah') : 'Tamat Tempoh'}
-                                  </span>
-                                )}
-                              </td>
-                            </tr>
-                          );
-                        })
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-
-                <div className="flex items-center mt-2">
-                  <button onClick={addPemeriksaRow} type="button" className="group flex items-center gap-1.5 px-4 py-2 border border-gray-200 rounded-[4px] bg-gray-50 hover:bg-gray-100 transition-colors text-sm font-bold text-action-teal shadow-sm">
-                    <span className="text-action-teal group-hover:scale-110 transition-transform font-black">+</span>
-                    Tambah
-                  </button>
-                </div>
-              </section>
-
-          {/* Section 6: Senarai Calon Table */}
+          {/* Section 3: Senarai Calon Table */}
           <section className="space-y-4">
             <div className="flex items-center justify-between border-b border-gray-100 pb-2">
               <h2 className="text-[14px] font-bold text-charcoal flex items-center gap-2">
                 <Globe className="w-4 h-4 text-action-teal" />
-                6. Senarai Calon
+                3. Senarai Calon
               </h2>
             </div>
-            <div className="p-0 border border-gray-200 rounded-lg overflow-hidden">
+            <div className="pt-4">
                <CandidateTable 
                 candidates={form.candidates} 
                 setCandidates={(candidates) => handleInputChange('candidates', candidates)} 
@@ -607,11 +466,11 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
             </div>
           </section>
 
-          {/* Section 7: Bahas & Lampiran */}
+          {/* Section 4: Bahas & Lampiran */}
           <section className="space-y-4 pb-8">
             <h2 className="text-[14px] font-bold text-charcoal border-b border-gray-100 pb-2 flex items-center gap-2">
               <Globe className="w-4 h-4 text-action-teal" />
-              7. Bahasa Peperiksaan & Bukti Pembayaran
+              4. Bahasa Peperiksaan & Bukti Pembayaran
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 pt-2">
@@ -654,6 +513,17 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
               </div>
 
               <div className="space-y-6">
+                <div className="space-y-2 p-5 bg-gray-50/80 rounded-[8px] border border-gray-200 text-xs text-charcoal">
+                    <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 block">Ringkasan Pembayaran</label>
+                    <p className="flex justify-between items-center"><span>Bayaran yuran peperiksaan (Ahli)<br/><span className="text-gray-500 mt-0.5 inline-block">{form.candidates.filter(c => c.isMember || (c.membershipId && c.membershipId.trim() !== '')).length} x RM 2.00 / calon</span></span> <span className="font-bold text-sm">RM {(form.candidates.filter(c => c.isMember || (c.membershipId && c.membershipId.trim() !== '')).length * 2).toFixed(2)}</span></p>
+                    <div className="h-px w-full bg-gray-200/50 my-2"></div>
+                    <p className="flex justify-between items-center"><span>Bayaran yuran peperiksaan (Bukan Ahli)<br/><span className="text-gray-500 mt-0.5 inline-block">{form.candidates.length - form.candidates.filter(c => c.isMember || (c.membershipId && c.membershipId.trim() !== '')).length} x RM 14.00 / calon</span></span> <span className="font-bold text-sm">RM {((form.candidates.length - form.candidates.filter(c => c.isMember || (c.membershipId && c.membershipId.trim() !== '')).length) * 14).toFixed(2)}</span></p>
+                    <div className="border-t border-gray-200/80 pt-3 mt-3 flex justify-between uppercase text-[11px] font-bold items-center">
+                      <span>Jumlah bayaran</span> 
+                      <span className="text-action-teal text-[15px]">RM {((form.candidates.filter(c => c.isMember || (c.membershipId && c.membershipId.trim() !== '')).length * 2) + ((form.candidates.length - form.candidates.filter(c => c.isMember || (c.membershipId && c.membershipId.trim() !== '')).length) * 14)).toFixed(2)}</span>
+                    </div>
+                </div>
+
                 <div className="space-y-4">
                   <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">{t('paymentProofLabel')} <span className="text-brand-red">*</span></label>
                   <input 
@@ -692,17 +562,6 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
                     onChange={(e) => handleInputChange('paymentDescription', e.target.value)}
                     className="w-full p-3 bg-gray-50 border border-gray-200 rounded-[6px] text-sm outline-none focus:ring-2 focus:ring-action-teal/10 font-medium" 
                   />
-                </div>
-
-                <div className="space-y-2 p-5 bg-gray-50/80 rounded-[8px] border border-gray-200 mt-6 text-xs text-charcoal">
-                    <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 block">Ringkasan Pembayaran</label>
-                    <p className="flex justify-between items-center"><span>Bayaran yuran peperiksaan (Ahli)<br/><span className="text-gray-500 mt-0.5 inline-block">{form.candidates.filter(c => c.isMember || (c.membershipId && c.membershipId.trim() !== '')).length} x RM 2.00 / calon</span></span> <span className="font-bold text-sm">RM {(form.candidates.filter(c => c.isMember || (c.membershipId && c.membershipId.trim() !== '')).length * 2).toFixed(2)}</span></p>
-                    <div className="h-px w-full bg-gray-200/50 my-2"></div>
-                    <p className="flex justify-between items-center"><span>Bayaran yuran peperiksaan (Bukan Ahli)<br/><span className="text-gray-500 mt-0.5 inline-block">{form.candidates.length - form.candidates.filter(c => c.isMember || (c.membershipId && c.membershipId.trim() !== '')).length} x RM 14.00 / calon</span></span> <span className="font-bold text-sm">RM {((form.candidates.length - form.candidates.filter(c => c.isMember || (c.membershipId && c.membershipId.trim() !== '')).length) * 14).toFixed(2)}</span></p>
-                    <div className="border-t border-gray-200/80 pt-3 mt-3 flex justify-between uppercase text-[11px] font-bold items-center">
-                      <span>Jumlah bayaran</span> 
-                      <span className="text-action-teal text-[15px]">RM {((form.candidates.filter(c => c.isMember || (c.membershipId && c.membershipId.trim() !== '')).length * 2) + ((form.candidates.length - form.candidates.filter(c => c.isMember || (c.membershipId && c.membershipId.trim() !== '')).length) * 14)).toFixed(2)}</span>
-                    </div>
                 </div>
               </div>
             </div>

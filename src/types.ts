@@ -32,9 +32,9 @@ export interface Candidate {
     practical: boolean;
   };
   scores?: {
-    theory: number;
-    oral: number;
-    practical: number;
+    theory: number | string;
+    oral: number | string;
+    practical: number | string;
   };
 }
 

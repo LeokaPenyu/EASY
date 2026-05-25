@@ -168,25 +168,25 @@ export const CandidateTable: React.FC<CandidateTableProps> = ({ candidates, setC
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-brand-red/5 rounded-lg">
+          <div className="p-2 bg-brand-red/5 rounded-lg border border-brand-red/10">
             <Users className="w-5 h-5 text-brand-red" />
           </div>
-          <h3 className="font-bold text-charcoal tracking-tight">
+          <h3 className="text-sm font-bold text-charcoal tracking-tight">
             {t('candidateList')}
           </h3>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <button onClick={() => setIsSearchModalOpen(true)} className="btn-secondary text-[11px] font-bold uppercase tracking-wider flex items-center gap-2 flex-1 justify-center sm:flex-none h-10 px-6">
+        <div className="flex flex-wrap sm:flex-nowrap gap-2 items-center">
+          <button onClick={() => setIsSearchModalOpen(true)} className="bg-rose-50 border border-brand-red/20 text-brand-red hover:bg-rose-100 text-[11px] font-bold uppercase tracking-wider flex items-center gap-2 flex-1 justify-center sm:flex-none h-10 px-5 rounded-[6px] transition-colors">
             <Search className="w-3.5 h-3.5" />
             {t('searchExistingCandidate')}
           </button>
-          <label className="btn-secondary text-[11px] font-bold uppercase tracking-wider cursor-pointer flex items-center gap-2 flex-1 justify-center sm:flex-none h-10 px-6">
+          <label className="bg-rose-50 border border-brand-red/20 text-brand-red hover:bg-rose-100 text-[11px] font-bold uppercase tracking-wider cursor-pointer flex items-center gap-2 flex-1 justify-center sm:flex-none h-10 px-5 rounded-[6px] transition-colors">
             <Upload className="w-3.5 h-3.5" />
             {t('uploadCsv')}
             <input type="file" accept=".csv" onChange={handleCsvUpload} className="hidden" />
           </label>
-          <button onClick={addRow} className="btn-primary text-[11px] font-bold uppercase tracking-wider flex items-center gap-2 flex-1 justify-center sm:flex-none h-10 px-6">
-            <Plus className="w-3.5 h-3.5" />
+          <button onClick={addRow} className="bg-action-teal hover:bg-teal-700 text-white text-[11px] font-bold uppercase tracking-wider flex items-center gap-2 flex-1 justify-center sm:flex-none h-10 px-5 rounded-[6px] transition-all shadow-sm">
+            <Plus className="w-4 h-4 text-white group-hover:scale-110 transition-transform" />
             {t('addCandidate')}
           </button>
         </div>
@@ -322,42 +322,6 @@ export const CandidateTable: React.FC<CandidateTableProps> = ({ candidates, setC
             )}
           </tbody>
         </table>
-      </div>
-      <div className="flex items-center">
-        <button onClick={addRow} className="group flex items-center gap-1.5 px-4 py-2 border border-gray-200 rounded-[4px] bg-gray-50 hover:bg-gray-100 transition-colors text-sm font-bold text-action-teal shadow-sm">
-          <Plus className="w-4 h-4 text-action-teal group-hover:scale-110 transition-transform" />
-          {t('addCandidate')}
-        </button>
-      </div>
-
-      <div className="card bg-brand-red/[0.01] border-l-4 border-brand-red shadow-sm mt-8 p-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
-          <div className="space-y-3">
-            <p className="text-[10px] font-bold text-brand-red uppercase tracking-widest">{t('feeSummary')}</p>
-            <div className="flex flex-wrap gap-8">
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-success-green/20 border border-success-green" />
-                <p className="text-xs font-semibold text-gray-600">Cadet: <span className="font-bold text-charcoal">{cadetCount}</span></p>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-success-green/20 border border-success-green" />
-                <p className="text-xs font-semibold text-gray-600">VAD: <span className="font-bold text-charcoal">{vadCount}</span></p>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-success-green/20 border border-success-green" />
-                <p className="text-xs font-semibold text-gray-600">Member: <span className="font-bold text-charcoal">{memberCount}</span></p>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-brand-red/20 border border-brand-red" />
-                <p className="text-xs font-semibold text-gray-600">Public: <span className="font-bold text-charcoal">{publicCount}</span></p>
-              </div>
-            </div>
-          </div>
-          <div className="text-left md:text-right bg-white p-4 rounded-lg border border-gray-100 min-w-[200px]">
-            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{t('totalPayment')}</p>
-            <p className="text-3xl font-black text-charcoal tracking-tighter">RM {totalFee.toFixed(2)}</p>
-          </div>
-        </div>
       </div>
     </div>
   );
