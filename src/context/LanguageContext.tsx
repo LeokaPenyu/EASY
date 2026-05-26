@@ -101,6 +101,24 @@ const MOCK_DICTIONARY: Record<string, { BM: string; EN: string }> = {
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [language, setLanguage] = useState<Language>(Language.BM);
 
+  const handleSetLanguage = (newLang: Language) => {
+    setLanguage(newLang);
+    
+    // Trigger Google Translate wrapper seamlessly with retry logic
+    let retries = 0;
+    const triggerTranslate = () => {
+        const select = document.querySelector('.goog-te-combo') as HTMLSelectElement;
+        if (select) {
+            select.value = newLang === Language.EN ? 'en' : 'ms';
+            select.dispatchEvent(new Event('change'));
+        } else if (retries < 20) {
+            retries++;
+            setTimeout(triggerTranslate, 200);
+        }
+    };
+    triggerTranslate();
+  };
+
   const t = (key: keyof typeof TRANSLATIONS[Language.BM]) => {
     return TRANSLATIONS[language][key] || key;
   };
@@ -145,7 +163,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t, translateContent }}>
+    <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage, t, translateContent }}>
       {children}
     </LanguageContext.Provider>
   );

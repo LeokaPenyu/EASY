@@ -181,45 +181,47 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isO
           {t('trainer')}
         </button>
 
-        <div className="space-y-0.5">
-          <button
-            onClick={() => setSijilOpen(!sijilOpen)}
-            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-[6px] text-[13px] font-bold transition-all ${
-              sijilOpen ? 'text-charcoal' : 'text-charcoal/80'
-            } hover:bg-gray-50 group`}
-          >
-            <div className="flex items-center gap-3">
-              <Award className={`w-[18px] h-[18px] transition-colors ${sijilOpen ? 'text-brand-red' : 'text-gray-400 group-hover:text-charcoal'}`} />
-              <span>Pengurusan Sijil</span>
-            </div>
-            <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${sijilOpen ? 'rotate-180' : ''}`} />
-          </button>
+        {(role === UserRole.DEC || role === UserRole.SEBC) && (
+          <div className="space-y-0.5">
+            <button
+              onClick={() => setSijilOpen(!sijilOpen)}
+              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-[6px] text-[13px] font-bold transition-all ${
+                sijilOpen ? 'text-charcoal' : 'text-charcoal/80'
+              } hover:bg-gray-50 group`}
+            >
+              <div className="flex items-center gap-3">
+                <Award className={`w-[18px] h-[18px] transition-colors ${sijilOpen ? 'text-brand-red' : 'text-gray-400 group-hover:text-charcoal'}`} />
+                <span>Pengurusan Sijil</span>
+              </div>
+              <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${sijilOpen ? 'rotate-180' : ''}`} />
+            </button>
 
-          {sijilOpen && (
-            <div className="pl-10 space-y-0.5 pb-1">
-              <button
-                onClick={() => setActiveView('CertificateRenewal')}
-                className={`w-full text-left px-3 py-2 rounded-[6px] text-[12px] font-medium transition-all ${
-                  activeView === 'CertificateRenewal' 
-                  ? 'text-brand-red font-bold bg-gray-50' 
-                  : 'text-charcoal/70 hover:text-charcoal hover:bg-gray-50'
-                }`}
-              >
-                Pembaharuan Sijil
-              </button>
-              <button
-                onClick={() => setActiveView('AttendanceCertificate')}
-                className={`w-full text-left px-3 py-2 rounded-[6px] text-[12px] font-medium transition-all ${
-                  activeView === 'AttendanceCertificate' 
-                  ? 'text-brand-red font-bold bg-gray-50' 
-                  : 'text-charcoal/70 hover:text-charcoal hover:bg-gray-50'
-                }`}
-              >
-                Sijil Kehadiran
-              </button>
-            </div>
-          )}
-        </div>
+            {sijilOpen && (
+              <div className="pl-10 space-y-0.5 pb-1">
+                <button
+                  onClick={() => setActiveView('CertificateRenewal')}
+                  className={`w-full text-left px-3 py-2 rounded-[6px] text-[12px] font-medium transition-all ${
+                    activeView === 'CertificateRenewal' 
+                    ? 'text-brand-red font-bold bg-gray-50' 
+                    : 'text-charcoal/70 hover:text-charcoal hover:bg-gray-50'
+                  }`}
+                >
+                  Pembaharuan Sijil
+                </button>
+                <button
+                  onClick={() => setActiveView('AttendanceCertificate')}
+                  className={`w-full text-left px-3 py-2 rounded-[6px] text-[12px] font-medium transition-all ${
+                    activeView === 'AttendanceCertificate' 
+                    ? 'text-brand-red font-bold bg-gray-50' 
+                    : 'text-charcoal/70 hover:text-charcoal hover:bg-gray-50'
+                  }`}
+                >
+                  Sijil Kehadiran
+                </button>
+              </div>
+            )}
+          </div>
+        )}
 
         <button
           onClick={() => setActiveView('Panduan')}

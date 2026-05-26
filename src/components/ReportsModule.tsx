@@ -27,10 +27,10 @@ const dummyDataYuran = [
 ];
 
 const dummyDataPembaharuan = [
-  { name: 'Johor', permohonan: 40 },
-  { name: 'Kedah', permohonan: 30 },
-  { name: 'Sabah', permohonan: 20 },
-  { name: 'Sarawak', permohonan: 27 },
+  { name: 'Kuching', permohonan: 40 },
+  { name: 'Sibu', permohonan: 30 },
+  { name: 'Miri', permohonan: 20 },
+  { name: 'Bintulu', permohonan: 27 },
 ];
 
 export const ReportsModule = () => {

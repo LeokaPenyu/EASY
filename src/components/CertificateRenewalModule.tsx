@@ -124,8 +124,8 @@ export const CertificateRenewalModule: React.FC<CertificateRenewalModuleProps> =
   };
 
   const handleHantar = () => {
-    updateAppStatus('Dihantar');
-    setSuccessMsg('Permohonan telah dihantar kepada SEC.');
+    updateAppStatus('Semakan Pengerusi');
+    setSuccessMsg('Permohonan telah dihantar kepada Pengerusi (SEBC) untuk semakan.');
     setTimeout(() => {
       setSuccessMsg('');
       setViewState('summary');
