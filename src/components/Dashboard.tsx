@@ -120,10 +120,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
   ).length;
 
   const sebcPersonnelInputCount = exams.filter(
-    (e) => e.status === ExamStatus.APPROVED,
+    (e) => e.status === ExamStatus.SUBMITTED,
   ).length;
   const sebcResultsInputCount = exams.filter(
-    (e) => e.status === ExamStatus.APPROVED,
+    (e) => e.status === ExamStatus.SUBMITTED,
+  ).length;
+
+  const sebcUnlockRequestCount = exams.filter(
+    (e) => e.status === ExamStatus.UNLOCK_REQUESTED,
   ).length;
 
   const decWorklist = [
@@ -218,9 +222,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
       group: "Action",
     },
     {
-      id: "unlock-req",
+      id: "unlock-list",
       label: "Permintaan untuk Membuka Peperiksaan Terkunci",
-      count: 0,
+      count: sebcUnlockRequestCount,
       color: "bg-[#f39c12]",
       group: "Alert",
     },
@@ -398,15 +402,19 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   </div>
                 )}
 
-                <div className="hover:bg-slate-50 p-3 -mx-3 rounded-lg transition-colors cursor-pointer group">
+                <a 
+                  href="/User_Guide.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer" 
+                  className="block hover:bg-slate-50 p-3 -mx-3 rounded-lg transition-colors cursor-pointer group"
+                >
                   <h4 className="text-action-teal font-medium text-sm mb-1 flex items-center gap-1.5 group-hover:underline">
                     <Download className="w-4 h-4" /> Garis Panduan Pengguna
                   </h4>
                   <p className="text-xs text-gray-500 leading-relaxed">
-                    Sila muat turun garis panduan terkini untuk modul penjanaan
-                    rumusan peperiksaan.
+                    Sila muat turun atau lihat garis panduan terkini untuk sistem EASY.
                   </p>
-                </div>
+                </a>
 
                 <div className="hover:bg-slate-50 p-3 -mx-3 rounded-lg transition-colors cursor-pointer group">
                   <h4 className="text-success-green font-medium text-sm mb-1 flex items-center gap-1.5 group-hover:underline">

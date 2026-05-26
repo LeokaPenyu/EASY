@@ -135,7 +135,7 @@ export const mockExams: MockExam[] = [
     deadline: '19/03/2024',
     address: 'HQ Kuching',
     candidates: [
-      { id: 'c1', name: 'ALEX WONG', idNo: '950101-13-5555', membershipNo: 'S-12345', isMember: true, attendance: { theory: true, oral: true, practical: true } },
+      { id: 'c1', name: 'ALEX WONG', idNo: '950101-13-5555', membershipNo: 'S-12345', isMember: true, attendance: { theory: false, oral: false, practical: false } },
     ]
   },
   {
@@ -158,7 +158,7 @@ export const mockExams: MockExam[] = [
     deadline: '22/05/2024',
     address: 'Dewan Sekolah',
     candidates: [
-      { id: 'c1', name: 'ALEX WONG', idNo: '980101-13-1111', membershipNo: 'S-9999', isMember: true, attendance: { theory: true, oral: true, practical: true } },
+      { id: 'c1', name: 'ALEX WONG', idNo: '980101-13-1111', membershipNo: 'S-9999', isMember: true, attendance: { theory: false, oral: false, practical: false } },
     ]
   },
   {
@@ -219,7 +219,7 @@ export const mockExams: MockExam[] = [
     formA: 'yes',
     formB: 'no',
     candidates: [
-      { id: 'c2', name: 'ALI BIN AHMAD', idNo: '000202-13-2222', membershipNo: 'S-7777', isMember: true, attendance: { theory: true, oral: true, practical: true } }
+      { id: 'c2', name: 'ALI BIN AHMAD', idNo: '000202-13-2222', membershipNo: 'S-7777', isMember: true, attendance: { theory: false, oral: false, practical: false } }
     ],
     examiners: [
        { id: 'e1', name: 'DR. SITI', role: 'Chief Examiner' }

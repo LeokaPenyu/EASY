@@ -124,17 +124,22 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
 
   const [candidates, setCandidates] = useState<Candidate[]>(() => {
     return examData.candidates.map(c => {
-      if (c.scores) {
+      const candidate: Candidate = {
+        ...c,
+        attendance: c.attendance || { theory: false, oral: false, practical: false }
+      };
+
+      if (candidate.scores) {
         return {
-          ...c,
+          ...candidate,
           scores: {
-            theory: c.scores.theory === 0 ? '' : c.scores.theory,
-            oral: c.scores.oral === 0 ? '' : c.scores.oral,
-            practical: c.scores.practical === 0 ? '' : c.scores.practical
+            theory: candidate.scores.theory === 0 ? '' : candidate.scores.theory,
+            oral: candidate.scores.oral === 0 ? '' : candidate.scores.oral,
+            practical: candidate.scores.practical === 0 ? '' : candidate.scores.practical
           }
         };
       }
-      return c;
+      return candidate;
     });
   });
   
@@ -589,7 +594,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                 </button>
               )}
               
-              {role === UserRole.SEC && (localStatus === ExamStatus.PENDING_VERIFICATION || localStatus === ExamStatus.SUBMITTED) && (
+              {role === UserRole.SEC && (localStatus === ExamStatus.PENDING_VERIFICATION) && (
                 <div className="flex gap-2">
                   <button 
                     onClick={() => {
@@ -622,7 +627,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                 </div>
               )}
 
-              {role === UserRole.SEC && localStatus === ExamStatus.UNLOCK_REQUESTED && (
+              {(role === UserRole.SEC || role === UserRole.SEBC) && localStatus === ExamStatus.UNLOCK_REQUESTED && (
                 <div className="flex gap-2">
                   <button 
                     onClick={handleUnlockApprove}
@@ -669,7 +674,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
             )}
 
             {/* Locked/Submitted Content View (Figure 17 Style) */}
-            {(isExpired || localStatus === ExamStatus.SUBMITTED) ? (
+            {(isExpired || localStatus === ExamStatus.UNLOCK_REQUESTED) ? (
               <div className="card text-center py-12 space-y-6 border border-gray-300">
                 <p className="text-[13px] font-bold text-charcoal max-w-2xl mx-auto leading-relaxed">
                   {localStatus === ExamStatus.SUBMITTED 
@@ -678,7 +683,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                   }
                 </p>
                 {/* The Buka Kunci button */}
-                {localStatus === ExamStatus.UNLOCK_REQUESTED && role === UserRole.SEC && (
+                {localStatus === ExamStatus.UNLOCK_REQUESTED && (role === UserRole.SEC || role === UserRole.SEBC) && (
                    <div className="flex justify-center mt-6">
                       <button 
                         onClick={handleUnlockApprove}
@@ -689,7 +694,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                       </button>
                    </div>
                 )}
-                {localStatus !== ExamStatus.SUBMITTED && role !== UserRole.SEC && (
+                {localStatus !== ExamStatus.SUBMITTED && role !== UserRole.SEC && role !== UserRole.SEBC && (
                    <div className="flex justify-center mt-6">
                       <button 
                         onClick={handleUnlockRequest}
@@ -783,14 +788,56 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                         {jurulatih.map((j) => (
                           <tr key={j.id} className="border-t border-gray-100 group">
                             <td className="px-3 py-1.5 flex items-center gap-2">
-                              {isEditable && role !== UserRole.SEBC && (
+                              {isEditable && (
                                 <button onClick={() => removeJurulatih(j.id)} className="text-black font-bold hover:text-brand-red">X</button>
                               )}
-                              <span className="font-bold uppercase">{j.name}</span>
+                              {isEditable ? (
+                                <input 
+                                  type="text" 
+                                  value={j.name} 
+                                  onChange={(e) => setJurulatih(jurulatih.map(item => item.id === j.id ? {...item, name: e.target.value} : item))}
+                                  className="border border-gray-300 rounded px-2 py-0.5 uppercase flex-1" 
+                                />
+                              ) : (
+                                <span className="font-bold uppercase">{j.name}</span>
+                              )}
                             </td>
-                            <td className="px-3 py-1.5">{j.ic}</td>
-                            <td className="px-3 py-1.5">{j.address}</td>
-                            <td className="px-3 py-1.5">{j.waran}</td>
+                            <td className="px-3 py-1.5">
+                              {isEditable ? (
+                                <input 
+                                  type="text" 
+                                  value={j.ic} 
+                                  onChange={(e) => setJurulatih(jurulatih.map(item => item.id === j.id ? {...item, ic: e.target.value} : item))}
+                                  className="w-full border border-gray-300 rounded px-2 py-0.5" 
+                                />
+                              ) : (
+                                <span>{j.ic}</span>
+                              )}
+                            </td>
+                            <td className="px-3 py-1.5">
+                              {isEditable ? (
+                                <input 
+                                  type="text" 
+                                  value={j.address} 
+                                  onChange={(e) => setJurulatih(jurulatih.map(item => item.id === j.id ? {...item, address: e.target.value} : item))}
+                                  className="w-full border border-gray-300 rounded px-2 py-0.5" 
+                                />
+                              ) : (
+                                <span>{j.address}</span>
+                              )}
+                            </td>
+                            <td className="px-3 py-1.5">
+                              {isEditable ? (
+                                <input 
+                                  type="text" 
+                                  value={j.waran} 
+                                  onChange={(e) => setJurulatih(jurulatih.map(item => item.id === j.id ? {...item, waran: e.target.value} : item))}
+                                  className="w-full border border-gray-300 rounded px-2 py-0.5" 
+                                />
+                              ) : (
+                                <span>{j.waran}</span>
+                              )}
+                            </td>
                           </tr>
                         ))}
                         {jurulatih.length === 0 && (
@@ -801,7 +848,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                       </tbody>
                     </table>
                   </div>
-                  {isEditable && role !== UserRole.SEBC && (
+                  {isEditable && (
                     <button 
                       onClick={addJurulatih}
                       className="border border-gray-400 px-4 py-1 flex items-center gap-2 text-action-teal font-bold text-xs rounded-sm hover:bg-gray-50"
@@ -831,10 +878,10 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                           <tr key={p.id} className="border-t border-gray-100">
                             <td className="px-3 py-1.5">
                               <div className="flex items-center gap-2">
-                                {isEditable && role !== UserRole.SEBC && (
+                                {isEditable && (
                                   <button onClick={() => removePenyelia(p.id)} className="text-black font-bold hover:text-brand-red">X</button>
                                 )}
-                                {isEditable && role !== UserRole.SEBC ? (
+                                {isEditable ? (
                                   <input 
                                     type="text" 
                                     value={p.name} 
@@ -847,7 +894,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                               </div>
                             </td>
                             <td className="px-3 py-1.5">
-                              {isEditable && role !== UserRole.SEBC ? (
+                              {isEditable ? (
                                 <input 
                                   type="text" 
                                   value={p.ic} 
@@ -863,7 +910,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                       </tbody>
                     </table>
                   </div>
-                  {isEditable && role !== UserRole.SEBC && (
+                  {isEditable && (
                     <button 
                       onClick={addPenyelia}
                       className="border border-gray-400 px-4 py-1 flex items-center gap-2 text-action-teal font-bold text-xs rounded-sm hover:bg-gray-50"
@@ -898,7 +945,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                                 {isEditable && (
                                   <button onClick={() => removePemeriksa(pr.id)} className="text-black font-bold hover:text-brand-red">X</button>
                                 )}
-                                {isEditable && role !== UserRole.SEBC ? (
+                                {isEditable ? (
                                   <input 
                                     type="text" 
                                     value={pr.name} 
@@ -911,7 +958,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                               </div>
                             </td>
                             <td className="px-3 py-1.5">
-                              {isEditable && role !== UserRole.SEBC ? (
+                              {isEditable ? (
                                 <input 
                                   type="text" 
                                   value={pr.ic} 
@@ -923,7 +970,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                               )}
                             </td>
                             <td className="px-3 py-1.5 text-xs text-gray-500">
-                              {isEditable && role !== UserRole.SEBC ? (
+                              {isEditable ? (
                                 <input 
                                   type="text" 
                                   value={pr.address} 
@@ -935,7 +982,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                               )}
                             </td>
                             <td className="px-3 py-1.5">
-                              {isEditable && role !== UserRole.SEBC ? (
+                              {isEditable ? (
                                 <input 
                                   type="text" 
                                   value={pr.waran} 
@@ -989,7 +1036,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                                 type="checkbox"
                                 checked={c.attendance?.[type as keyof NonNullable<Candidate['attendance']>] || false}
                                 onChange={() => toggleAttendance(c.id, type as any)}
-                                disabled={!isEditable || role === UserRole.SEBC}
+                                disabled={!isEditable}
                                 className="w-4 h-4 cursor-pointer"
                               />
                             </td>
@@ -1138,7 +1185,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                   </>
                 )}
 
-                {!isEditable && role === UserRole.SEBC && localStatus === ExamStatus.APPROVED && (
+                {!isEditable && role === UserRole.SEBC && (localStatus === ExamStatus.APPROVED || localStatus === ExamStatus.SUBMITTED) && (
                   <button 
                     onClick={() => setIsEditable(true)}
                     className="btn-footer flex items-center gap-1.5 px-4 py-1 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-blue-600"

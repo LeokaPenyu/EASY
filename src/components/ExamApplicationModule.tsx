@@ -193,8 +193,8 @@ export const ExamApplicationModule: React.FC<ExamApplicationModuleProps> = ({
       {/* Header */}
       <div className="bg-brand-red p-4 flex items-center justify-between shadow-md">
         <h2 className="text-white font-bold text-xl flex items-center gap-2">
-          {headerTitle || (isUnlockRequestMode && role === UserRole.SEC
-            ? 'Permintaan Membuka Pemeriksa (Unlock)'
+          {headerTitle || (isUnlockRequestMode && (role === UserRole.SEC || role === UserRole.SEBC)
+            ? 'Permintaan untuk Membuka Peperiksaan Terkunci'
             : isSummaryReadyMode 
             ? 'Sedia untuk Penyediaan Rumusan Peperiksaan' 
             : (role === UserRole.DEC ? t('examApplication') : (role === UserRole.SEC ? 'Permohonan Peperiksaan Baru' : 'Kemasukan Keputusan Peperiksaan')))}

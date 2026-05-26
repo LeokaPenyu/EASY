@@ -163,8 +163,8 @@ export default function App() {
                 setIsUnlockListView(true);
                 setIsPrintListView(false);
                 setInitialModuleTab('rumusan');
-                setInitialModuleStatus('Semua');
-                setViewTitle('Permintaan Membuka Pemeriksa (Unlock)');
+                setInitialModuleStatus(ExamStatus.UNLOCK_REQUESTED);
+                setViewTitle('Permintaan Membuka Peperiksaan Terkunci');
               } else if (key === 'personnel-input') {
                 setActiveView('ExamApplication');
                 setExamStep('list');
@@ -173,8 +173,8 @@ export default function App() {
                 setIsPendingSubmissionView(false);
                 setIsRejectedView(false);
                 setIsPrintListView(false);
-                setInitialModuleTab('keputusan');
-                setInitialModuleStatus(ExamStatus.APPROVED);
+                setInitialModuleTab('rumusan');
+                setInitialModuleStatus(ExamStatus.SUBMITTED);
                 setViewTitle('Sedia untuk Memasukkan Senarai Pemeriksa');
               } else if (key === 'results-input') {
                 setActiveView('ExamApplication');
@@ -185,7 +185,7 @@ export default function App() {
                 setIsRejectedView(false);
                 setIsPrintListView(false);
                 setInitialModuleTab('keputusan');
-                setInitialModuleStatus(ExamStatus.APPROVED);
+                setInitialModuleStatus(ExamStatus.SUBMITTED);
                 setViewTitle('Sedia untuk Memasukkan Keputusan');
               } else if (key === 'sedia-cetak-list') {
                 setActiveView('ExamApplication');
@@ -233,7 +233,7 @@ export default function App() {
                 isNewApplicationListMode={initialModuleTab === 'borang' && initialModuleStatus === ExamStatus.PENDING_VERIFICATION}
                 isVerificationListMode={isVerificationListView && initialModuleStatus === ExamStatus.SUBMITTED}
                 isPrintListMode={isPrintListView}
-                isSebcListMode={initialModuleTab === 'keputusan' && (initialModuleStatus === ExamStatus.SUBMITTED || initialModuleStatus === ExamStatus.APPROVED)}
+                isSebcListMode={(initialModuleTab === 'keputusan' || initialModuleTab === 'rumusan') && (initialModuleStatus === ExamStatus.SUBMITTED || initialModuleStatus === ExamStatus.APPROVED)}
                 headerTitle={viewTitle}
                 initialTab={initialModuleTab}
                 initialStatusFilter={initialModuleStatus}
