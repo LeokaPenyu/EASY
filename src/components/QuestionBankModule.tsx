@@ -369,7 +369,7 @@ export const QuestionBankModule = () => {
                       <div className="flex justify-between items-start mb-4">
                         <div className="font-bold text-charcoal text-[15px] pr-8">
                           <span className="text-brand-red mr-2">{i + 1}.</span>
-                          {translateContent(q.question)}
+                          {q ? translateContent(q.question) : 'Soalan Tidak Sah'}
                         </div>
                         {!locked && editingIndex === null && !isAddingNew && (
                           <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -383,8 +383,8 @@ export const QuestionBankModule = () => {
                         )}
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pl-5">
-                        {q.options.map((opt, optIndex) => {
-                          const isCorrect = String.fromCharCode(65 + optIndex) === q.answer.toUpperCase() || opt.trim().toLowerCase() === q.answer.trim().toLowerCase();
+                        {q?.options?.map((opt, optIndex) => {
+                          const isCorrect = String.fromCharCode(65 + optIndex) === (q?.answer || '').toUpperCase() || opt.trim().toLowerCase() === (q?.answer || '').trim().toLowerCase();
                           return (
                             <div key={optIndex} className={`p-3 rounded-lg border flex items-center gap-3 transition-colors ${
                               isCorrect 

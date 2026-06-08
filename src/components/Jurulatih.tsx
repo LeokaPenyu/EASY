@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Search, Edit, Trash2, X, Save, UserSquare2 } from 'lucide-react';
+import { Search, Edit, Trash2, X, Save, UserSquare2, Plus } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 interface Trainer {
@@ -118,7 +118,7 @@ export const Jurulatih: React.FC = () => {
             onClick={handleAddNew}
             className="bg-action-teal hover:bg-teal-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center gap-2"
           >
-            {t('addTrainer')}
+            <Plus className="w-4 h-4" /> {t('addTrainer')}
           </button>
         </div>
 
@@ -239,87 +239,88 @@ export const Jurulatih: React.FC = () => {
           <motion.div 
             initial={{ scale: 0.95, opacity: 0 }} 
             animate={{ scale: 1, opacity: 1 }} 
-            className="bg-white shadow-xl rounded-xl w-full max-w-2xl flex flex-col overflow-hidden"
+            className="bg-white shadow-xl rounded-xl w-full max-w-lg flex flex-col overflow-hidden"
           >
             {/* Modal Header */}
-            <div className="px-6 py-4 flex justify-between items-center border-b border-gray-100 bg-gradient-to-r from-gray-800 to-gray-700 text-white">
-              <h3 className="font-bold text-base tracking-wide">
+            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white">
+              <h3 className="font-bold text-lg text-gray-900">
                 {editingId ? t('ubahJurulatih') : t('addTrainer')}
               </h3>
               <button 
                 onClick={() => setIsModalOpen(false)} 
-                className="p-1.5 text-white/70 hover:text-white hover:bg-white/10 transition-colors rounded-lg border border-white/20 bg-black/20"
+                className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-50 rounded-lg"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
             
             {/* Modal Content */}
-            <div className="p-6 bg-gray-50/50 space-y-4">
-              <div className="flex items-center gap-4">
-                <label className="w-48 text-right font-medium text-gray-700 text-sm">
-                  <span className="text-alert-red">*</span>{t('trainerName')}:
+            <div className="p-6 bg-white space-y-5">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  {t('trainerName')} <span className="text-brand-red">*</span>
                 </label>
                 <input 
                   type="text" 
                   value={formData.nama}
-                  onChange={(e) => setFormData(prev => ({ ...prev, nama: e.target.value }))}
-                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-action-teal focus:border-action-teal bg-white"
+                  onChange={(e) => setFormData(prev => ({ ...prev, nama: e.target.value.toUpperCase() }))}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:border-action-teal focus:ring-2 focus:ring-action-teal/20 outline-none transition-all uppercase placeholder:normal-case"
+                  placeholder="e.g. AHMAD BIN ABU"
                 />
               </div>
               
-              <div className="flex items-center gap-4">
-                <label className="w-48 text-right font-medium text-gray-700 text-sm">
-                  <span className="text-alert-red">*</span>{t('trainerIc')}:
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  {t('trainerIc')} <span className="text-brand-red">*</span>
                 </label>
                 <input 
                   type="text" 
                   value={formData.noKp}
                   onChange={(e) => setFormData(prev => ({ ...prev, noKp: e.target.value }))}
-                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-action-teal focus:border-action-teal bg-white"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:border-action-teal focus:ring-2 focus:ring-action-teal/20 outline-none transition-all"
+                  placeholder="e.g. 900101-13-5000"
                 />
               </div>
 
-              <div className="flex items-center gap-4">
-                <label className="w-48 text-right font-medium text-gray-700 text-sm">
-                  <span className="text-alert-red">*</span>{t('noWaranTrainer')}:
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  {t('noWaranTrainer')} <span className="text-brand-red">*</span>
                 </label>
                 <input 
                   type="text" 
                   value={formData.noWaran}
                   onChange={(e) => setFormData(prev => ({ ...prev, noWaran: e.target.value }))}
-                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-action-teal focus:border-action-teal bg-white"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:border-action-teal focus:ring-2 focus:ring-action-teal/20 outline-none transition-all"
+                  placeholder="e.g. W123456"
                 />
               </div>
 
-              <div className="flex items-start gap-4">
-                <label className="w-48 text-right font-medium text-gray-700 text-sm pt-2">
-                  {t('trainerAddress')}:
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  {t('trainerAddress')}
                 </label>
                 <textarea 
                   value={formData.alamat}
                   onChange={(e) => setFormData(prev => ({ ...prev, alamat: e.target.value }))}
                   rows={3}
-                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-action-teal focus:border-action-teal bg-white resize-none"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:border-action-teal focus:ring-2 focus:ring-action-teal/20 outline-none transition-all resize-none"
+                  placeholder="Street address or P.O Box"
                 />
               </div>
 
-              <div className="flex items-center gap-4 pt-4">
-                <div className="w-48 mt-1"></div>
-                <div className="flex gap-2">
-                  <button 
-                    onClick={() => setIsModalOpen(false)}
-                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors shadow-sm text-sm font-medium flex items-center gap-2 bg-white"
-                  >
-                    <X className="w-4 h-4" /> {t('close')}
-                  </button>
-                  <button 
-                    onClick={handleSave}
-                    className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-black transition-colors shadow-sm text-sm font-medium flex items-center gap-2"
-                  >
-                    <Save className="w-4 h-4" /> {t('saveTrainer')}
-                  </button>
-                </div>
+              <div className="flex justify-end gap-3 pt-6 border-t border-gray-100 mt-8">
+                <button 
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-6 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center gap-2"
+                >
+                  Batal
+                </button>
+                <button 
+                  onClick={handleSave}
+                  className="px-6 py-2 bg-action-teal hover:bg-teal-700 text-white rounded-lg text-sm font-medium flex items-center gap-2 transition-colors shadow-sm"
+                >
+                  <Save className="w-5 h-5" /> {t('simpan') || 'Simpan'}
+                </button>
               </div>
             </div>
             

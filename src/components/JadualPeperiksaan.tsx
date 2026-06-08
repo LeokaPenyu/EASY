@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Search, Edit, Trash2, X, Save, CalendarDays } from 'lucide-react';
+import { Search, Edit, Trash2, X, Save, CalendarDays, Plus } from 'lucide-react';
 
 interface Jadual {
   id: string;
@@ -110,7 +110,7 @@ export const JadualPeperiksaan: React.FC = () => {
             onClick={handleAddNew}
             className="bg-action-teal hover:bg-teal-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center gap-2"
           >
-            Tambah Jadual
+            <Plus className="w-4 h-4" /> Tambah Jadual
           </button>
         </div>
 
@@ -194,31 +194,31 @@ export const JadualPeperiksaan: React.FC = () => {
           <motion.div 
             initial={{ scale: 0.95, opacity: 0 }} 
             animate={{ scale: 1, opacity: 1 }} 
-            className="bg-white shadow-xl rounded-xl w-full max-w-2xl flex flex-col overflow-hidden"
+            className="bg-white shadow-xl rounded-xl w-full max-w-lg flex flex-col overflow-hidden"
           >
             {/* Modal Header */}
-            <div className="px-6 py-4 flex justify-between items-center border-b border-gray-100 bg-gradient-to-r from-gray-800 to-gray-700 text-white">
-              <h3 className="font-bold text-base tracking-wide">
+            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white">
+              <h3 className="font-bold text-lg text-gray-900">
                 {editingId ? 'Kemaskini Jadual' : 'Tambah Jadual'}
               </h3>
               <button 
                 onClick={() => setIsModalOpen(false)} 
-                className="p-1.5 text-white/70 hover:text-white hover:bg-white/10 transition-colors rounded-lg border border-white/20 bg-black/20"
+                className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-50 rounded-lg"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
             
             {/* Modal Content */}
-            <div className="p-6 bg-gray-50/50 space-y-6">
-              <div className="flex items-center gap-4">
-                <label className="w-40 text-right font-medium text-gray-700 text-sm">
-                  <span className="text-alert-red">*</span>Subjek:
+            <div className="p-6 bg-white space-y-5">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Subjek <span className="text-brand-red">*</span>
                 </label>
                 <select 
                   value={formData.subjek}
                   onChange={(e) => setFormData(prev => ({ ...prev, subjek: e.target.value }))}
-                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-action-teal focus:border-action-teal bg-white"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:border-action-teal focus:ring-2 focus:ring-action-teal/20 outline-none transition-all bg-white"
                 >
                   <option value="">-- Sila Pilih --</option>
                   <option value="CBFA1021 - Pertolongan Cemas Asas dan CPR">CBFA1021 - Pertolongan Cemas Asas dan CPR</option>
@@ -228,36 +228,31 @@ export const JadualPeperiksaan: React.FC = () => {
                 </select>
               </div>
               
-              <div className="flex items-center gap-4">
-                <label className="w-40 text-right font-medium text-gray-700 text-sm">
-                  <span className="text-alert-red">*</span>Tarikh Peperiksaan:
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Tarikh Peperiksaan <span className="text-brand-red">*</span>
                 </label>
-                <div className="relative">
-                  <input 
-                    type="date" 
-                    value={formData.tarikhPeperiksaan}
-                    onChange={(e) => setFormData(prev => ({ ...prev, tarikhPeperiksaan: e.target.value }))}
-                    className="border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-action-teal focus:border-action-teal text-sm w-48 bg-white pr-10"
-                  />
-                </div>
+                <input 
+                  type="date" 
+                  value={formData.tarikhPeperiksaan}
+                  onChange={(e) => setFormData(prev => ({ ...prev, tarikhPeperiksaan: e.target.value }))}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:border-action-teal focus:ring-2 focus:ring-action-teal/20 outline-none transition-all bg-white"
+                />
               </div>
 
-              <div className="flex items-center gap-4 pt-4">
-                <div className="w-40 mt-1"></div>
-                <div className="flex gap-2">
-                  <button 
-                    onClick={() => setIsModalOpen(false)}
-                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors shadow-sm text-sm font-medium flex items-center gap-2 bg-white"
-                  >
-                    <X className="w-4 h-4" /> Tutup
-                  </button>
-                  <button 
-                    onClick={handleSave}
-                    className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-black transition-colors shadow-sm text-sm font-medium flex items-center gap-2"
-                  >
-                    <Save className="w-4 h-4" /> Simpan
-                  </button>
-                </div>
+              <div className="flex justify-end gap-3 pt-6 border-t border-gray-100 mt-8">
+                <button 
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-6 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center gap-2"
+                >
+                  Batal
+                </button>
+                <button 
+                  onClick={handleSave}
+                  className="px-6 py-2 bg-action-teal hover:bg-teal-700 text-white rounded-lg text-sm font-medium flex items-center gap-2 transition-colors shadow-sm"
+                >
+                  <Save className="w-5 h-5" /> Simpan
+                </button>
               </div>
             </div>
             

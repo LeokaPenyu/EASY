@@ -199,154 +199,156 @@ export const ProfilSubjek = () => {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
+        <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 overflow-y-auto">
           <motion.div 
             initial={{ scale: 0.95, opacity: 0 }} 
             animate={{ scale: 1, opacity: 1 }} 
-            className="bg-white rounded-xl shadow-xl w-full max-w-2xl flex flex-col my-8 overflow-hidden"
+            className="bg-white rounded-xl shadow-xl w-full max-w-2xl flex flex-col my-auto max-h-[96vh] overflow-hidden"
           >
-            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-              <h3 className="font-bold text-lg text-gray-900">{editingId ? 'Kemaskini Profil Subjek' : 'Tambah Profil Subjek'}</h3>
-              <button onClick={handleCloseModal} className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-50 rounded-lg">
-                <X className="w-5 h-5" />
+            <div className="px-5 py-3 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+              <h3 className="font-bold text-[15px] text-gray-900">{editingId ? 'Kemaskini Profil Subjek' : 'Tambah Profil Subjek'}</h3>
+              <button onClick={handleCloseModal} className="text-gray-400 hover:text-red-500 transition-colors p-1.5 hover:bg-red-50 rounded-lg">
+                <X className="w-4 h-4" />
               </button>
             </div>
             
-            <div className="p-6 flex-1 flex flex-col bg-white">
-              <div className="flex gap-2 border-b border-gray-100 mb-6">
+            <div className="p-4 md:p-5 flex-1 flex flex-col bg-white overflow-y-auto custom-scrollbar">
+              <div className="flex gap-2 border-b border-gray-100 mb-4">
                 <button 
-                  className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'EN' ? 'border-action-teal text-action-teal' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
+                  className={`px-3 py-1.5 text-xs font-bold border-b-2 transition-colors ${activeTab === 'EN' ? 'border-action-teal text-action-teal' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
                   onClick={() => setActiveTab('EN')}
                 >
                   English
                 </button>
                 <button 
-                  className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'BM' ? 'border-action-teal text-action-teal' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
+                  className={`px-3 py-1.5 text-xs font-bold border-b-2 transition-colors ${activeTab === 'BM' ? 'border-action-teal text-action-teal' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
                   onClick={() => setActiveTab('BM')}
                 >
                   B.Malaysia
                 </button>
               </div>
 
-              <div className="space-y-5 mb-8 flex-1">
+              <div className="space-y-4 mb-4 flex-1">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label className="block text-xs font-bold text-gray-700 mb-1">
                     Nama Subjek <span className="text-brand-red">*</span>
                   </label>
                   <input 
                     type="text" 
                     value={formData.name}
                     onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:border-action-teal focus:ring-2 focus:ring-action-teal/20 outline-none transition-all"
+                    className="w-full border border-gray-300 rounded-md px-3 py-1.5 text-xs focus:border-action-teal focus:ring-1 focus:ring-action-teal/20 outline-none transition-all"
                   />
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    <label className="block text-xs font-bold text-gray-700 mb-1">
                       Kod Subjek <span className="text-brand-red">*</span>
                     </label>
                     <input 
                       type="text" 
                       value={formData.code}
                       onChange={(e) => setFormData(prev => ({ ...prev, code: e.target.value }))}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:border-action-teal focus:ring-2 focus:ring-action-teal/20 outline-none transition-all uppercase placeholder:normal-case"
+                      className="w-full border border-gray-300 rounded-md px-3 py-1.5 text-xs focus:border-action-teal focus:ring-1 focus:ring-action-teal/20 outline-none transition-all uppercase placeholder:normal-case"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    <label className="block text-xs font-bold text-gray-700 mb-1">
                       Waktu Subjek <span className="text-brand-red">*</span>
                     </label>
                     <input 
                       type="text" 
                       value={formData.duration}
                       onChange={(e) => setFormData(prev => ({ ...prev, duration: e.target.value }))}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:border-action-teal focus:ring-2 focus:ring-action-teal/20 outline-none transition-all"
+                      className="w-full border border-gray-300 rounded-md px-3 py-1.5 text-xs focus:border-action-teal focus:ring-1 focus:ring-action-teal/20 outline-none transition-all"
                       placeholder="e.g. 14 JAM"
                     />
                   </div>
                 </div>
 
-                <div className="border border-gray-200 rounded-lg p-4 space-y-4 bg-gray-50/50">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-3">
-                        Subjek Tersedia Untuk <span className="text-brand-red">*</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="border border-gray-200 rounded-md p-3 space-y-3 bg-gray-50/30">
+                    <label className="block text-xs font-bold text-gray-700 border-b border-gray-200 pb-2">
+                      Subjek Tersedia Untuk <span className="text-brand-red">*</span>
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <label className="flex items-center gap-2 text-xs text-gray-700 cursor-pointer">
+                        <input type="checkbox" checked={formData.availableFor.youth} onChange={() => handleCheckbox('availableFor', 'youth')} className="rounded text-action-teal focus:ring-action-teal w-3.5 h-3.5 border-gray-300" /> Youth
                       </label>
-                      <div className="flex flex-col gap-2.5">
-                        <label className="flex items-center gap-3 text-sm text-gray-700 cursor-pointer">
-                          <input type="checkbox" checked={formData.availableFor.youth} onChange={() => handleCheckbox('availableFor', 'youth')} className="rounded text-action-teal focus:ring-action-teal w-4 h-4 border-gray-300" /> Youth
-                        </label>
-                        <label className="flex items-center gap-3 text-sm text-gray-700 cursor-pointer">
-                          <input type="checkbox" checked={formData.availableFor.vad} onChange={() => handleCheckbox('availableFor', 'vad')} className="rounded text-action-teal focus:ring-action-teal w-4 h-4 border-gray-300" /> VAD + Ordinary
-                        </label>
-                        <label className="flex items-center gap-3 text-sm text-gray-700 cursor-pointer">
-                          <input type="checkbox" checked={formData.availableFor.private} onChange={() => handleCheckbox('availableFor', 'private')} className="rounded text-action-teal focus:ring-action-teal w-4 h-4 border-gray-300" /> Private
-                        </label>
-                        <label className="flex items-center gap-3 text-sm text-gray-700 cursor-pointer">
-                          <input type="checkbox" checked={formData.availableFor.gov} onChange={() => handleCheckbox('availableFor', 'gov')} className="rounded text-action-teal focus:ring-action-teal w-4 h-4 border-gray-300" /> Government
-                        </label>
-                      </div>
+                      <label className="flex items-center gap-2 text-xs text-gray-700 cursor-pointer">
+                        <input type="checkbox" checked={formData.availableFor.vad} onChange={() => handleCheckbox('availableFor', 'vad')} className="rounded text-action-teal focus:ring-action-teal w-3.5 h-3.5 border-gray-300" /> VAD + Ordinary
+                      </label>
+                      <label className="flex items-center gap-2 text-xs text-gray-700 cursor-pointer">
+                        <input type="checkbox" checked={formData.availableFor.private} onChange={() => handleCheckbox('availableFor', 'private')} className="rounded text-action-teal focus:ring-action-teal w-3.5 h-3.5 border-gray-300" /> Private
+                      </label>
+                      <label className="flex items-center gap-2 text-xs text-gray-700 cursor-pointer">
+                        <input type="checkbox" checked={formData.availableFor.gov} onChange={() => handleCheckbox('availableFor', 'gov')} className="rounded text-action-teal focus:ring-action-teal w-3.5 h-3.5 border-gray-300" /> Government
+                      </label>
                     </div>
+                  </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-3">
-                        Bahasa Subjek <span className="text-brand-red">*</span>
+                  <div className="border border-gray-200 rounded-md p-3 space-y-3 bg-gray-50/30">
+                    <label className="block text-xs font-bold text-gray-700 border-b border-gray-200 pb-2">
+                      Bahasa Subjek <span className="text-brand-red">*</span>
+                    </label>
+                    <div className="flex gap-4">
+                      <label className="flex items-center gap-2 text-xs text-gray-700 cursor-pointer">
+                        <input type="checkbox" checked={formData.languages.bc} onChange={() => handleCheckbox('languages', 'bc')} className="rounded text-action-teal focus:ring-action-teal w-3.5 h-3.5 border-gray-300" /> BC
                       </label>
-                      <div className="flex flex-col gap-2.5">
-                        <label className="flex items-center gap-3 text-sm text-gray-700 cursor-pointer">
-                          <input type="checkbox" checked={formData.languages.bc} onChange={() => handleCheckbox('languages', 'bc')} className="rounded text-action-teal focus:ring-action-teal w-4 h-4 border-gray-300" /> BC
-                        </label>
-                        <label className="flex items-center gap-3 text-sm text-gray-700 cursor-pointer">
-                          <input type="checkbox" checked={formData.languages.bi} onChange={() => handleCheckbox('languages', 'bi')} className="rounded text-action-teal focus:ring-action-teal w-4 h-4 border-gray-300" /> BI
-                        </label>
-                        <label className="flex items-center gap-3 text-sm text-gray-700 cursor-pointer">
-                          <input type="checkbox" checked={formData.languages.bm} onChange={() => handleCheckbox('languages', 'bm')} className="rounded text-action-teal focus:ring-action-teal w-4 h-4 border-gray-300" /> BM
-                        </label>
-                      </div>
+                      <label className="flex items-center gap-2 text-xs text-gray-700 cursor-pointer">
+                        <input type="checkbox" checked={formData.languages.bi} onChange={() => handleCheckbox('languages', 'bi')} className="rounded text-action-teal focus:ring-action-teal w-3.5 h-3.5 border-gray-300" /> BI
+                      </label>
+                      <label className="flex items-center gap-2 text-xs text-gray-700 cursor-pointer">
+                        <input type="checkbox" checked={formData.languages.bm} onChange={() => handleCheckbox('languages', 'bm')} className="rounded text-action-teal focus:ring-action-teal w-3.5 h-3.5 border-gray-300" /> BM
+                      </label>
                     </div>
                   </div>
                 </div>
 
-                <div className="border border-gray-200 rounded-lg p-4 bg-gray-50/50">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-3">
-                        Jenis Subjek (Peperiksaan) <span className="text-brand-red">*</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="border border-gray-200 rounded-md p-3 space-y-3 bg-gray-50/30">
+                    <label className="block text-xs font-bold text-gray-700 border-b border-gray-200 pb-2">
+                      Jenis Subjek (Peperiksaan) <span className="text-brand-red">*</span>
+                    </label>
+                    <div className="flex gap-4">
+                      <label className="flex items-center gap-2 text-xs text-gray-700 cursor-pointer">
+                        <input type="checkbox" checked={formData.types.teori} onChange={() => handleCheckbox('types', 'teori')} className="rounded text-action-teal focus:ring-action-teal w-3.5 h-3.5 border-gray-300" /> Teori
                       </label>
-                      <div className="flex flex-col gap-2.5">
-                        <label className="flex items-center gap-3 text-sm text-gray-700 cursor-pointer">
-                          <input type="checkbox" checked={formData.types.teori} onChange={() => handleCheckbox('types', 'teori')} className="rounded text-action-teal focus:ring-action-teal w-4 h-4 border-gray-300" /> Teori
-                        </label>
-                        <label className="flex items-center gap-3 text-sm text-gray-700 cursor-pointer">
-                          <input type="checkbox" checked={formData.types.lisan} onChange={() => handleCheckbox('types', 'lisan')} className="rounded text-action-teal focus:ring-action-teal w-4 h-4 border-gray-300" /> Lisan
-                        </label>
-                        <label className="flex items-center gap-3 text-sm text-gray-700 cursor-pointer">
-                          <input type="checkbox" checked={formData.types.praktikal} onChange={() => handleCheckbox('types', 'praktikal')} className="rounded text-action-teal focus:ring-action-teal w-4 h-4 border-gray-300" /> Praktikal
-                        </label>
-                      </div>
+                      <label className="flex items-center gap-2 text-xs text-gray-700 cursor-pointer">
+                        <input type="checkbox" checked={formData.types.lisan} onChange={() => handleCheckbox('types', 'lisan')} className="rounded text-action-teal focus:ring-action-teal w-3.5 h-3.5 border-gray-300" /> Lisan
+                      </label>
+                      <label className="flex items-center gap-2 text-xs text-gray-700 cursor-pointer">
+                        <input type="checkbox" checked={formData.types.praktikal} onChange={() => handleCheckbox('types', 'praktikal')} className="rounded text-action-teal focus:ring-action-teal w-3.5 h-3.5 border-gray-300" /> Praktikal
+                      </label>
                     </div>
+                  </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-3">
-                        Skala Skor Subjek <span className="text-brand-red">*</span>
-                      </label>
-                      <div className="flex flex-col gap-3">
-                        <div className="flex items-center gap-3">
-                          <span className="text-sm w-16 font-medium text-gray-600">Teori:</span>
-                          <input type="text" className="w-20 border border-gray-300 rounded-md px-3 py-1.5 text-sm outline-none focus:border-action-teal focus:ring-1 focus:ring-action-teal" value={formData.scores.teori} onChange={e => handleScoreChange('teori', e.target.value)} />
-                          <span className="text-sm text-gray-500">/ 100</span>
+                  <div className="border border-gray-200 rounded-md p-3 space-y-3 bg-gray-50/30">
+                    <label className="block text-xs font-bold text-gray-700 border-b border-gray-200 pb-2">
+                      Skala Skor Subjek <span className="text-brand-red">*</span>
+                    </label>
+                    <div className="flex justify-between gap-2">
+                      <div className="flex flex-col gap-1 items-center">
+                        <span className="text-[10px] uppercase font-bold text-gray-500">Teori</span>
+                        <div className="flex items-center gap-1">
+                          <input type="text" className="w-10 border border-gray-300 rounded px-1.5 py-1 text-xs text-center outline-none focus:border-action-teal" value={formData.scores.teori} onChange={e => handleScoreChange('teori', e.target.value)} />
+                          <span className="text-xs text-gray-400">/100</span>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <span className="text-sm w-16 font-medium text-gray-600">Lisan:</span>
-                          <input type="text" className="w-20 border border-gray-300 rounded-md px-3 py-1.5 text-sm outline-none focus:border-action-teal focus:ring-1 focus:ring-action-teal" value={formData.scores.lisan} onChange={e => handleScoreChange('lisan', e.target.value)} />
-                          <span className="text-sm text-gray-500">/ 40</span>
+                      </div>
+                      <div className="flex flex-col gap-1 items-center">
+                        <span className="text-[10px] uppercase font-bold text-gray-500">Lisan</span>
+                        <div className="flex items-center gap-1">
+                          <input type="text" className="w-10 border border-gray-300 rounded px-1.5 py-1 text-xs text-center outline-none focus:border-action-teal" value={formData.scores.lisan} onChange={e => handleScoreChange('lisan', e.target.value)} />
+                          <span className="text-xs text-gray-400">/40</span>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <span className="text-sm w-16 font-medium text-gray-600">Praktikal:</span>
-                          <input type="text" className="w-20 border border-gray-300 rounded-md px-3 py-1.5 text-sm outline-none focus:border-action-teal focus:ring-1 focus:ring-action-teal" value={formData.scores.praktikal} onChange={e => handleScoreChange('praktikal', e.target.value)} />
-                          <span className="text-sm text-gray-500">/ 60</span>
+                      </div>
+                      <div className="flex flex-col gap-1 items-center">
+                        <span className="text-[10px] uppercase font-bold text-gray-500">Praktikal</span>
+                        <div className="flex items-center gap-1">
+                          <input type="text" className="w-10 border border-gray-300 rounded px-1.5 py-1 text-xs text-center outline-none focus:border-action-teal" value={formData.scores.praktikal} onChange={e => handleScoreChange('praktikal', e.target.value)} />
+                          <span className="text-xs text-gray-400">/60</span>
                         </div>
                       </div>
                     </div>
@@ -355,25 +357,25 @@ export const ProfilSubjek = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                    <label className="block text-xs font-bold text-gray-700 mb-1">
                       Subjek Untuk Pembaharuan <span className="text-brand-red">*</span>
                     </label>
-                    <div className="flex items-center gap-6">
-                      <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                        <input type="radio" name="renewal" checked={formData.renewal === 'ya'} onChange={() => setFormData(prev => ({ ...prev, renewal: 'ya' }))} className="text-action-teal focus:ring-action-teal border-gray-300" /> Ya
+                    <div className="flex items-center gap-4 mt-2">
+                      <label className="flex items-center gap-2 text-xs text-gray-700 cursor-pointer">
+                        <input type="radio" name="renewal" checked={formData.renewal === 'ya'} onChange={() => setFormData(prev => ({ ...prev, renewal: 'ya' }))} className="text-action-teal focus:ring-action-teal w-3.5 h-3.5 border-gray-300" /> Ya
                       </label>
-                      <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                        <input type="radio" name="renewal" checked={formData.renewal === 'tidak'} onChange={() => setFormData(prev => ({ ...prev, renewal: 'tidak' }))} className="text-action-teal focus:ring-action-teal border-gray-300" /> Tidak
+                      <label className="flex items-center gap-2 text-xs text-gray-700 cursor-pointer">
+                        <input type="radio" name="renewal" checked={formData.renewal === 'tidak'} onChange={() => setFormData(prev => ({ ...prev, renewal: 'tidak' }))} className="text-action-teal focus:ring-action-teal w-3.5 h-3.5 border-gray-300" /> Tidak
                       </label>
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    <label className="block text-xs font-bold text-gray-700 mb-1">
                       Tarikh Luput Sijil <span className="text-brand-red">*</span>
                     </label>
                     <select 
-                      className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:border-action-teal focus:ring-2 focus:ring-action-teal/20 outline-none transition-all bg-white"
+                      className="w-full border border-gray-300 rounded-md px-3 py-1.5 text-xs focus:border-action-teal focus:ring-1 focus:ring-action-teal/20 outline-none transition-all bg-white"
                       value={formData.expiry}
                       onChange={(e) => setFormData(prev => ({ ...prev, expiry: e.target.value }))}
                     >

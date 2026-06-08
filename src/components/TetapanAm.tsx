@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Settings, Edit, X, Save } from 'lucide-react';
+import { Settings, Edit, X, Save, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 
 interface Tetapan {
   id: string;
@@ -46,35 +46,36 @@ export const TetapanAm = () => {
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 text-sm">
       <div className="card shadow-sm border border-gray-100 p-0 overflow-hidden bg-white">
         
-        {/* Header */}
-        <div className="bg-brand-red p-3 flex justify-between items-center text-white">
-          <div className="flex items-center gap-2">
-            <Settings className="w-5 h-5 text-white/80" />
-            <h2 className="font-bold text-[15px]">Tetapan Am</h2>
+        <div className="p-6 flex justify-between items-center border-b border-gray-100">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-rose-50 text-brand-red rounded-lg">
+              <Settings className="w-5 h-5" />
+            </div>
+            <h2 className="font-bold text-lg text-gray-900">Tetapan Am</h2>
           </div>
         </div>
 
         {/* Content Area */}
-        <div>
-          <table className="w-full text-left border-collapse text-[12px]">
-            <thead className="bg-[#E8EEF4] text-[#2D5A8D] font-bold border-b-2 border-gray-200">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left border-collapse">
+            <thead className="bg-gray-50 text-gray-500 uppercase text-xs font-semibold tracking-wider border-b border-gray-100">
               <tr>
-                <th className="p-2 border-r border-gray-200 text-center w-12">NO.</th>
-                <th className="p-2 border-r border-gray-200 uppercase">NAMA</th>
-                <th className="p-2 border-r border-gray-200 uppercase w-32 text-center">NILAI</th>
-                <th className="p-2 text-center uppercase w-20">TINDAKAN</th>
+                <th className="px-6 py-4 text-center w-16">NO.</th>
+                <th className="px-6 py-4">NAMA</th>
+                <th className="px-6 py-4 text-center w-32">NILAI</th>
+                <th className="px-6 py-4 text-center w-28">TINDAKAN</th>
               </tr>
             </thead>
             <tbody>
               {tetapanList.map((tetapan, index) => (
-                <tr key={tetapan.id} className="border-b border-gray-200 hover:bg-gray-50/50">
-                  <td className="p-2 border-r border-gray-100 text-center font-medium text-gray-700 bg-[#FAFBFD]">{index + 1}</td>
-                  <td className="p-2 border-r border-gray-100 text-gray-800">{tetapan.name}</td>
-                  <td className="p-2 border-r border-gray-100 text-gray-800 text-center">{tetapan.value}</td>
-                  <td className="p-2 text-center">
+                <tr key={tetapan.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-center font-medium text-gray-500">{index + 1}</td>
+                  <td className="px-6 py-4 text-gray-800 font-medium">{tetapan.name}</td>
+                  <td className="px-6 py-4 text-center text-gray-600 font-medium">{tetapan.value}</td>
+                  <td className="px-6 py-4 text-center">
                     <button 
                       onClick={() => handleOpenModal(tetapan)}
-                      className="text-action-teal hover:text-action-teal/80 bg-[#E8F0FE] border border-gray-300 p-0.5 rounded-[2px]"
+                      className="text-action-teal hover:text-teal-700 bg-teal-50 border border-teal-100 p-1.5 rounded-md transition-colors inline-flex"
                       title="Kemaskini"
                     >
                       <Edit className="w-4 h-4" />
@@ -85,73 +86,79 @@ export const TetapanAm = () => {
             </tbody>
           </table>
           
-          <div className="flex justify-center p-2 text-[11px] text-[#0066CC] font-medium bg-[#F8F9FA] border-t border-gray-200">
-            <div className="flex items-center gap-2">
-              <span className="text-gray-400 cursor-not-allowed uppercase tracking-wider text-[10px]">Pertama</span>
-              <span className="text-gray-400 cursor-not-allowed uppercase tracking-wider text-[10px]">Sebelumnya</span>
-              <span className="text-gray-600">Halaman <input type="text" value="1" className="w-8 border border-gray-300 text-center mx-1 py-0.5 rounded-[2px]" readOnly /> dari 1</span>
-              <span className="text-gray-400 cursor-not-allowed uppercase tracking-wider text-[10px]">Seterusnya</span>
-              <span className="text-gray-400 cursor-not-allowed uppercase tracking-wider text-[10px]">Terakhir</span>
+          {/* Pagination */}
+          <div className="bg-white px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-gray-100">
+            <p className="text-sm text-gray-600">
+              Menunjukkan <span className="font-semibold text-gray-900">{tetapanList.length}</span> rekod keseluruhan
+            </p>
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <button className="px-3 py-1 border border-gray-200 rounded text-gray-400 cursor-not-allowed hover:bg-gray-50">Pertama</button>
+              <button className="px-3 py-1 border border-gray-200 rounded text-gray-400 cursor-not-allowed hover:bg-gray-50">Sblm</button>
+              <span className="px-2">Hal <input type="text" value="1" className="w-10 border border-gray-300 text-center mx-1 py-1 rounded-md" readOnly /> dari 1</span>
+              <button className="px-3 py-1 border border-gray-200 rounded text-action-teal hover:bg-gray-50">Setrnya</button>
+              <button className="px-3 py-1 border border-gray-200 rounded text-action-teal hover:bg-gray-50">Terakhir</button>
             </div>
-          </div>
-          <div className="text-center text-[11px] text-gray-500 pb-2 bg-[#F8F9FA]">
-            Jumlah Rekod : {tetapanList.length}
           </div>
         </div>
       </div>
 
       {/* Modal / Dialog */}
       {isModalOpen && editingTetapan && (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-start pt-20 z-50 p-4">
+        <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
           <motion.div 
             initial={{ scale: 0.95, opacity: 0 }} 
             animate={{ scale: 1, opacity: 1 }} 
-            className="bg-[#F0F0F0] shadow-xl w-full max-w-xl flex flex-col overflow-hidden border border-gray-400"
+            className="bg-white rounded-xl shadow-xl w-full max-w-lg flex flex-col my-auto overflow-hidden"
           >
-            {/* Modal Header */}
-            <div className="bg-gradient-to-b from-[#4A4A4A] to-[#1A1A1A] text-white px-3 py-1 flex justify-between items-center border-b-[3px] border-brand-red">
-              <h3 className="font-bold text-[13px] tracking-wide">Ubah Tetapan Am</h3>
-              <button onClick={handleCloseModal} className="bg-[#E8E8E8] text-gray-800 rounded-[2px] px-2 py-0.5 ml-4 flex items-center justify-center hover:bg-white inset-shadow border border-gray-400">
-                <X className="w-3 h-3 text-brand-red" />
+            <div className="px-5 py-3 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+              <h3 className="font-bold text-[15px] text-gray-900">Ubah Tetapan Am</h3>
+              <button 
+                onClick={handleCloseModal} 
+                className="text-gray-400 hover:text-red-500 transition-colors p-1.5 hover:bg-red-50 rounded-lg"
+              >
+                <X className="w-4 h-4" />
               </button>
             </div>
             
-            {/* Modal Content */}
-            <div className="bg-white p-6 min-h-[300px]">
-               <div className="flex justify-center mb-4">
-                 <div className="grid grid-cols-[80px_1fr] items-center gap-2 max-w-md w-full">
-                    <div className="text-right text-gray-700 font-medium text-[13px]">Nama:</div>
-                    <div className="text-gray-900 text-[13px]">{editingTetapan.name}</div>
-                 </div>
-               </div>
-
-               <div className="flex justify-center mb-8">
-                 <div className="grid grid-cols-[80px_1fr] items-center gap-2 max-w-md w-full">
-                    <div className="text-right font-bold text-gray-800 text-[13px]">
-                      <span className="text-alert-red">*</span>Nilai:
+            <div className="p-5 flex-1 flex flex-col bg-white">
+               <div className="space-y-4 mb-6">
+                 <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1">
+                      Nama
+                    </label>
+                    <div className="text-sm text-gray-900 bg-gray-50 border border-gray-200 rounded-md px-3 py-2">
+                       {editingTetapan.name}
                     </div>
+                 </div>
+                 
+                 <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1">
+                      Nilai <span className="text-brand-red">*</span>
+                    </label>
                     <input 
                       type="text" 
                       value={editValue} 
                       onChange={e => setEditValue(e.target.value)} 
-                      className="border border-gray-300 w-32 px-2 py-1 outline-none focus:border-action-teal text-[13px] shadow-inner rounded-[2px]"
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-action-teal focus:ring-1 focus:ring-action-teal/20 outline-none transition-all"
                     />
                  </div>
                </div>
 
-               <div className="flex justify-center gap-2">
-                 <button onClick={handleCloseModal} className="flex items-center gap-1.5 bg-[#E8F0FE] border border-gray-300 rounded-[2px] px-3 py-1 text-gray-700 font-bold text-[12px] hover:bg-white transition-colors">
-                    <X className="w-4 h-4 text-brand-red" /> Tutup
+               <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 mt-2">
+                 <button 
+                   onClick={handleCloseModal} 
+                   className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-colors"
+                 >
+                    Tutup
                  </button>
-                 <button onClick={handleSave} className="flex items-center gap-1.5 bg-[#E8F0FE] border border-gray-300 rounded-[2px] px-3 py-1 text-[#0066CC] font-bold text-[12px] hover:bg-white transition-colors">
+                 <button 
+                   onClick={handleSave} 
+                   className="px-4 py-2 text-sm font-medium text-white bg-action-teal hover:bg-teal-700 rounded-lg flex items-center gap-2 transition-colors shadow-sm"
+                 >
                     <Save className="w-4 h-4" /> Simpan
                  </button>
                </div>
             </div>
-
-            {/* Bottom Gray Bar in Modal like in image */}
-            <div className="h-6 bg-[#E8E8E8] border-t border-gray-300"></div>
-
           </motion.div>
         </div>
       )}

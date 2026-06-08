@@ -34,6 +34,17 @@ export const CandidateExamRoom = ({ examTitle, onFinish }: { examTitle: string, 
 
   const q = sharedQuestions[currentQIndex];
 
+  if (!q) {
+    return (
+      <div className="p-8 text-center bg-white rounded-xl shadow-sm border border-gray-100 max-w-2xl mx-auto mt-12">
+        <AlertTriangle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
+        <h3 className="text-lg font-bold text-charcoal mb-2">{translateContent('Ralat Peperiksaan')}</h3>
+        <p className="text-gray-500 mb-6">{translateContent('Soalan tidak ditemui. Sila hubungi Penyelaras Peperiksaan.')}</p>
+        <button onClick={onFinish} className="bg-gray-100 hover:bg-gray-200 text-charcoal font-bold py-2 px-6 rounded-lg transition-colors">{translateContent('Kembali')}</button>
+      </div>
+    );
+  }
+
   const handleSelectOption = (opt: string) => {
     setAnswers({ ...answers, [q?.id]: opt });
   };
