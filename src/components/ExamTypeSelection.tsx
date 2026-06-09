@@ -54,7 +54,7 @@ export const ExamTypeSelection: React.FC<ExamTypeSelectionProps> = ({ onBack, on
           </div>
           <div className="flex-1 space-y-3">
             <label className="flex items-center gap-3 cursor-pointer group" onClick={() => handleTypeChange('biasa')}>
-              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${examType === 'biasa' ? 'border-[#008B8B]' : 'border-gray-400'}`}>
+              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${examType === 'biasa' ? 'border-[#008B8B]' : 'border-gray-300'}`}>
                 {examType === 'biasa' && <div className="w-2 h-2 rounded-full bg-[#008B8B]" />}
               </div>
               <span className="text-sm font-medium text-gray-800 group-hover:text-charcoal cursor-pointer">
@@ -62,7 +62,7 @@ export const ExamTypeSelection: React.FC<ExamTypeSelectionProps> = ({ onBack, on
               </span>
             </label>
             <label className="flex items-center gap-3 cursor-pointer group" onClick={() => handleTypeChange('berpusat')}>
-              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${examType === 'berpusat' ? 'border-[#008B8B]' : 'border-gray-400'}`}>
+              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${examType === 'berpusat' ? 'border-[#008B8B]' : 'border-gray-300'}`}>
                 {examType === 'berpusat' && <div className="w-2 h-2 rounded-full bg-[#008B8B]" />}
               </div>
               <span className="text-sm font-medium text-gray-800 group-hover:text-charcoal cursor-pointer">
@@ -70,7 +70,7 @@ export const ExamTypeSelection: React.FC<ExamTypeSelectionProps> = ({ onBack, on
               </span>
             </label>
             <label className="flex items-center gap-3 cursor-pointer group" onClick={() => handleTypeChange('sijil')}>
-              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${examType === 'sijil' ? 'border-[#008B8B]' : 'border-gray-400'}`}>
+              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${examType === 'sijil' ? 'border-[#008B8B]' : 'border-gray-300'}`}>
                 {examType === 'sijil' && <div className="w-2 h-2 rounded-full bg-[#008B8B]" />}
               </div>
               <span className="text-sm font-medium text-gray-800 group-hover:text-charcoal cursor-pointer">

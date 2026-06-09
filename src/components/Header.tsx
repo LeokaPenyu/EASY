@@ -33,8 +33,18 @@ export const Header: React.FC<HeaderProps> = ({ role, setRole, onMenuClick, onLo
         <button onClick={onMenuClick} className="p-2 -ml-2 text-gray-500 hover:bg-gray-100 rounded-lg">
           <Menu className="w-6 h-6" />
         </button>
-        <div className="hidden sm:block">
-          <h1 className="text-lg font-bold bg-gradient-to-r from-brand-red to-red-800 bg-clip-text text-transparent">Exam Administration System (EASY)</h1>
+        <div>
+          <div className="flex items-center gap-3">
+            <img 
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRv9nKB44c6cGGVDzbxCl8ctElibJoYsmXGUg&s" 
+              alt="MRCS Logo" 
+              className="h-8 object-contain"
+            />
+            <div className="flex flex-col justify-center">
+              <h1 className="text-xl font-bold text-charcoal leading-none mb-0.5 tracking-tight">EASY</h1>
+              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider leading-none">MRC SARAWAK BRANCH</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -113,7 +123,7 @@ export const Header: React.FC<HeaderProps> = ({ role, setRole, onMenuClick, onLo
                   
                   <div className="p-3 hover:bg-gray-50 transition-colors rounded-lg flex gap-3 cursor-pointer">
                     <div className="flex-shrink-0 mt-0.5">
-                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-charcoal">
                         <Info className="w-4 h-4" />
                       </div>
                     </div>

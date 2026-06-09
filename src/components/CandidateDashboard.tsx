@@ -176,12 +176,13 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
       <header className="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-40 shadow-sm">
         {/* Left Side: Branding */}
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-brand-red text-white rounded-lg flex items-center justify-center shadow-inner">
-            <Shield className="w-5 h-5" />
-          </div>
+          <img 
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRv9nKB44c6cGGVDzbxCl8ctElibJoYsmXGUg&s" 
+            alt="MRCS Logo" 
+            className="h-8 object-contain"
+          />
           <div>
-            <h1 className="font-bold text-charcoal text-base leading-tight tracking-tight">EASY</h1>
-            <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">MRC Sarawak Branch</p>
+            <h1 className="text-[14px] uppercase tracking-wider text-slate-700 font-bold">MRC Sarawak Branch</h1>
           </div>
         </div>
 
@@ -309,51 +310,60 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
       ) : (
       <main className="max-w-7xl mx-auto px-4 lg:px-8 py-8 md:py-10">
         
+        {upcomingExams.some(e => {
+          const d = new Date(e.date);
+          const diffMs = d.getTime() - new Date().getTime();
+          return diffMs > 0 && diffMs < 48 * 60 * 60 * 1000;
+        }) && (
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-6 flex flex-col md:flex-row md:items-start gap-4 lg:max-w-4xl">
+            <div className="bg-amber-100 text-amber-600 p-2 rounded-lg shrink-0">
+              <AlertCircle className="w-5 h-5" />
+            </div>
+            <div className="flex-1">
+              <h4 className="text-amber-800 font-bold text-sm mb-2">{translateContent("Exam Readiness Checklist (Next 48 Hours)")}</h4>
+              <ul className="space-y-2 text-sm text-amber-700/90 font-medium">
+                <li className="flex items-center gap-2 text-emerald-600"><CheckCircle className="w-4 h-4"/> {translateContent("Stable internet connection confirmed")}</li>
+                <li className="flex items-center gap-2 text-amber-600/70"><div className="w-4 h-4 rounded border-2 border-amber-400 flex items-center justify-center"></div> {translateContent("Identity document ready")}</li>
+                <li className="flex items-center gap-2 text-amber-600/70"><div className="w-4 h-4 rounded border-2 border-amber-400 flex items-center justify-center"></div> {translateContent("Exam time confirmed (13:30)")}</li>
+                <li className="flex items-center gap-2 text-amber-600/70"><div className="w-4 h-4 rounded border-2 border-amber-400 flex items-center justify-center"></div> {translateContent("Device charged and ready")}</li>
+              </ul>
+            </div>
+          </div>
+        )}
+
+        <div className="flex items-center gap-6 border-b border-slate-200 mb-8 overflow-x-auto pb-1">
+          <button 
+            onClick={() => setActiveTab('active')}
+            className={`pb-2 text-sm font-bold transition-colors relative whitespace-nowrap ${activeTab === 'active' ? 'text-brand-red' : 'text-slate-500 hover:text-slate-700'}`}
+          >
+            {translateContent('Active')}
+            {activeTab === 'active' && <div className="absolute bottom-[-5px] left-0 right-0 h-0.5 bg-brand-red rounded-t-full"></div>}
+          </button>
+          <button 
+            onClick={() => setActiveTab('history')}
+            className={`pb-2 text-sm font-bold transition-colors relative whitespace-nowrap ${activeTab === 'history' ? 'text-brand-red' : 'text-slate-500 hover:text-slate-700'}`}
+          >
+            {translateContent('History')}
+            {activeTab === 'history' && <div className="absolute bottom-[-5px] left-0 right-0 h-0.5 bg-brand-red rounded-t-full"></div>}
+          </button>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
           {/* --- LEFT COLUMN (65% -> col-span-8) --- */}
-          <div className={`${activeTab === 'active' ? 'lg:col-span-8' : 'lg:col-span-12'} space-y-8`}>
-
-            {upcomingExams.some(e => {
-              const d = new Date(e.date);
-              const diffMs = d.getTime() - new Date().getTime();
-              return diffMs > 0 && diffMs < 48 * 60 * 60 * 1000;
-            }) && (
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-2 flex flex-col md:flex-row md:items-start gap-4">
-                <div className="bg-amber-100 text-amber-600 p-2 rounded-lg shrink-0">
-                  <AlertCircle className="w-5 h-5" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="text-amber-800 font-bold text-sm mb-2">{translateContent("Exam Readiness Checklist (Next 48 Hours)")}</h4>
-                  <ul className="space-y-2 text-sm text-amber-700/90 font-medium">
-                    <li className="flex items-center gap-2 text-emerald-600"><CheckCircle className="w-4 h-4"/> {translateContent("Stable internet connection confirmed")}</li>
-                    <li className="flex items-center gap-2 text-amber-600/70"><div className="w-4 h-4 rounded border-2 border-amber-400 flex items-center justify-center"></div> {translateContent("Identity document ready")}</li>
-                    <li className="flex items-center gap-2 text-amber-600/70"><div className="w-4 h-4 rounded border-2 border-amber-400 flex items-center justify-center"></div> {translateContent("Exam time confirmed (13:30)")}</li>
-                    <li className="flex items-center gap-2 text-amber-600/70"><div className="w-4 h-4 rounded border-2 border-amber-400 flex items-center justify-center"></div> {translateContent("Device charged and ready")}</li>
-                  </ul>
-                </div>
-              </div>
-            )}
-
-            <div className="flex items-center gap-6 border-b border-slate-200 mb-6 overflow-x-auto pb-1">
-              <button 
-                onClick={() => setActiveTab('active')}
-                className={`pb-2 text-sm font-bold transition-colors relative whitespace-nowrap ${activeTab === 'active' ? 'text-brand-red' : 'text-slate-500 hover:text-slate-700'}`}
-              >
-                {translateContent('Active')}
-                {activeTab === 'active' && <div className="absolute bottom-[-5px] left-0 right-0 h-0.5 bg-brand-red rounded-t-full"></div>}
-              </button>
-              <button 
-                onClick={() => setActiveTab('history')}
-                className={`pb-2 text-sm font-bold transition-colors relative whitespace-nowrap ${activeTab === 'history' ? 'text-brand-red' : 'text-slate-500 hover:text-slate-700'}`}
-              >
-                {translateContent('History')}
-                {activeTab === 'history' && <div className="absolute bottom-[-5px] left-0 right-0 h-0.5 bg-brand-red rounded-t-full"></div>}
-              </button>
-            </div>
-
+          <motion.div 
+            layout
+            className={`${activeTab === 'active' ? 'lg:col-span-8' : 'lg:col-span-12'} space-y-8`}
+          >
+            <AnimatePresence mode="wait">
             {activeTab === 'active' ? (
-              <>
+              <motion.div
+                key="active"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+              >
             <section>
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2.5">
@@ -489,9 +499,15 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
                 </div>
               )}
             </section>
-
-            </>
+            </motion.div>
             ) : activeTab === 'history' ? (
+            <motion.div
+              key="history"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+            >
             <section>
               <div className="flex items-center gap-2.5 mb-5">
                 <div className="bg-slate-100 p-2 rounded-lg">
@@ -555,23 +571,38 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
                 </div>
               </div>
             </section>
+            </motion.div>
             ) : null}
-
-          </div>
+            </AnimatePresence>
+          </motion.div>
 
           {/* --- RIGHT COLUMN (35% -> col-span-4) --- */}
+          <AnimatePresence mode="wait">
           {activeTab === 'active' && (
-          <div className="lg:col-span-4 space-y-8">
+          <motion.div 
+            key="right-col"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20, transition: { duration: 0.2 } }}
+            transition={{ duration: 0.3, ease: 'easeOut', delay: 0.1 }}
+            className="lg:col-span-4 space-y-8"
+          >
 
 
             {/* Retest Area */}
             {retestExams.length > 0 && (
-              <div className="bg-amber-50 rounded-2xl border border-amber-200 p-6 shadow-sm">
-                <h3 className="text-sm font-bold text-amber-900 mb-4 flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 text-amber-600" />
-                  {translateContent("Required Retests")}
-                </h3>
-                <div className="space-y-3">
+              <section>
+                <div className="flex items-center gap-2.5 mb-5">
+                  <div className="bg-amber-100 p-2 rounded-lg">
+                    <AlertCircle className="w-5 h-5 text-amber-600" />
+                  </div>
+                  <h2 className="text-xl font-bold text-charcoal tracking-tight">{translateContent("Action Required")}</h2>
+                </div>
+                <div className="bg-amber-50 rounded-2xl border border-amber-200 p-6 shadow-sm">
+                  <h3 className="text-sm font-bold text-amber-900 mb-4 flex items-center gap-2 uppercase tracking-wider">
+                    {translateContent("Required Retests")}
+                  </h3>
+                  <div className="space-y-3">
                   {retestExams.map((exam) => (
                     <div 
                       key={exam.id}
@@ -600,9 +631,11 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
                   ))}
                 </div>
               </div>
+              </section>
             )}
-          </div>
+          </motion.div>
           )}
+          </AnimatePresence>
         </div>
       </main>
       )}

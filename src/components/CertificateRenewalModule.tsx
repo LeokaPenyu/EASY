@@ -444,13 +444,13 @@ export const CertificateRenewalModule: React.FC<CertificateRenewalModuleProps> =
           <div className="mb-6">
             <div className="grid grid-cols-[200px_1fr] items-start">
               <span className="text-gray-500 font-medium text-right pr-4 mt-1">Senarai Peserta:</span>
-              <table className="w-full border-collapse border border-gray-400">
+              <table className="w-full border-collapse border border-gray-300">
                 <thead>
-                  <tr className="border-b border-gray-400 bg-gray-100/50">
-                    <th className="text-left font-bold py-1.5 px-3 border-r border-gray-400">Nama</th>
-                    <th className="text-center font-bold py-1.5 px-3 border-r border-gray-400">No. KP/Pasport</th>
-                    <th className="text-center font-bold py-1.5 px-3 border-r border-gray-400">No. Ahli BSMM</th>
-                    <th className="text-center font-bold py-1.5 px-3 border-r border-gray-400">Tarikh Tamat Sijil</th>
+                  <tr className="border-b border-gray-300 bg-gray-100/50">
+                    <th className="text-left font-bold py-1.5 px-3 border-r border-gray-300">Nama</th>
+                    <th className="text-center font-bold py-1.5 px-3 border-r border-gray-300">No. KP/Pasport</th>
+                    <th className="text-center font-bold py-1.5 px-3 border-r border-gray-300">No. Ahli BSMM</th>
+                    <th className="text-center font-bold py-1.5 px-3 border-r border-gray-300">Tarikh Tamat Sijil</th>
                     <th className="text-center font-bold py-1.5 px-3">Status</th>
                   </tr>
                 </thead>
@@ -504,22 +504,22 @@ export const CertificateRenewalModule: React.FC<CertificateRenewalModuleProps> =
         {/* Action Footer locked to bottom of screen in summary mode */}
         <div className="fixed bottom-0 left-0 right-0 bg-gray-100 border-t border-gray-300 p-2.5 px-4 flex justify-between md:justify-center items-center shadow-[0_-4px_10px_rgba(0,0,0,0.05)] z-40">
           <div className="flex gap-2 max-w-[1000px] w-full mx-auto">
-             <button onClick={() => setViewState('list')} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-blue-600">
+             <button onClick={() => setViewState('list')} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-charcoal">
                <ArrowLeft className="w-3.5 h-3.5" /> Kembali
              </button>
-             <button className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-blue-600">
+             <button className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-charcoal">
                <Printer className="w-3.5 h-3.5" /> Cetak
              </button>
-             <button className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-blue-600">
+             <button className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-charcoal">
                <Printer className="w-3.5 h-3.5" /> Cetak dengan calon
              </button>
              
              {role === UserRole.DEC && (status === 'Draf' || status === 'Ditolak') && (
                <>
-                 <button onClick={() => setViewState('form')} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-blue-600 ml-auto">
+                 <button onClick={() => setViewState('form')} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-charcoal ml-auto">
                    <Edit2 className="w-3.5 h-3.5" /> Ubah
                  </button>
-                 <button onClick={() => setViewState('list')} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-brand-red">
+                 <button onClick={() => setViewState('list')} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-brand-red">
                    <Trash2 className="w-3.5 h-3.5" /> Padam
                  </button>
                </>
@@ -527,10 +527,10 @@ export const CertificateRenewalModule: React.FC<CertificateRenewalModuleProps> =
 
              {role === UserRole.SEC && status === 'Dihantar' && (
                <>
-                 <button onClick={handleTolak} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-brand-red ml-auto">
+                 <button onClick={handleTolak} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-brand-red ml-auto">
                    <UserX className="w-3.5 h-3.5" /> Tolak
                  </button>
-                 <button onClick={handleHantarPengerusi} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-400 rounded bg-white hover:bg-green-50 font-bold text-[11px] shadow-sm text-action-teal">
+                 <button onClick={handleHantarPengerusi} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-300 rounded bg-white hover:bg-green-50 font-bold text-[11px] shadow-sm text-action-teal">
                    <Send className="w-3.5 h-3.5" /> Hantar kepada Pengerusi
                  </button>
                </>
@@ -538,10 +538,10 @@ export const CertificateRenewalModule: React.FC<CertificateRenewalModuleProps> =
 
              {role === UserRole.SEBC && status === 'Semakan Pengerusi' && (
                <>
-                 <button onClick={handleTolak} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-brand-red ml-auto">
+                 <button onClick={handleTolak} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-brand-red ml-auto">
                    <UserX className="w-3.5 h-3.5" /> Tolak
                  </button>
-                 <button onClick={handleLulus} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-400 rounded bg-white hover:bg-green-50 font-bold text-[11px] shadow-sm text-action-teal">
+                 <button onClick={handleLulus} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-300 rounded bg-white hover:bg-green-50 font-bold text-[11px] shadow-sm text-action-teal">
                    <UserCheck className="w-3.5 h-3.5" /> Luluskan Sijil
                  </button>
                </>
@@ -910,13 +910,13 @@ export const CertificateRenewalModule: React.FC<CertificateRenewalModuleProps> =
           {/* DEC Draft View */}
           {role === UserRole.DEC && (status === 'Draf' || status === 'Ditolak') && (
             <>
-              <button onClick={onBack} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-sm shadow-sm text-blue-600 mr-auto">
+              <button onClick={onBack} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-sm shadow-sm text-charcoal mr-auto">
                 <ArrowLeft className="w-4 h-4" /> Kembali
               </button>
-              <button onClick={handleSaveDraft} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-sm shadow-sm text-blue-600">
+              <button onClick={handleSaveDraft} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-sm shadow-sm text-charcoal">
                 <Save className="w-4 h-4" /> Simpan Draf
               </button>
-              <button disabled={!fileAttached && !isReadOnly} onClick={handleHantar} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-400 rounded bg-white hover:bg-green-50 font-bold text-sm shadow-sm text-action-teal disabled:opacity-50">
+              <button disabled={!fileAttached && !isReadOnly} onClick={handleHantar} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-300 rounded bg-white hover:bg-green-50 font-bold text-sm shadow-sm text-action-teal disabled:opacity-50">
                 <Send className="w-4 h-4" /> Hantar Permohonan
               </button>
             </>
@@ -925,19 +925,19 @@ export const CertificateRenewalModule: React.FC<CertificateRenewalModuleProps> =
           {/* SEC View */}
           {role === UserRole.SEC && status === 'Dihantar' && (
             <>
-              <button onClick={onBack} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-sm shadow-sm text-blue-600 mr-auto">
+              <button onClick={onBack} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-sm shadow-sm text-charcoal mr-auto">
                 <ArrowLeft className="w-4 h-4" /> Kembali
               </button>
-              <button className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-sm shadow-sm text-blue-600">
+              <button className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-sm shadow-sm text-charcoal">
                 <Printer className="w-4 h-4" /> Cetak
               </button>
-              <button className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-sm shadow-sm text-blue-600">
+              <button className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-sm shadow-sm text-charcoal">
                 <Printer className="w-4 h-4" /> Cetak dengan calon
               </button>
-              <button onClick={handleTolak} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-sm shadow-sm text-brand-red">
+              <button onClick={handleTolak} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-sm shadow-sm text-brand-red">
                 <UserX className="w-4 h-4" /> Tolak
               </button>
-              <button onClick={handleHantarPengerusi} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-400 rounded bg-white hover:bg-green-50 font-bold text-sm shadow-sm text-action-teal">
+              <button onClick={handleHantarPengerusi} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-300 rounded bg-white hover:bg-green-50 font-bold text-sm shadow-sm text-action-teal">
                 <Send className="w-4 h-4" /> Hantar kepada Pengerusi
               </button>
             </>
@@ -946,13 +946,13 @@ export const CertificateRenewalModule: React.FC<CertificateRenewalModuleProps> =
           {/* Chairman (SEBC) View */}
           {role === UserRole.SEBC && status === 'Semakan Pengerusi' && (
             <>
-               <button onClick={onBack} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-sm shadow-sm text-blue-600 mr-auto">
+               <button onClick={onBack} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-sm shadow-sm text-charcoal mr-auto">
                 <ArrowLeft className="w-4 h-4" /> Kembali
               </button>
-              <button onClick={handleTolak} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-sm shadow-sm text-brand-red">
+              <button onClick={handleTolak} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-sm shadow-sm text-brand-red">
                 <UserX className="w-4 h-4" /> Tolak
               </button>
-              <button onClick={handleLulus} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-400 rounded bg-white hover:bg-green-50 font-bold text-sm shadow-sm text-action-teal">
+              <button onClick={handleLulus} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-300 rounded bg-white hover:bg-green-50 font-bold text-sm shadow-sm text-action-teal">
                 <UserCheck className="w-4 h-4" /> Luluskan Sijil
               </button>
             </>
@@ -960,7 +960,7 @@ export const CertificateRenewalModule: React.FC<CertificateRenewalModuleProps> =
 
           {/* Fallback for already processed states for SEC/SEBC */}
           {((role === UserRole.SEC && status !== 'Dihantar') || (role === UserRole.SEBC && status !== 'Semakan Pengerusi') || (role === UserRole.DEC && status !== 'Draf' && status !== 'Ditolak')) && (
-             <button onClick={onBack} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-sm shadow-sm text-blue-600">
+             <button onClick={onBack} className="flex items-center gap-1.5 px-4 py-1.5 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-sm shadow-sm text-charcoal">
                <ArrowLeft className="w-4 h-4" /> Kembali ke Senarai
              </button>
           )}

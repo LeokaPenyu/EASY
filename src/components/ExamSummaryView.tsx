@@ -408,7 +408,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
         </div>
       )}
       {/* Tab Navigation - Figure 12 Style */}
-      <div className="flex bg-[#E5E7EB] border-b border-gray-400">
+      <div className="flex bg-[#E5E7EB] border-b border-gray-300">
         {[
           { id: 'borang', label: 'Borang Permohonan' },
           { id: 'rumusan', label: 'Rumusan Peperiksaan' },
@@ -417,11 +417,11 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`flex-1 py-1 text-[11px] font-bold border-r border-gray-400 transition-all ${
+            className={`flex-1 py-1 text-[11px] font-bold border-r border-gray-300 transition-all ${
               activeTab === tab.id 
                 ? 'bg-white text-black border-t-2 border-t-brand-red' 
                 : 'text-gray-600 hover:bg-gray-200'
-            } ${idx === 0 ? 'border-l border-gray-400' : ''}`}
+            } ${idx === 0 ? 'border-l border-gray-300' : ''}`}
           >
             {tab.label}
           </button>
@@ -548,7 +548,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                   <FileText className="w-3.5 h-3.5 text-blue-500" />
                   <button 
                     onClick={() => setAlertDialog({message: `Membuka fail: ${examData.attachment.name}`})}
-                    className="text-blue-600 hover:underline font-bold underline decoration-1 underline-offset-4 text-left"
+                    className="text-charcoal hover:underline font-bold underline decoration-1 underline-offset-4 text-left"
                   >
                     {examData.attachment.name}
                   </button>
@@ -651,7 +651,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
             {/* Locked/Submitted/Ready Worklist Style Header (Figure 14) */}
             {(isExpired || localStatus === ExamStatus.SUBMITTED || localStatus === ExamStatus.APPROVED) && (
               <div className="border border-gray-300 p-4 mb-4 bg-[#F0F0F0]/50">
-                <div className="border-b border-gray-400 pb-2 mb-3">
+                <div className="border-b border-gray-300 pb-2 mb-3">
                   <h3 className="text-xl text-charcoal font-bold">
                     {localStatus === ExamStatus.SUBMITTED 
                       ? 'Rumusan Peperiksaan Telah Dihantar' 
@@ -687,9 +687,9 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                    <div className="flex justify-center mt-6">
                       <button 
                         onClick={handleUnlockApprove}
-                        className="btn-footer flex items-center gap-1.5 px-6 py-1.5 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-sm shadow-sm text-blue-600"
+                        className="btn-footer flex items-center gap-1.5 px-6 py-1.5 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-sm shadow-sm text-charcoal"
                       >
-                        <Unlock className="w-4 h-4 text-blue-600" />
+                        <Unlock className="w-4 h-4 text-charcoal" />
                         Buka Kunci
                       </button>
                    </div>
@@ -699,9 +699,9 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                       <button 
                         onClick={handleUnlockRequest}
                         disabled={localStatus === ExamStatus.UNLOCK_REQUESTED}
-                        className="btn-footer flex items-center gap-1.5 px-4 py-1 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-blue-600 disabled:opacity-50"
+                        className="btn-footer flex items-center gap-1.5 px-4 py-1 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-charcoal disabled:opacity-50"
                       >
-                        <Unlock className="w-3 h-3 text-blue-600" />
+                        <Unlock className="w-3 h-3 text-charcoal" />
                         Buka Kunci
                       </button>
                    </div>
@@ -851,7 +851,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                   {isEditable && (
                     <button 
                       onClick={addJurulatih}
-                      className="border border-gray-400 px-4 py-1 flex items-center gap-2 text-action-teal font-bold text-xs rounded-sm hover:bg-gray-50"
+                      className="border border-gray-300 px-4 py-1 flex items-center gap-2 text-action-teal font-bold text-xs rounded-sm hover:bg-gray-50"
                     >
                       <span className="text-lg leading-none">+</span> Tambah
                     </button>
@@ -913,7 +913,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                   {isEditable && (
                     <button 
                       onClick={addPenyelia}
-                      className="border border-gray-400 px-4 py-1 flex items-center gap-2 text-action-teal font-bold text-xs rounded-sm hover:bg-gray-50"
+                      className="border border-gray-300 px-4 py-1 flex items-center gap-2 text-action-teal font-bold text-xs rounded-sm hover:bg-gray-50"
                     >
                       <span className="text-lg leading-none">+</span> Tambah
                     </button>
@@ -1001,7 +1001,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                   {isEditable && (
                     <button 
                       onClick={role === UserRole.SEBC ? handleOpenAddPemeriksa : addPemeriksa}
-                      className="border border-gray-400 px-4 py-1 flex items-center gap-2 text-action-teal font-bold text-xs rounded-sm hover:bg-gray-50"
+                      className="border border-gray-300 px-4 py-1 flex items-center gap-2 text-action-teal font-bold text-xs rounded-sm hover:bg-gray-50"
                     >
                       <span className="text-lg leading-none">+</span> Tambah
                     </button>
@@ -1105,7 +1105,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                   <FileText className="w-4 h-4 text-blue-500" />
                   <button 
                     onClick={() => setAlertDialog({message: `Membuka fail: ${examData.attachment.name}`})}
-                    className="text-blue-600 hover:underline font-bold underline decoration-1 underline-offset-4 text-left"
+                    className="text-charcoal hover:underline font-bold underline decoration-1 underline-offset-4 text-left"
                   >
                     {examData.attachment.name}
                   </button>
@@ -1118,7 +1118,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
             <div className="flex items-center justify-center gap-2 pt-6 border-t border-gray-300 flex-wrap">
                 <button 
                   onClick={onBack}
-                  className="btn-footer flex items-center gap-1.5 px-4 py-1 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-blue-600"
+                  className="btn-footer flex items-center gap-1.5 px-4 py-1 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-charcoal"
                 >
                   <ArrowLeft className="w-3 h-3" />
                   Kembali
@@ -1126,7 +1126,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                 
                 <button 
                   onClick={handlePrint}
-                  className="btn-footer flex items-center gap-1.5 px-4 py-1 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-blue-600"
+                  className="btn-footer flex items-center gap-1.5 px-4 py-1 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-charcoal"
                 >
                   <Printer className="w-3 h-3" />
                   Cetak
@@ -1140,7 +1140,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                         handleSave();
                         triggerNotification('Maklumat berjaya disimpan sebagai draf.');
                       }}
-                      className="btn-footer flex items-center gap-1.5 px-4 py-1 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-action-teal"
+                      className="btn-footer flex items-center gap-1.5 px-4 py-1 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-action-teal"
                     >
                       <Save className="w-3 h-3" />
                       Simpan
@@ -1148,7 +1148,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                     {(isSummaryReadyFinal || localStatus === ExamStatus.APPROVED) && !isExpired && (
                       <button 
                         onClick={handleSubmit}
-                        className="flex items-center gap-1.5 px-4 py-1 border border-gray-400 rounded bg-white hover:bg-green-50 font-bold text-[11px] text-action-teal shadow-sm"
+                        className="flex items-center gap-1.5 px-4 py-1 border border-gray-300 rounded bg-white hover:bg-green-50 font-bold text-[11px] text-action-teal shadow-sm"
                       >
                         <Send className="w-3 h-3" />
                         Hantar Rumusan Peperiksaan
@@ -1156,7 +1156,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                     )}
                     <button 
                       onClick={() => setIsEditable(false)}
-                      className="btn-footer flex items-center gap-1.5 px-4 py-1 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-brand-red"
+                      className="btn-footer flex items-center gap-1.5 px-4 py-1 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-brand-red"
                     >
                       Batal
                     </button>
@@ -1171,14 +1171,14 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                         handleSave();
                         triggerNotification('Maklumat berjaya disimpan.');
                       }}
-                      className="btn-footer flex items-center gap-1.5 px-4 py-1 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-action-teal"
+                      className="btn-footer flex items-center gap-1.5 px-4 py-1 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-action-teal"
                     >
                       <Save className="w-3 h-3" />
                       Simpan
                     </button>
                     <button 
                       onClick={() => setIsEditable(false)}
-                      className="btn-footer flex items-center gap-1.5 px-4 py-1 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-brand-red"
+                      className="btn-footer flex items-center gap-1.5 px-4 py-1 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-brand-red"
                     >
                       Batal
                     </button>
@@ -1188,7 +1188,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                 {!isEditable && role === UserRole.SEBC && (localStatus === ExamStatus.APPROVED || localStatus === ExamStatus.SUBMITTED) && (
                   <button 
                     onClick={() => setIsEditable(true)}
-                    className="btn-footer flex items-center gap-1.5 px-4 py-1 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-blue-600"
+                    className="btn-footer flex items-center gap-1.5 px-4 py-1 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-charcoal"
                   >
                     <Edit3 className="w-3 h-3" />
                     Ubah
@@ -1200,7 +1200,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                     {(isSummaryReadyFinal || initialEditMode || localStatus === ExamStatus.APPROVED) && !isExpired && (
                       <button 
                         onClick={() => setIsEditable(true)}
-                        className="btn-footer flex items-center gap-1.5 px-4 py-1 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-blue-600"
+                        className="btn-footer flex items-center gap-1.5 px-4 py-1 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-charcoal"
                       >
                         <Edit3 className="w-3 h-3" />
                         Ubah
@@ -1212,7 +1212,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                         {!isExpired && (
                           <button 
                             onClick={handleSubmit}
-                            className="flex items-center gap-1.5 px-4 py-1 border border-gray-400 rounded bg-white hover:bg-green-50 font-bold text-[11px] text-action-teal shadow-sm"
+                            className="flex items-center gap-1.5 px-4 py-1 border border-gray-300 rounded bg-white hover:bg-green-50 font-bold text-[11px] text-action-teal shadow-sm"
                           >
                             <Send className="w-3 h-3" />
                             Hantar Rumusan Peperiksaan
@@ -1221,7 +1221,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
 
                         <button 
                           onClick={handleRenew}
-                          className="btn-footer flex items-center gap-1.5 px-4 py-1 border border-gray-400 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-blue-600"
+                          className="btn-footer flex items-center gap-1.5 px-4 py-1 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-[11px] shadow-sm text-charcoal"
                         >
                           <FileText className="w-3 h-3" />
                           Memperbaharui Kursus?
@@ -1404,7 +1404,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded overflow-hidden shadow-2xl w-full max-w-md border border-gray-400"
+            className="bg-white rounded overflow-hidden shadow-2xl w-full max-w-md border border-gray-300"
           >
             {/* Header matches Figure 25 */}
             <div className="bg-gradient-to-b from-gray-600 to-gray-800 p-2 flex items-center shadow-inner">
@@ -1419,7 +1419,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                   <span className="text-brand-red font-bold text-lg leading-none mt-1">*</span>
                   <span className="font-bold text-charcoal text-[13px] w-14">Nama:</span>
                   <select 
-                    className="flex-1 p-1 border border-gray-400 bg-white text-[13px] focus:outline-none focus:ring-1 focus:ring-action-teal shadow-sm"
+                    className="flex-1 p-1 border border-gray-300 bg-white text-[13px] focus:outline-none focus:ring-1 focus:ring-action-teal shadow-sm"
                     value={selectedPemeriksaId}
                     onChange={(e) => setSelectedPemeriksaId(e.target.value)}
                   >
@@ -1492,16 +1492,16 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                   <span className="text-[13px] font-medium text-gray-500 text-right flex justify-end items-start mt-2">
                     <span className="text-brand-red font-bold mr-1">*</span>Senarai Calon:
                   </span>
-                  <div className="overflow-hidden border border-gray-400 bg-white">
+                  <div className="overflow-hidden border border-gray-300 bg-white">
                     <table className="w-full text-left border-collapse">
                       <thead className="bg-[#E5E7EB]">
                     <tr>
-                      <th className="px-3 py-2 text-[11px] font-black text-charcoal border-r border-gray-400">Nama</th>
-                      <th className="px-3 py-2 text-[11px] font-black text-charcoal border-r border-gray-400">No. KP/Pasport</th>
-                      <th className="px-3 py-2 text-[11px] font-black text-charcoal border-r border-gray-400">No. Ahli BSMM</th>
-                      <th className="px-3 py-2 text-[11px] font-black text-charcoal border-r border-gray-400 text-center">Skor Teori/100</th>
-                      <th className="px-3 py-2 text-[11px] font-black text-charcoal border-r border-gray-400 text-center">Skor Lisan/40</th>
-                      <th className="px-3 py-2 text-[11px] font-black text-charcoal border-r border-gray-400 text-center">Skor Praktikal/60</th>
+                      <th className="px-3 py-2 text-[11px] font-black text-charcoal border-r border-gray-300">Nama</th>
+                      <th className="px-3 py-2 text-[11px] font-black text-charcoal border-r border-gray-300">No. KP/Pasport</th>
+                      <th className="px-3 py-2 text-[11px] font-black text-charcoal border-r border-gray-300">No. Ahli BSMM</th>
+                      <th className="px-3 py-2 text-[11px] font-black text-charcoal border-r border-gray-300 text-center">Skor Teori/100</th>
+                      <th className="px-3 py-2 text-[11px] font-black text-charcoal border-r border-gray-300 text-center">Skor Lisan/40</th>
+                      <th className="px-3 py-2 text-[11px] font-black text-charcoal border-r border-gray-300 text-center">Skor Praktikal/60</th>
                       <th className="px-3 py-2 text-[11px] font-black text-charcoal text-center">Keputusan</th>
                     </tr>
                   </thead>
@@ -1554,7 +1554,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
             <div className="flex justify-start mt-8 gap-2">
                 <button 
                   onClick={onBack}
-                  className="flex items-center gap-2 px-4 py-1 border border-gray-400 bg-gray-100 text-charcoal font-medium text-[12px] shadow-sm hover:bg-gray-200 transition-all"
+                  className="flex items-center gap-2 px-4 py-1 border border-gray-300 bg-gray-100 text-charcoal font-medium text-[12px] shadow-sm hover:bg-gray-200 transition-all"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" /> Kembali
                 </button>
@@ -1563,7 +1563,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                     {!isEditable ? (
                       <button 
                         onClick={() => setIsEditable(true)}
-                        className="flex items-center gap-2 px-4 py-1 border border-gray-400 bg-white text-charcoal font-medium text-[12px] shadow-sm hover:bg-gray-50 transition-all"
+                        className="flex items-center gap-2 px-4 py-1 border border-gray-300 bg-white text-charcoal font-medium text-[12px] shadow-sm hover:bg-gray-50 transition-all"
                       >
                         <Edit3 className="w-3.5 h-3.5" /> Ubah
                       </button>
@@ -1575,7 +1575,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                           setIsEditable(false);
                           triggerNotification('Keputusan telah disimpan.');
                         }}
-                        className="flex items-center gap-2 px-4 py-1 border border-gray-400 bg-white text-charcoal font-medium text-[12px] shadow-sm hover:bg-gray-50 transition-all"
+                        className="flex items-center gap-2 px-4 py-1 border border-gray-300 bg-white text-charcoal font-medium text-[12px] shadow-sm hover:bg-gray-50 transition-all"
                       >
                         <Save className="w-3.5 h-3.5" /> Simpan
                       </button>
@@ -1597,7 +1597,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                           }
                         });
                       }}
-                      className="flex items-center gap-2 px-4 py-1 border border-gray-400 bg-blue-50 text-action-teal font-bold text-[12px] shadow-sm hover:bg-blue-100 transition-all"
+                      className="flex items-center gap-2 px-4 py-1 border border-gray-300 bg-blue-50 text-action-teal font-bold text-[12px] shadow-sm hover:bg-blue-100 transition-all"
                     >
                       <ArrowRight className="w-3.5 h-3.5" /> Pemprosesan Keputusan Selesai
                     </button>
@@ -1613,19 +1613,19 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                       <div className="flex gap-2">
                         <button 
                           onClick={() => setShowSijilModal(true)}
-                          className="px-4 py-1 border border-gray-400 bg-action-teal text-white font-bold rounded shadow-md hover:bg-teal-700 transition-all uppercase text-[12px] flex items-center gap-2"
+                          className="px-4 py-1 border border-gray-300 bg-action-teal text-white font-bold rounded shadow-md hover:bg-teal-700 transition-all uppercase text-[12px] flex items-center gap-2"
                         >
                           Mengurus Sijil
                         </button>
                         <button 
                           onClick={() => setShowPrint(true)}
-                          className="px-4 py-1 border border-gray-400 bg-action-teal text-white font-bold rounded shadow-md hover:bg-teal-700 transition-all uppercase text-[12px] flex items-center gap-2"
+                          className="px-4 py-1 border border-gray-300 bg-action-teal text-white font-bold rounded shadow-md hover:bg-teal-700 transition-all uppercase text-[12px] flex items-center gap-2"
                         >
                           Cetak PP
                         </button>
                         <button 
                           onClick={() => setShowSlipPrint(true)}
-                          className="px-4 py-1 border border-gray-400 bg-action-teal text-white font-bold rounded shadow-md hover:bg-teal-700 transition-all uppercase text-[12px] flex items-center gap-2"
+                          className="px-4 py-1 border border-gray-300 bg-action-teal text-white font-bold rounded shadow-md hover:bg-teal-700 transition-all uppercase text-[12px] flex items-center gap-2"
                         >
                           Cetak Slip
                         </button>
@@ -1649,7 +1649,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
 
       {showSijilModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-[#E6EFF5] border border-gray-400 w-[500px] shadow-2xl">
+          <div className="bg-[#E6EFF5] border border-gray-300 w-[500px] shadow-2xl">
             <div className="bg-gradient-to-b from-[#4A4A4A] to-[#1A1A1A] px-4 py-2 flex items-center justify-between shadow-sm border-b-2 border-brand-red">
               <h3 className="text-white font-bold text-[14px]">Jenis Sijil</h3>
               <button onClick={() => setShowSijilModal(false)} className="text-white hover:text-gray-300">
@@ -1714,10 +1714,10 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
               </div>
             </div>
             
-            <div className="bg-[#D1D5DB] px-4 py-3 flex justify-end gap-2 border-t border-gray-400">
+            <div className="bg-[#D1D5DB] px-4 py-3 flex justify-end gap-2 border-t border-gray-300">
               <button 
                 onClick={() => setShowSijilModal(false)}
-                className="flex items-center gap-1.5 px-4 py-1.5 bg-white border border-gray-400 font-bold text-[13px] shadow-sm hover:bg-gray-50 text-charcoal"
+                className="flex items-center gap-1.5 px-4 py-1.5 bg-white border border-gray-300 font-bold text-[13px] shadow-sm hover:bg-gray-50 text-charcoal"
               >
                 <X className="w-4 h-4" /> Tidak
               </button>
@@ -1726,7 +1726,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                   setShowSijilModal(false);
                   triggerNotification('Sijil berjaya dijana dan sedia untuk dicetak.');
                 }}
-                className="flex items-center gap-1.5 px-6 py-1.5 bg-white border border-gray-400 font-bold text-[13px] shadow-sm hover:bg-green-50 text-action-teal"
+                className="flex items-center gap-1.5 px-6 py-1.5 bg-white border border-gray-300 font-bold text-[13px] shadow-sm hover:bg-green-50 text-action-teal"
               >
                 <Check className="w-4 h-4" /> Ya
               </button>

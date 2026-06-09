@@ -91,7 +91,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       label: "Laporan Dijana",
       value: "14",
       icon: FileCheck,
-      color: "text-blue-600",
+      color: "text-charcoal",
       bgColor: "bg-blue-50",
     },
   ];

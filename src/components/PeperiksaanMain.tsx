@@ -27,7 +27,7 @@ export const PeperiksaanMain: React.FC<PeperiksaanMainProps> = ({ setActiveView 
           <button
             key={menu.id}
             onClick={() => setActiveView(menu.id as ViewType)}
-            className="flex flex-col items-center justify-center p-4 bg-white border border-gray-300 hover:border-gray-400 hover:shadow-sm transition-all w-36 h-28 group"
+            className="flex flex-col items-center justify-center p-4 bg-white border border-gray-300 hover:border-gray-300 hover:shadow-sm transition-all w-36 h-28 group"
           >
             <menu.icon className="w-8 h-8 text-gray-500 mb-2 group-hover:text-gray-700 transition-colors" />
             <span className="text-[11px] font-medium text-gray-600 text-center leading-tight">{menu.label}</span>

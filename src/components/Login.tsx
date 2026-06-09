@@ -42,7 +42,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
           <div className="flex justify-center mb-10 w-full">
             <div className="flex gap-4 items-center">
               <img 
-                src="https://upload.wikimedia.org/wikipedia/en/9/91/Malaysian_Red_Crescent_Society_logo.svg" 
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRv9nKB44c6cGGVDzbxCl8ctElibJoYsmXGUg&s" 
                 alt="MRCS Logo" 
                 className="h-[70px] object-contain"
               />
@@ -85,7 +85,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
               {/* Password Box */}
               <div className="flex items-end pt-3">
-                <div className="relative border border-gray-300 border-r-0 rounded-l-[3px] rounded-r-none pt-[7px] flex-grow transition-colors focus-within:border-gray-400">
+                <div className="relative border border-gray-300 border-r-0 rounded-l-[3px] rounded-r-none pt-[7px] flex-grow transition-colors focus-within:border-gray-300">
                   <label className="absolute -top-[11px] left-3 bg-white px-1 text-[13px] text-gray-600 font-medium tracking-wide">Password:</label>
                   <div className="bg-[#EAF1FA] m-[2px] mt-0 mr-0 h-11 flex items-center">
                     <input 

@@ -47,14 +47,14 @@ export const ResultSlipPrint: React.FC<ResultSlipPrintProps> = ({ exam, onClose 
           </button>
           <button 
             onClick={onClose}
-            className="flex items-center gap-2 px-4 py-1.5 bg-gray-200 text-charcoal border border-gray-400 rounded shadow-sm hover:bg-gray-300 font-bold text-[13px] uppercase"
+            className="flex items-center gap-2 px-4 py-1.5 bg-gray-200 text-charcoal border border-gray-300 rounded shadow-sm hover:bg-gray-300 font-bold text-[13px] uppercase"
           >
             <X className="w-4 h-4" /> Tutup
           </button>
         </div>
       </div>
 
-      <div id="print-result-slips" className="max-w-4xl mx-auto bg-white border border-gray-400 p-8">
+      <div id="print-result-slips" className="max-w-4xl mx-auto bg-white border border-gray-300 p-8">
         {exam.candidates?.map((candidate, index) => (
           <div key={candidate.id} className="p-8 border border-black h-[140mm] flex flex-col justify-center mb-8 page-break">
             <div className="text-center mb-8">

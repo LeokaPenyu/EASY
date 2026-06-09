@@ -408,12 +408,12 @@ export const ExamApplicationModule: React.FC<ExamApplicationModuleProps> = ({
                 >
                   <td className="px-3 py-1.5 text-[11px] text-charcoal border-r border-gray-200 text-center">{index + 1}</td>
                   <td className="px-3 py-1.5 text-[11px] border-r border-gray-200">
-                    <span className="text-blue-600 font-bold hover:underline">
+                    <span className="text-charcoal font-bold hover:underline">
                       {row.regNo} {row.status === ExamStatus.EXPIRED && <span className="text-red-600 font-bold ml-1">(Tamat Tempoh)</span>}
                     </span>
                   </td>
                   <td className="px-3 py-1.5 text-[11px] font-bold text-charcoal uppercase border-r border-gray-200">{row.district}</td>
-                  <td className="px-3 py-1.5 text-[11px] text-blue-600 font-bold border-r border-gray-200">
+                  <td className="px-3 py-1.5 text-[11px] text-charcoal font-bold border-r border-gray-200">
                     {new Date(row.date).toLocaleDateString('ms-MY')}
                   </td>
                   <td className="px-3 py-1.5 text-[11px] font-bold text-charcoal text-center border-r border-gray-200">{row.fee.toFixed(0)}</td>
