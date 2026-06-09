@@ -102,6 +102,7 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
   
   const [activeTab, setActiveTab] = useState<'active' | 'history'>('active');
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [connectingId, setConnectingId] = useState<string | null>(null);
   const [userProfileData, setUserProfileData] = useState<UserProfileData>({
     name: mockUser.name,
     email: 'ahmad.faiz@example.com',
@@ -123,6 +124,15 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  };
+
+  const handleAttendExam = (examId: string) => {
+    setConnectingId(examId);
+    // Simulate connection validation
+    setTimeout(() => {
+      setTakingExamId(examId);
+      setConnectingId(null);
+    }, 1200);
   };
 
   const exams = isPopulated ? [...populatedExams, ...completedExams] : [];
@@ -149,7 +159,7 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
   };
 
   return (
-    <div className="min-h-screen bg-surface-cream font-sans text-charcoal">
+    <div className="candidate-panel min-h-screen bg-surface-cream font-sans text-charcoal">
       
       {/* --- DEV TOGGLE BAR --- */}
       <div className="bg-charcoal text-white text-xs py-1.5 px-4 flex justify-between items-center z-50 relative">
@@ -372,13 +382,17 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
                         key={exam.id}
                         initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden group hover:border-slate-300 transition-colors"
+                        className="exam-container bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden group hover:border-slate-300 transition-colors"
                       >
                         <div className="p-6 sm:p-8 border-b border-slate-100 flex flex-col md:flex-row justify-between gap-6">
                           <div className="flex-1">
                             <div className="flex flex-wrap items-center gap-2 mb-3">
-                              <span className="px-3 py-1 bg-slate-100 text-slate-700 rounded-lg text-xs font-bold font-mono tracking-wide border border-slate-200">
+                              <span className="exam-code-disp candidate-tooltip group relative px-3 py-1 bg-slate-100 text-slate-700 rounded-lg text-xs font-bold font-mono tracking-wide border border-slate-200 cursor-help transition-colors hover:bg-slate-200">
                                 {exam.code}
+                                <span className="tooltip-text pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-[200px] rounded border border-slate-700 bg-slate-800 px-3 py-1.5 text-[11px] font-medium text-slate-50 opacity-0 shadow-lg transition-all duration-200 group-hover:opacity-100 group-hover:-translate-y-1 z-10 font-sans">
+                                  Certification ID: {exam.code}
+                                  <span className="absolute bottom-[-5px] left-1/2 -translate-x-1/2 border-l-[5px] border-r-[5px] border-t-[5px] border-l-transparent border-r-transparent border-t-slate-800"></span>
+                                </span>
                               </span>
                               <span className="px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-xs font-bold border border-blue-100/50">
                                 Jadual Rasmi
@@ -390,7 +404,10 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
                                 const feeDetails = calculateCandidateFee("unknown", mockUser.category as any, new Date().toISOString().split('T')[0], exam.date);
                                 const isLate = feeDetails.isLate;
                                 return isLate ? (
-                                  <span className="text-xs font-bold text-amber-600 flex items-center gap-1.5"><AlertCircle className="w-3.5 h-3.5"/> ⚠ {translateContent("Late Application: RM14 (merged with other late applicants)")}</span>
+                                  <div className="candidate-alert pending-fee inline-flex items-center gap-2 bg-amber-50 md:bg-[#fff9f0] border border-amber-200/60 rounded-md px-3 py-2 text-xs font-bold text-amber-800 shadow-sm">
+                                    <AlertCircle className="w-4 h-4 text-amber-500"/> 
+                                    {translateContent("Late Application: RM14 (merged with other late applicants)")}
+                                  </div>
                                 ) : (
                                   <span className="text-xs font-bold text-emerald-600 flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5"/> ✓ {translateContent("Standard Fee: RM")}{feeDetails.fee}</span>
                                 )
@@ -419,23 +436,43 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
                         </div>
                         
                         <div className="bg-slate-50/50 p-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-                          <div className={`text-sm font-semibold flex items-center gap-2 ${
+                          <div className={`exam-status-indicator text-sm font-semibold flex items-center gap-2 ${
                             isLocked ? 'text-slate-500' : 'text-emerald-600'
                           }`}>
                             {isLocked ? <AlertCircle className="w-4 h-4" /> : <CheckCircle className="w-4 h-4" />}
-                            {timeStatus.message}
+                            {timeStatus.message.includes('(Dev Mode)') ? (
+                              <span className="flex items-center gap-2">
+                                {timeStatus.message.replace(' (Dev Mode)', '')}
+                                <span className="dev-mode-badge px-2.5 py-0.5 bg-slate-100 border border-slate-200 text-slate-500 text-[10px] uppercase tracking-widest font-bold rounded-full">
+                                  Dev Mode
+                                </span>
+                              </span>
+                            ) : (
+                              timeStatus.message
+                            )}
                           </div>
                           
                           <button 
-                            disabled={isLocked}
-                            onClick={() => setTakingExamId(exam.id)}
-                            className={`w-full sm:w-auto px-8 py-3 rounded-xl text-sm font-bold transition-all shadow-sm flex items-center justify-center gap-2 ${
+                            disabled={isLocked || connectingId === exam.id}
+                            onClick={() => handleAttendExam(exam.id)}
+                            className={`attend-exam-btn w-full sm:w-auto px-8 py-3 rounded-xl text-sm font-bold transition-all shadow-sm flex items-center justify-center gap-2 ${
                               isLocked 
                                 ? 'bg-slate-100 border border-slate-200 text-slate-400 cursor-not-allowed' 
-                                : 'bg-action-teal hover:bg-teal-700 text-white shadow-md hover:shadow-xl hover:shadow-teal-900/20 active:scale-[0.98]'
+                                : connectingId === exam.id
+                                  ? 'bg-teal-600 text-white cursor-wait opacity-90'
+                                  : 'bg-action-teal hover:bg-teal-700 hover:-translate-y-0.5 text-white shadow-md hover:shadow-lg hover:shadow-teal-900/20 active:shadow-sm active:translate-y-0'
                             }`}
                           >
-                            {isLocked ? 'Locked' : translateContent('Attend Exam')}
+                            {isLocked 
+                              ? 'Locked' 
+                              : connectingId === exam.id 
+                                ? (
+                                  <>
+                                    <span className="animate-spin rounded-full h-4 w-4 border-2 border-white/20 border-t-white"></span>
+                                    {translateContent('Loading...')}
+                                  </>
+                                ) 
+                                : translateContent('Attend Exam')}
                           </button>
                         </div>
                       </motion.div>
@@ -478,8 +515,13 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
                       {historyExams.length > 0 ? historyExams.map(exam => (
                         <tr key={exam.id} className="hover:bg-slate-50/50 transition-colors">
                           <td className="px-6 py-4">
-                            <div className="font-bold text-charcoal">{exam.title}</div>
-                            <div className="font-mono text-[10px] text-slate-400 mt-0.5">{exam.code}</div>
+                            <div className="exam-title font-bold text-charcoal">{exam.title}</div>
+                            <div className="candidate-tooltip group relative inline-block font-mono text-[10px] text-slate-400 mt-0.5 cursor-help">
+                              {exam.code}
+                              <span className="tooltip-text pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1 w-max rounded bg-slate-800 px-2 py-1 text-[10px] text-white opacity-0 transition-opacity group-hover:opacity-100 z-10 font-sans">
+                                Certification ID: {exam.code}
+                              </span>
+                            </div>
                           </td>
                           <td className="px-6 py-4 font-medium">{new Date(exam.date).toLocaleDateString('en-GB')}</td>
                           <td className="px-6 py-4">
@@ -539,7 +581,12 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
                         <span className="px-2 py-0.5 bg-amber-100 text-amber-800 rounded text-[10px] font-black uppercase tracking-widest leading-none">
                           {translateContent('Retest')}
                         </span>
-                        <span className="text-xs font-bold text-slate-500">{exam.code}</span>
+                        <span className="candidate-tooltip group relative text-xs font-bold text-slate-500 cursor-help">
+                          {exam.code}
+                          <span className="tooltip-text pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1 w-max rounded bg-slate-800 px-2 py-1 text-[10px] text-white opacity-0 transition-opacity group-hover:opacity-100 z-10 font-normal font-sans">
+                            Certification ID: {exam.code}
+                          </span>
+                        </span>
                       </div>
                       <h4 className="font-bold text-charcoal text-sm mb-2">{exam.title}</h4>
                       <p className="text-xs text-slate-600 mb-3 flex gap-1.5">
