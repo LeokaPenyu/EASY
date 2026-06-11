@@ -211,7 +211,7 @@ export const QuestionBankModule = () => {
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden bg-white">
-          <div className="p-6 flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-100 mb-2 gap-4">
+          <div className="p-4 md:p-6 flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-100 mb-2 gap-4">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-rose-50 text-brand-red rounded-lg">
                 <Database className="w-5 h-5" />
@@ -224,23 +224,23 @@ export const QuestionBankModule = () => {
             <table className="w-full text-sm text-left border-collapse">
               <thead className="bg-gray-50 text-gray-500 uppercase text-xs font-semibold tracking-wider border-b border-gray-100">
                 <tr>
-                  <th className="px-6 py-4 text-center w-12 border-b border-gray-100">No.</th>
-                  <th className="px-6 py-4 border-b border-gray-100">Nama Subjek</th>
-                  <th className="px-6 py-4 text-center whitespace-nowrap border-b border-gray-100">Kod Subjek</th>
-                  <th className="px-6 py-4 text-center whitespace-nowrap border-b border-gray-100">Waktu Subjek</th>
-                  <th className="px-6 py-4 text-center whitespace-nowrap border-b border-gray-100">Bahasa Subjek</th>
-                  <th className="px-6 py-4 text-center w-28 border-b border-gray-100">Tindakan</th>
+                  <th className="px-4 md:px-6 py-4 text-center w-12 border-b border-gray-100">No.</th>
+                  <th className="px-4 md:px-6 py-4 border-b border-gray-100">Nama Subjek</th>
+                  <th className="px-4 md:px-6 py-4 text-center whitespace-nowrap border-b border-gray-100">Kod Subjek</th>
+                  <th className="px-4 md:px-6 py-4 text-center whitespace-nowrap border-b border-gray-100">Waktu Subjek</th>
+                  <th className="px-4 md:px-6 py-4 text-center whitespace-nowrap border-b border-gray-100">Bahasa Subjek</th>
+                  <th className="px-4 md:px-6 py-4 text-center w-28 border-b border-gray-100">Tindakan</th>
                 </tr>
               </thead>
               <tbody>
                 {initialSubjek.map((subjek, index) => (
                   <tr key={subjek.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors cursor-pointer" onClick={() => setSelectedSubject(subjek)}>
-                    <td className="px-6 py-4 text-center font-medium text-gray-500">{index + 1}</td>
-                    <td className="px-6 py-4 font-medium text-gray-900">{subjek.name}</td>
-                    <td className="px-6 py-4 text-center text-gray-600">{subjek.code}</td>
-                    <td className="px-6 py-4 text-center text-gray-600 truncate max-w-[100px]">{subjek.duration}</td>
-                    <td className="px-6 py-4 text-center text-gray-600">{subjek.languages.join(', ')}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 md:px-6 py-4 text-center font-medium text-gray-500">{index + 1}</td>
+                    <td className="px-4 md:px-6 py-4 font-medium text-gray-900">{subjek.name}</td>
+                    <td className="px-4 md:px-6 py-4 text-center text-gray-600">{subjek.code}</td>
+                    <td className="px-4 md:px-6 py-4 text-center text-gray-600 truncate max-w-[100px]">{subjek.duration}</td>
+                    <td className="px-4 md:px-6 py-4 text-center text-gray-600">{subjek.languages.join(', ')}</td>
+                    <td className="px-4 md:px-6 py-4">
                       <div className="flex items-center justify-center gap-3">
                         <button onClick={(e) => { e.stopPropagation(); setSelectedSubject(subjek); }} className="bg-action-teal text-white w-full py-1.5 px-3 rounded text-xs font-bold hover:bg-teal-700 transition shadow-sm whitespace-nowrap">
                           Pilih
@@ -259,7 +259,7 @@ export const QuestionBankModule = () => {
 
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-      <div className="card shadow-sm border border-gray-100 p-6 bg-white rounded-xl">
+      <div className="card shadow-sm border border-gray-100 p-4 md:p-6 bg-white rounded-xl">
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button 
@@ -291,7 +291,7 @@ export const QuestionBankModule = () => {
               initial={{ opacity: 0, y: -20, x: '-50%' }} 
               animate={{ opacity: 1, y: 0, x: '-50%' }} 
               exit={{ opacity: 0, y: -20, x: '-50%' }}
-              className="fixed top-20 left-1/2 z-[100] p-4 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between text-green-800 shadow-xl min-w-[400px]"
+              className="fixed top-20 left-1/2 z-[100] p-4 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between text-green-800 shadow-xl w-11/12 max-w-[400px]"
             >
               <div className="flex items-center gap-3">
                 <CheckCircle className="w-5 h-5 text-green-500" />
@@ -304,7 +304,7 @@ export const QuestionBankModule = () => {
           )}
         </AnimatePresence>
 
-        <div className="border border-dashed border-gray-300 p-8 rounded-xl flex flex-col items-center justify-center text-center bg-gray-50/50">
+        <div className="border border-dashed border-gray-300 p-4 md:p-8 rounded-xl flex flex-col items-center justify-center text-center bg-gray-50/50">
            {uploadedFile ? (
              <AnimatePresence>
                <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex flex-col items-center">
@@ -328,7 +328,7 @@ export const QuestionBankModule = () => {
                <button 
                  onClick={handleUploadClick}
                  disabled={locked} 
-                 className="bg-brand-red text-white px-6 py-2.5 rounded-[6px] font-bold text-sm shadow-sm hover:bg-red-700 disabled:opacity-50 transition-all cursor-pointer"
+                 className="bg-brand-red text-white px-4 md:px-6 py-2.5 rounded-[6px] font-bold text-sm shadow-sm hover:bg-red-700 disabled:opacity-50 transition-all cursor-pointer"
                >
                  Tarik fail atau Klik untuk Muat Naik
                </button>
@@ -433,7 +433,7 @@ export const QuestionBankModule = () => {
               setSaveSuccessMsg(true);
               setTimeout(() => setSaveSuccessMsg(false), 5000);
             }}
-            className="flex items-center gap-2 bg-action-teal hover:bg-teal-700 text-white px-8 py-2.5 rounded-[6px] font-bold text-sm shadow-sm transition-all text-center cursor-pointer"
+            className="flex items-center gap-2 bg-action-teal hover:bg-teal-700 text-white px-4 md:px-8 py-2.5 rounded-[6px] font-bold text-sm shadow-sm transition-all text-center cursor-pointer"
           >
             <Save className="w-4 h-4" />
             Simpan Bank Soalan
@@ -470,7 +470,7 @@ export const QuestionBankModule = () => {
             initial={{ opacity: 0, y: -20, x: '-50%' }} 
             animate={{ opacity: 1, y: 0, x: '-50%' }} 
             exit={{ opacity: 0, y: -20, x: '-50%' }}
-            className="fixed top-20 left-1/2 z-[100] p-4 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between text-green-800 shadow-xl min-w-[400px]"
+            className="fixed top-20 left-1/2 z-[100] p-4 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between text-green-800 shadow-xl w-11/12 max-w-[400px]"
           >
             <div className="flex items-center gap-3">
               <CheckCircle className="w-5 h-5 text-green-500" />

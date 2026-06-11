@@ -5,7 +5,7 @@ import { Calendar } from 'lucide-react';
 export const RetestModule = () => {
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-      <div className="card shadow-sm border border-gray-100 p-6">
+      <div className="card shadow-sm border border-gray-100 p-4 md:p-6">
         <h2 className="text-xl font-black text-charcoal mb-4">Pengurusan Ujian Semula (Retest)</h2>
         <div className="bg-blush-rose/50 p-4 rounded-xl border border-brand-red/10 mb-6 flex items-center gap-4">
            <Calendar className="text-brand-red" />

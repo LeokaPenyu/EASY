@@ -25,7 +25,7 @@ export const AttendanceCertificateModule = () => {
 
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-      <div className="card shadow-sm border border-gray-100 p-6">
+      <div className="card shadow-sm border border-gray-100 p-4 md:p-6">
         <h2 className="text-xl font-black text-charcoal mb-4">Jana Sijil Kehadiran</h2>
         
         {!generated ? (

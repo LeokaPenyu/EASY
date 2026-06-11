@@ -46,7 +46,7 @@ export const TetapanAm = () => {
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 text-sm">
       <div className="card shadow-sm border border-gray-100 p-0 overflow-hidden bg-white">
         
-        <div className="p-6 flex justify-between items-center border-b border-gray-100">
+        <div className="p-4 md:p-6 flex justify-between items-center border-b border-gray-100">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-rose-50 text-brand-red rounded-lg">
               <Settings className="w-5 h-5" />
@@ -60,19 +60,19 @@ export const TetapanAm = () => {
           <table className="w-full text-sm text-left border-collapse">
             <thead className="bg-gray-50 text-gray-500 uppercase text-xs font-semibold tracking-wider border-b border-gray-100">
               <tr>
-                <th className="px-6 py-4 text-center w-16">NO.</th>
-                <th className="px-6 py-4">NAMA</th>
-                <th className="px-6 py-4 text-center w-32">NILAI</th>
-                <th className="px-6 py-4 text-center w-28">TINDAKAN</th>
+                <th className="px-4 md:px-6 py-4 text-center w-16">NO.</th>
+                <th className="px-4 md:px-6 py-4">NAMA</th>
+                <th className="px-4 md:px-6 py-4 text-center w-32">NILAI</th>
+                <th className="px-4 md:px-6 py-4 text-center w-28">TINDAKAN</th>
               </tr>
             </thead>
             <tbody>
               {tetapanList.map((tetapan, index) => (
                 <tr key={tetapan.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 text-center font-medium text-gray-500">{index + 1}</td>
-                  <td className="px-6 py-4 text-gray-800 font-medium">{tetapan.name}</td>
-                  <td className="px-6 py-4 text-center text-gray-600 font-medium">{tetapan.value}</td>
-                  <td className="px-6 py-4 text-center">
+                  <td className="px-4 md:px-6 py-4 text-center font-medium text-gray-500">{index + 1}</td>
+                  <td className="px-4 md:px-6 py-4 text-gray-800 font-medium">{tetapan.name}</td>
+                  <td className="px-4 md:px-6 py-4 text-center text-gray-600 font-medium">{tetapan.value}</td>
+                  <td className="px-4 md:px-6 py-4 text-center">
                     <button 
                       onClick={() => handleOpenModal(tetapan)}
                       className="text-action-teal hover:text-teal-700 bg-teal-50 border border-teal-100 p-1.5 rounded-md transition-colors inline-flex"
@@ -87,7 +87,7 @@ export const TetapanAm = () => {
           </table>
           
           {/* Pagination */}
-          <div className="bg-white px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-gray-100">
+          <div className="bg-white px-4 md:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-gray-100">
             <p className="text-sm text-gray-600">
               Menunjukkan <span className="font-semibold text-gray-900">{tetapanList.length}</span> rekod keseluruhan
             </p>

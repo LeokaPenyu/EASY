@@ -195,7 +195,7 @@ export const CandidateTable: React.FC<CandidateTableProps> = ({ candidates, setC
       {isSearchModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-in fade-in">
           <div className="bg-white rounded-xl shadow-2xl overflow-hidden max-w-2xl w-full mx-auto flex flex-col max-h-[90vh]">
-            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white rounded-t-xl">
+            <div className="px-4 md:px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white rounded-t-xl">
               <h3 className="font-bold text-lg text-gray-900">{t('candidateSearchTitle')}</h3>
               <button 
                 onClick={() => setIsSearchModalOpen(false)} 
@@ -248,17 +248,17 @@ export const CandidateTable: React.FC<CandidateTableProps> = ({ candidates, setC
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={5} className="px-4 py-8 text-center text-gray-400 italic">{t('noRecordFound')}</td>
+                      <td colSpan={5} className="px-4 py-4 md:py-8 text-center text-gray-400 italic">{t('noRecordFound')}</td>
                     </tr>
                   )}
                 </tbody>
               </table>
             </div>
             
-            <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-100 bg-white">
+            <div className="flex justify-end gap-3 px-4 md:px-6 py-4 border-t border-gray-100 bg-white">
                <button 
                  onClick={() => setIsSearchModalOpen(false)} 
-                 className="px-6 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg text-sm font-medium transition-colors shadow-sm"
+                 className="px-4 md:px-6 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg text-sm font-medium transition-colors shadow-sm"
                >
                  Batal
                </button>
@@ -280,7 +280,7 @@ export const CandidateTable: React.FC<CandidateTableProps> = ({ candidates, setC
           <tbody className="divide-y divide-gray-50">
             {candidates.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-6 py-12 text-center text-gray-400 text-sm italic font-medium">
+                <td colSpan={4} className="px-4 md:px-6 py-12 text-center text-gray-400 text-sm italic font-medium">
                   {t('noCandidates')}
                 </td>
               </tr>

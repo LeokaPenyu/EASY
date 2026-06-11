@@ -361,12 +361,12 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
       {/* Confirm Dialog */}
       {confirmDialog && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white rounded-xl shadow-2xl overflow-hidden max-w-sm w-full mx-auto p-6 space-y-6">
+          <div className="bg-white rounded-xl shadow-2xl overflow-hidden max-w-sm w-full mx-auto p-4 md:p-6 space-y-6">
             <h3 className="text-lg font-bold text-charcoal">{confirmDialog.message}</h3>
             <div className="flex gap-3 justify-end pt-4">
               <button 
                 onClick={() => setConfirmDialog(null)}
-                className="px-6 py-2 border border-gray-200 text-gray-600 bg-gray-50 rounded shadow-sm font-bold text-sm hover:bg-gray-100"
+                className="px-4 md:px-6 py-2 border border-gray-200 text-gray-600 bg-gray-50 rounded shadow-sm font-bold text-sm hover:bg-gray-100"
               >
                 Batal
               </button>
@@ -375,7 +375,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                   confirmDialog.onConfirm();
                   setConfirmDialog(null);
                 }}
-                className="px-6 py-2 bg-action-teal text-white rounded shadow-md font-bold text-sm hover:bg-teal-700"
+                className="px-4 md:px-6 py-2 bg-action-teal text-white rounded shadow-md font-bold text-sm hover:bg-teal-700"
               >
                 Teruskan
               </button>
@@ -387,7 +387,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
       {/* Alert Dialog */}
       {alertDialog && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white rounded-xl shadow-2xl overflow-hidden max-w-sm w-full mx-auto p-6 space-y-6 border-t-4 border-action-teal">
+          <div className="bg-white rounded-xl shadow-2xl overflow-hidden max-w-sm w-full mx-auto p-4 md:p-6 space-y-6 border-t-4 border-action-teal">
             <h3 className="text-xl font-black text-action-teal uppercase flex items-center gap-2">
               <CheckCircle2 className="w-6 h-6" />
               Notifikasi
@@ -399,7 +399,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                   if (alertDialog.onClose) alertDialog.onClose();
                   setAlertDialog(null);
                 }}
-                className="px-8 py-2 bg-action-teal text-white rounded shadow-md font-bold text-sm hover:bg-teal-700"
+                className="px-4 md:px-8 py-2 bg-action-teal text-white rounded shadow-md font-bold text-sm hover:bg-teal-700"
               >
                 {alertDialog.buttonText || 'Tutup'}
               </button>
@@ -433,7 +433,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
           <motion.div 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="fixed top-24 left-1/2 -translate-x-1/2 z-50 bg-green-50 border border-green-200 text-green-700 px-6 py-3 rounded-lg shadow-xl flex items-center gap-3"
+            className="fixed top-24 left-1/2 -translate-x-1/2 z-50 bg-green-50 border border-green-200 text-green-700 px-4 md:px-6 py-3 rounded-lg shadow-xl flex items-center gap-3"
           >
             <CheckCircle2 className="w-5 h-5" />
             <span className="font-bold">{showNotification.message}</span>
@@ -446,42 +446,42 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
             animate={{ opacity: 1 }}
             className="space-y-6 text-[13px] text-charcoal"
           >
-            <div className="grid grid-cols-[200px_1fr] gap-x-0 gap-y-1">
-              <span className="text-[#8B4513] text-right pr-4 font-medium">No. Pendaftaran:</span>
+            <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-x-0 gap-y-1">
+              <span className="text-[#8B4513] md:text-right text-left pr-4 font-medium">No. Pendaftaran:</span>
               <span className="font-bold text-base leading-none">{examData.regNo}</span>
               
-              <span className="text-[#8B4513] text-right pr-4 font-medium">Status:</span>
+              <span className="text-[#8B4513] md:text-right text-left pr-4 font-medium">Status:</span>
               <div className="flex items-center gap-2">
                 <span className="font-bold">{localStatus}</span>
               </div>
               
               <div className="col-span-2 my-2"></div>
 
-              <span className="text-[#8B4513] text-right pr-4 font-medium">Nama Daerah:</span>
+              <span className="text-[#8B4513] md:text-right text-left pr-4 font-medium">Nama Daerah:</span>
               <span className="font-bold uppercase">{examData.district}</span>
 
-              <span className="text-[#8B4513] text-right pr-4 font-medium">Nama Unit/Organisasi:</span>
+              <span className="text-[#8B4513] md:text-right text-left pr-4 font-medium">Nama Unit/Organisasi:</span>
               <span className="font-bold">{examData.organization}</span>
 
-              <span className="text-[#8B4513] text-right pr-4 font-medium">Kategori Unit/Organisasi:</span>
+              <span className="text-[#8B4513] md:text-right text-left pr-4 font-medium">Kategori Unit/Organisasi:</span>
               <span className="font-medium">{examData.category}</span>
 
-              <span className="text-[#8B4513] text-right pr-4 font-medium">Alamat Peperiksaan:</span>
+              <span className="text-[#8B4513] md:text-right text-left pr-4 font-medium">Alamat Peperiksaan:</span>
               <span className="font-medium">{address}</span>
 
-              <span className="text-[#8B4513] text-right pr-4 font-medium">Nama dan Alamat Latihan O/C:</span>
+              <span className="text-[#8B4513] md:text-right text-left pr-4 font-medium">Nama dan Alamat Latihan O/C:</span>
               <span className="font-medium">Capten Nemo, Sekolah SAINS</span>
 
-              <span className="text-[#8B4513] text-right pr-4 font-medium">Tarikh Peperiksaan:</span>
+              <span className="text-[#8B4513] md:text-right text-left pr-4 font-medium">Tarikh Peperiksaan:</span>
               <span className="font-medium">{examData.examDate}</span>
 
-              <span className="text-[#8B4513] text-right pr-4 font-medium">Subjek:</span>
+              <span className="text-[#8B4513] md:text-right text-left pr-4 font-medium">Subjek:</span>
               <span className="font-medium">{examData.subject}</span>
             </div>
 
-            <div className="grid grid-cols-[150px_1fr] gap-4 mt-4">
-              <span className="text-gray-400 font-bold text-right">Senarai Calon:</span>
-              <div className="overflow-hidden border border-gray-300 rounded-sm">
+            <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4 mt-4">
+              <span className="text-gray-400 font-bold md:text-right text-left">Senarai Calon:</span>
+              <div className="overflow-x-auto border border-gray-300 rounded-sm">
                 <table className="w-full text-left border-collapse">
                   <thead className="bg-[#D1D5DB]">
                     <tr className="divide-x divide-gray-400">
@@ -503,8 +503,8 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
               </div>
             </div>
 
-            <div className="grid grid-cols-[150px_1fr_1fr] gap-4 mt-4">
-              <span className="text-gray-400 font-bold text-right pt-1">Bilangan Calon:</span>
+            <div className="grid grid-cols-1 md:grid-cols-[150px_1fr_1fr] gap-4 mt-4">
+              <span className="text-gray-400 font-bold md:text-right text-left pt-1">Bilangan Calon:</span>
               <div className="space-y-0.5">
                 <div className="flex gap-4 items-center">
                   <span className="text-gray-500 font-medium">Jumlah Calon :</span>
@@ -523,7 +523,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                   </div>
                 </div>
               </div>
-              <div className="text-right space-y-1">
+              <div className="md:text-right text-left space-y-1">
                 <span className="text-gray-400 font-bold block text-[10px]">Pilihan bahasa dalam peperiksaan:</span>
                 <div className="flex justify-end gap-3 font-black text-[10px]">
                   <span>BM : {totals.lang.bm}</span>
@@ -534,16 +534,16 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
             </div>
 
             <div className="bg-[#FFEFEF] border border-[#FFD0D0] p-4 rounded-sm space-y-1 mt-4">
-              <div className="grid grid-cols-[150px_1fr] gap-x-4">
-                <span className="text-gray-500 text-right font-medium">Pembayaran:</span>
+              <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-x-4">
+                <span className="text-gray-500 md:text-right text-left font-medium">Pembayaran:</span>
                 <div className="space-y-1">
                   <p className="font-medium">Bayaran yuran peperiksaan (Ahli) <span className="font-black">{totals.members}</span> x RM 2.00/calon = <span className="font-black">RM {fees.memberTotal.toFixed(0)}</span></p>
                   <p className="font-medium">Bayaran yuran peperiksaan (Bukan Ahli) <span className="font-black">{totals.nonMembers}</span> x RM 14.00/calon = <span className="font-black">RM {fees.nonMemberTotal.toFixed(0)}</span></p>
                   <p className="font-medium pt-1 border-t border-red-100">Jumlah bayaran yuran peperiksaan = <span className="font-black">RM {fees.grandTotal.toFixed(0)}</span></p>
                 </div>
               </div>
-              <div className="grid grid-cols-[150px_1fr] gap-x-4 pt-2">
-                <span className="text-gray-500 text-right font-medium">Lampiran Pembayaran:</span>
+              <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-x-4 pt-2">
+                <span className="text-gray-500 md:text-right text-left font-medium">Lampiran Pembayaran:</span>
                 <div className="flex items-center gap-2">
                   <FileText className="w-3.5 h-3.5 text-blue-500" />
                   <button 
@@ -687,7 +687,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                    <div className="flex justify-center mt-6">
                       <button 
                         onClick={handleUnlockApprove}
-                        className="btn-footer flex items-center gap-1.5 px-6 py-1.5 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-sm shadow-sm text-charcoal"
+                        className="btn-footer flex items-center gap-1.5 px-4 md:px-6 py-1.5 border border-gray-300 rounded bg-white hover:bg-gray-50 font-bold text-sm shadow-sm text-charcoal"
                       >
                         <Unlock className="w-4 h-4 text-charcoal" />
                         Buka Kunci
@@ -709,7 +709,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                 {/* Status-specific indicators in center (keeping as extra context, but Figure 15 buttons go in footer) */}
                 {localStatus === ExamStatus.UNLOCK_REQUESTED && (
                   <div className="flex justify-center mt-4">
-                    <div className="flex items-center gap-2 px-6 py-2 bg-orange-50 text-orange-700 border border-orange-200 rounded font-bold text-xs">
+                    <div className="flex items-center gap-2 px-4 md:px-6 py-2 bg-orange-50 text-orange-700 border border-orange-200 rounded font-bold text-xs">
                       <RefreshCw className="w-3.5 h-3.5 animate-spin" />
                       Permintaan Menunggu Pengesahan...
                     </div>
@@ -717,7 +717,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                 )}
                 {localStatus === ExamStatus.SUBMITTED && (
                    <div className="flex justify-center">
-                      <div className="flex items-center gap-2 px-6 py-2 bg-green-50 text-green-700 border border-green-200 rounded font-bold text-xs uppercase">
+                      <div className="flex items-center gap-2 px-4 md:px-6 py-2 bg-green-50 text-green-700 border border-green-200 rounded font-bold text-xs uppercase">
                         <CheckCircle2 className="w-3.5 h-3.5" />
                         Telah Dihantar
                       </div>
@@ -727,54 +727,54 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
             ) : (
               <>
                 {/* Personnel Tables - Figure 12 Style */}
-            <div className="grid grid-cols-[200px_1fr] gap-x-0 gap-y-1">
-              <span className="text-[#8B4513] text-right pr-4 font-medium">No. Pendaftaran:</span>
+            <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-x-0 gap-y-1">
+              <span className="text-[#8B4513] md:text-right text-left pr-4 font-medium">No. Pendaftaran:</span>
               <span className="font-bold text-base leading-none">{examData.regNo}</span>
               
-              <span className="text-[#8B4513] text-right pr-4 font-medium">Status:</span>
+              <span className="text-[#8B4513] md:text-right text-left pr-4 font-medium">Status:</span>
               <div className="flex items-center gap-2">
                 <span className={`font-bold ${isExpired ? 'text-red-600' : 'text-charcoal'}`}>{localStatus}</span>
               </div>
               
-              <span className="text-[#8B4513] text-right pr-4 font-medium">Tarikh Akhir Penyerahan:</span>
+              <span className="text-[#8B4513] md:text-right text-left pr-4 font-medium">Tarikh Akhir Penyerahan:</span>
               <span className="font-medium">{examData.deadline}</span>
               
               <div className="col-span-2 my-1"></div>
 
-              <span className="text-[#8B4513] text-right pr-4 font-medium">Nama Daerah:</span>
+              <span className="text-[#8B4513] md:text-right text-left pr-4 font-medium">Nama Daerah:</span>
               <span className="font-bold uppercase">{examData.district}</span>
 
-              <span className="text-[#8B4513] text-right pr-4 font-medium">Nama Unit/Organisasi:</span>
+              <span className="text-[#8B4513] md:text-right text-left pr-4 font-medium">Nama Unit/Organisasi:</span>
               <span className="font-bold">{examData.organization}</span>
 
-              <span className="text-[#8B4513] text-right pr-4 font-medium">Kategori Unit/Organisasi:</span>
+              <span className="text-[#8B4513] md:text-right text-left pr-4 font-medium">Kategori Unit/Organisasi:</span>
               <span className="font-medium">{examData.category}</span>
 
-              <span className="text-[#8B4513] text-right pr-4 font-medium">Tarikh Mula Kursus:</span>
+              <span className="text-[#8B4513] md:text-right text-left pr-4 font-medium">Tarikh Mula Kursus:</span>
               <span className="font-medium">{courseStart}</span>
 
-              <span className="text-[#8B4513] text-right pr-4 font-medium">Tarikh Tamat Kursus:</span>
+              <span className="text-[#8B4513] md:text-right text-left pr-4 font-medium">Tarikh Tamat Kursus:</span>
               <span className="font-medium">{courseEnd}</span>
 
-              <span className="text-[#8B4513] text-right pr-4 font-medium">Tarikh Peperiksaan:</span>
+              <span className="text-[#8B4513] md:text-right text-left pr-4 font-medium">Tarikh Peperiksaan:</span>
               <span className="font-medium">{examData.examDate}</span>
 
-              <span className="text-[#8B4513] text-right pr-4 font-medium">Subjek:</span>
+              <span className="text-[#8B4513] md:text-right text-left pr-4 font-medium">Subjek:</span>
               <span className="font-medium">{examData.subject}</span>
 
-              <span className="text-[#8B4513] text-right pr-4 font-medium">Alamat Peperiksaan:</span>
+              <span className="text-[#8B4513] md:text-right text-left pr-4 font-medium">Alamat Peperiksaan:</span>
               <span className="font-medium">{address}</span>
             </div>
 
             {/* Personnel Tables - Figure 12 Style */}
             <div className="space-y-8 mt-8">
               {/* Jurulatih */}
-              <div className="grid grid-cols-[150px_1fr] gap-4">
-                <span className="text-gray-400 font-bold text-right py-1">
+              <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4">
+                <span className="text-gray-400 font-bold md:text-right text-left py-1">
                   <span className="text-brand-red font-bold mr-1">*</span>Senarai Jurulatih:
                 </span>
                 <div className="space-y-2">
-                  <div className="overflow-hidden border border-gray-200 rounded-sm">
+                  <div className="overflow-x-auto border border-gray-200 rounded-sm">
                     <table className="w-full">
                       <thead className="bg-[#D1D5DB]">
                         <tr>
@@ -860,12 +860,12 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
               </div>
 
               {/* Penyelia */}
-              <div className="grid grid-cols-[150px_1fr] gap-4">
-                <span className="text-gray-400 font-bold text-right py-1">
+              <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4">
+                <span className="text-gray-400 font-bold md:text-right text-left py-1">
                   <span className="text-brand-red font-bold mr-1">*</span>Senarai Penyelia:
                 </span>
                 <div className="space-y-2">
-                  <div className="overflow-hidden border border-gray-200 rounded-sm">
+                  <div className="overflow-x-auto border border-gray-200 rounded-sm">
                     <table className="w-full">
                       <thead className="bg-[#D1D5DB]">
                         <tr>
@@ -922,12 +922,12 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
               </div>
 
               {/* Senarai Pemeriksa */}
-              <div className="grid grid-cols-[150px_1fr] gap-4">
-                <span className="text-gray-400 font-bold text-right py-1">
+              <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4">
+                <span className="text-gray-400 font-bold md:text-right text-left py-1">
                   <span className="text-brand-red font-bold mr-1">*</span>Senarai Pemeriksa:
                 </span>
                 <div className="space-y-2">
-                  <div className="overflow-hidden border border-gray-200 rounded-sm">
+                  <div className="overflow-x-auto border border-gray-200 rounded-sm">
                     <table className="w-full">
                       <thead className="bg-[#D1D5DB]">
                         <tr>
@@ -1010,9 +1010,9 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
               </div>
 
               {/* Candidate Table - Figure 12 Style */}
-              <div className="grid grid-cols-[150px_1fr] gap-4">
-                <span className="text-gray-400 font-bold text-right py-1">Senarai Calon:</span>
-                <div className="overflow-hidden border border-gray-300 rounded-sm">
+              <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4">
+                <span className="text-gray-400 font-bold md:text-right text-left py-1">Senarai Calon:</span>
+                <div className="overflow-x-auto border border-gray-300 rounded-sm">
                   <table className="w-full text-left border-collapse">
                     <thead className="bg-[#D1D5DB]">
                       <tr className="divide-x divide-gray-400">
@@ -1046,7 +1046,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                     </tbody>
                     <tfoot className="bg-white border-t border-gray-300">
                       <tr className="divide-x divide-gray-300">
-                        <td colSpan={3} className="px-3 py-2 text-right font-bold bg-gray-50">Kehadiran</td>
+                        <td colSpan={3} className="px-3 py-2 md:text-right text-left font-bold bg-gray-50">Kehadiran</td>
                         <td className="px-3 py-2 text-center font-bold text-gray-500">{totals.theory}/{totals.totalCount}</td>
                         <td className="px-3 py-2 text-center font-bold text-gray-500">{totals.oral}/{totals.totalCount}</td>
                         <td className="px-3 py-2 text-center font-bold text-gray-500">{totals.practical}/{totals.totalCount}</td>
@@ -1058,8 +1058,8 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
             </div>
 
             {/* Summary Row */}
-            <div className="grid grid-cols-[150px_1fr_1fr] gap-4 mt-6">
-              <span className="text-gray-400 font-bold text-right pt-1">Bilangan Calon:</span>
+            <div className="grid grid-cols-1 md:grid-cols-[150px_1fr_1fr] gap-4 mt-6">
+              <span className="text-gray-400 font-bold md:text-right text-left pt-1">Bilangan Calon:</span>
               <div className="space-y-1">
                 <div className="flex gap-4 items-center">
                   <span className="text-gray-500 font-medium">Jumlah Calon :</span>
@@ -1078,7 +1078,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                   </div>
                 </div>
               </div>
-              <div className="text-right space-y-2">
+              <div className="md:text-right text-left space-y-2">
                 <span className="text-gray-400 font-bold block">Pilihan bahasa dalam peperiksaan:</span>
                 <div className="flex justify-end gap-4 font-black">
                   <span>BM : {totals.lang.bm}</span>
@@ -1089,9 +1089,9 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
             </div>
 
             {/* Payment Section - Pink Background Style */}
-            <div className="bg-[#FFEFEF] border border-[#FFD0D0] p-6 rounded-sm space-y-2 relative mt-8">
-              <div className="grid grid-cols-[150px_1fr] gap-x-4">
-                <span className="text-gray-500 text-right font-medium">Pembayaran:</span>
+            <div className="bg-[#FFEFEF] border border-[#FFD0D0] p-4 md:p-6 rounded-sm space-y-2 relative mt-8">
+              <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-x-4">
+                <span className="text-gray-500 md:text-right text-left font-medium">Pembayaran:</span>
                 <div className="space-y-2">
                   <p className="font-medium">Bayaran yuran peperiksaan (Ahli) <span className="font-black">{totals.members}</span> x RM 2.00/calon = <span className="font-black">RM {fees.memberTotal.toFixed(2)}</span></p>
                   <p className="font-medium">Bayaran yuran peperiksaan (Bukan Ahli) <span className="font-black">{totals.nonMembers}</span> x RM 14.00/calon = <span className="font-black">RM {fees.nonMemberTotal.toFixed(2)}</span></p>
@@ -1099,8 +1099,8 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                 </div>
               </div>
               
-              <div className="grid grid-cols-[150px_1fr] gap-x-4 pt-4">
-                <span className="text-gray-500 text-right font-medium">Lampiran Pembayaran:</span>
+              <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-x-4 pt-4">
+                <span className="text-gray-500 md:text-right text-left font-medium">Lampiran Pembayaran:</span>
                 <div className="flex items-center gap-2">
                   <FileText className="w-4 h-4 text-blue-500" />
                   <button 
@@ -1245,7 +1245,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-xl overflow-hidden border border-gray-200 shadow-2xl w-full max-w-xl"
+            className="bg-white rounded-xl overflow-x-auto border border-gray-200 shadow-2xl w-full max-w-xl"
           >
             <div className="bg-action-teal/10 p-5 border-b border-action-teal/20 flex items-center justify-between">
               <h3 className="font-bold text-action-teal flex items-center gap-2 text-lg">
@@ -1260,7 +1260,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
               </button>
             </div>
 
-            <div className="p-6 space-y-6">
+            <div className="p-4 md:p-6 space-y-6">
               <div className="bg-blue-50/50 border border-blue-100 rounded-lg p-4">
                 <h4 className="text-blue-800 font-bold mb-2 flex items-center gap-2 text-sm"><FileText className="w-4 h-4"/>Nota Penting</h4>
                 <div className="space-y-2 text-blue-800/80 text-sm">
@@ -1302,13 +1302,13 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
               <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
                 <button 
                   onClick={() => setShowUnlockDialog(false)}
-                  className="px-6 py-2 border border-gray-300 rounded font-bold text-gray-600 hover:bg-gray-50 transition-colors shadow-sm text-sm"
+                  className="px-4 md:px-6 py-2 border border-gray-300 rounded font-bold text-gray-600 hover:bg-gray-50 transition-colors shadow-sm text-sm"
                 >
                   Tidak, Kembali
                 </button>
                 <button 
                   onClick={confirmUnlock}
-                  className="flex items-center gap-2 px-6 py-2 bg-action-teal text-white rounded font-bold hover:bg-teal-700 transition-colors shadow-md text-sm"
+                  className="flex items-center gap-2 px-4 md:px-6 py-2 bg-action-teal text-white rounded font-bold hover:bg-teal-700 transition-colors shadow-md text-sm"
                 >
                   <Unlock className="w-4 h-4" /> Ya, Mohon Buka Kunci
                 </button>
@@ -1324,7 +1324,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-xl overflow-hidden border border-gray-200 shadow-2xl w-full max-w-md"
+            className="bg-white rounded-xl overflow-x-auto border border-gray-200 shadow-2xl w-full max-w-md"
           >
             <div className="bg-action-teal/10 p-5 border-b border-action-teal/20 flex items-center justify-between">
               <h3 className="font-bold text-action-teal flex items-center gap-2 text-lg">
@@ -1339,7 +1339,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
               </button>
             </div>
             
-            <div className="p-6 space-y-6">
+            <div className="p-4 md:p-6 space-y-6">
               <div className="text-center space-y-2">
                 <p className="text-[15px] font-medium text-gray-600">
                   Tarikh akhir penyerahan semasa: <strong className="text-brand-red">{examData.deadline}</strong>
@@ -1382,13 +1382,13 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
               <div className="flex justify-end gap-3 pt-2">
                 <button 
                   onClick={() => setShowSECUnlockDialog(false)}
-                  className="px-6 py-2 border border-gray-300 rounded font-bold text-gray-600 hover:bg-gray-50 transition-colors shadow-sm text-sm"
+                  className="px-4 md:px-6 py-2 border border-gray-300 rounded font-bold text-gray-600 hover:bg-gray-50 transition-colors shadow-sm text-sm"
                 >
                   Tutup
                 </button>
                 <button 
                   onClick={confirmSECUnlock}
-                  className="flex items-center gap-2 px-6 py-2 bg-action-teal text-white rounded font-bold hover:bg-teal-700 transition-colors shadow-md text-sm"
+                  className="flex items-center gap-2 px-4 md:px-6 py-2 bg-action-teal text-white rounded font-bold hover:bg-teal-700 transition-colors shadow-md text-sm"
                 >
                   <Unlock className="w-4 h-4" /> Buka Kunci
                 </button>
@@ -1457,42 +1457,42 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
             animate={{ opacity: 1 }}
             className="space-y-6"
           >
-            <div className="bg-white border-t-2 border-charcoal pt-4 px-8 pb-8">
+            <div className="bg-white border-t-2 border-charcoal pt-4 px-4 md:px-8 pb-8">
               <div className="mb-6">
-                <div className="grid grid-cols-[150px_1fr] gap-4 mb-1">
-                  <span className="text-[13px] font-medium text-gray-500 text-right">No. Pendaftaran:</span>
+                <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4 mb-1">
+                  <span className="text-[13px] font-medium text-gray-500 md:text-right text-left">No. Pendaftaran:</span>
                   <span className="text-[15px] font-bold text-charcoal uppercase">{examData.regNo}</span>
                 </div>
-                <div className="grid grid-cols-[150px_1fr] gap-4 mb-1">
-                  <span className="text-[13px] font-medium text-gray-500 text-right">Status:</span>
+                <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4 mb-1">
+                  <span className="text-[13px] font-medium text-gray-500 md:text-right text-left">Status:</span>
                   <span className="text-[13px] text-charcoal">{localStatus === ExamStatus.APPROVED ? 'Rumusan Peperiksaan Telah Dihantar' : examData.status}</span>
                 </div>
                 
                 <div className="h-6"></div>
                 
-                <div className="grid grid-cols-[150px_1fr] gap-4 mb-1">
-                  <span className="text-[13px] font-medium text-gray-500 text-right">Nama Daerah:</span>
+                <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4 mb-1">
+                  <span className="text-[13px] font-medium text-gray-500 md:text-right text-left">Nama Daerah:</span>
                   <span className="text-[13px] text-charcoal uppercase">{examData.district}</span>
                 </div>
-                <div className="grid grid-cols-[150px_1fr] gap-4 mb-1">
-                  <span className="text-[13px] font-medium text-gray-500 text-right">Nama Unit/Organisasi:</span>
+                <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4 mb-1">
+                  <span className="text-[13px] font-medium text-gray-500 md:text-right text-left">Nama Unit/Organisasi:</span>
                   <span className="text-[13px] text-charcoal">{examData.organization}</span>
                 </div>
-                <div className="grid grid-cols-[150px_1fr] gap-4 mb-1 border-brand-red">
-                  <span className="text-[13px] font-medium text-gray-500 text-right flex justify-end items-center"><span className="text-brand-red font-bold mr-1">*</span> Tarikh Peperiksaan:</span>
+                <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4 mb-1 border-brand-red">
+                  <span className="text-[13px] font-medium text-gray-500 md:text-right text-left flex justify-end items-center"><span className="text-brand-red font-bold mr-1">*</span> Tarikh Peperiksaan:</span>
                   <span className="text-[13px] text-charcoal">{examData.examDate}</span>
                 </div>
-                <div className="grid grid-cols-[150px_1fr] gap-4 mb-6">
-                  <span className="text-[13px] font-medium text-gray-500 text-right">Subjek:</span>
+                <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4 mb-6">
+                  <span className="text-[13px] font-medium text-gray-500 md:text-right text-left">Subjek:</span>
                   <span className="text-[13px] text-charcoal">{examData.subject}</span>
                 </div>
               </div>
                 
-              <div className="grid grid-cols-[150px_1fr] gap-4">
-                  <span className="text-[13px] font-medium text-gray-500 text-right flex justify-end items-start mt-2">
+              <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4">
+                  <span className="text-[13px] font-medium text-gray-500 md:text-right text-left flex justify-end items-start mt-2">
                     <span className="text-brand-red font-bold mr-1">*</span>Senarai Calon:
                   </span>
-                  <div className="overflow-hidden border border-gray-300 bg-white">
+                  <div className="overflow-x-auto border border-gray-300 bg-white">
                     <table className="w-full text-left border-collapse">
                       <thead className="bg-[#E5E7EB]">
                     <tr>
@@ -1649,7 +1649,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
 
       {showSijilModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-[#E6EFF5] border border-gray-300 w-[500px] shadow-2xl">
+          <div className="bg-[#E6EFF5] border border-gray-300 w-full max-w-[500px] shadow-2xl">
             <div className="bg-gradient-to-b from-[#4A4A4A] to-[#1A1A1A] px-4 py-2 flex items-center justify-between shadow-sm border-b-2 border-brand-red">
               <h3 className="text-white font-bold text-[14px]">Jenis Sijil</h3>
               <button onClick={() => setShowSijilModal(false)} className="text-white hover:text-gray-300">
@@ -1657,9 +1657,9 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
               </button>
             </div>
             
-            <div className="p-8">
+            <div className="p-4 md:p-8">
               <div className="flex gap-4">
-                <label className="text-[13px] font-bold text-gray-700 w-24 text-right pt-1">Jenis Sijil:</label>
+                <label className="text-[13px] font-bold text-gray-700 w-24 md:text-right text-left pt-1">Jenis Sijil:</label>
                 <div className="flex-1 space-y-3">
                   <div className="flex items-center gap-2">
                     <input 
@@ -1726,7 +1726,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                   setShowSijilModal(false);
                   triggerNotification('Sijil berjaya dijana dan sedia untuk dicetak.');
                 }}
-                className="flex items-center gap-1.5 px-6 py-1.5 bg-white border border-gray-300 font-bold text-[13px] shadow-sm hover:bg-green-50 text-action-teal"
+                className="flex items-center gap-1.5 px-4 md:px-6 py-1.5 bg-white border border-gray-300 font-bold text-[13px] shadow-sm hover:bg-green-50 text-action-teal"
               >
                 <Check className="w-4 h-4" /> Ya
               </button>

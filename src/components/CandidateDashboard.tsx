@@ -253,7 +253,7 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
                         </button>
                       </div>
                     )) : (
-                      <div className="p-8 text-center text-slate-500 text-sm">{translateContent('No notifications')}</div>
+                      <div className="p-4 md:p-8 text-center text-slate-500 text-sm">{translateContent('No notifications')}</div>
                     )}
                   </div>
                 </motion.div>
@@ -308,7 +308,7 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
           onFinish={() => setTakingExamId(null)} 
         />
       ) : (
-      <main className="max-w-7xl mx-auto px-4 lg:px-8 py-8 md:py-10">
+      <main className="max-w-7xl mx-auto px-4 lg:px-8 py-4 md:py-8 md:py-10">
         
         {upcomingExams.some(e => {
           const d = new Date(e.date);
@@ -331,7 +331,7 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
           </div>
         )}
 
-        <div className="flex items-center gap-6 border-b border-slate-200 mb-8 overflow-x-auto pb-1">
+        <div className="flex items-center gap-4 md:gap-6 border-b border-slate-200 mb-8 overflow-x-auto pb-1">
           <button 
             onClick={() => setActiveTab('active')}
             className={`pb-2 text-sm font-bold transition-colors relative whitespace-nowrap ${activeTab === 'active' ? 'text-brand-red' : 'text-slate-500 hover:text-slate-700'}`}
@@ -348,7 +348,7 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
           </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-8">
           
           {/* --- LEFT COLUMN (65% -> col-span-8) --- */}
           <motion.div 
@@ -394,7 +394,7 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
                         animate={{ opacity: 1, y: 0 }}
                         className="exam-container bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden group hover:border-slate-300 transition-colors"
                       >
-                        <div className="p-6 sm:p-8 border-b border-slate-100 flex flex-col md:flex-row justify-between gap-6">
+                        <div className="p-4 md:p-6 sm:p-8 border-b border-slate-100 flex flex-col md:flex-row justify-between gap-4 md:gap-6">
                           <div className="flex-1">
                             <div className="flex flex-wrap items-center gap-2 mb-3">
                               <span className="exam-code-disp candidate-tooltip group relative px-3 py-1 bg-slate-100 text-slate-700 rounded-lg text-xs font-bold font-mono tracking-wide border border-slate-200 cursor-help transition-colors hover:bg-slate-200">
@@ -465,7 +465,7 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
                           <button 
                             disabled={isLocked || connectingId === exam.id}
                             onClick={() => handleAttendExam(exam.id)}
-                            className={`attend-exam-btn w-full sm:w-auto px-8 py-3 rounded-xl text-sm font-bold transition-all shadow-sm flex items-center justify-center gap-2 ${
+                            className={`attend-exam-btn w-full sm:w-auto px-4 md:px-8 py-3 rounded-xl text-sm font-bold transition-all shadow-sm flex items-center justify-center gap-2 ${
                               isLocked 
                                 ? 'bg-slate-100 border border-slate-200 text-slate-400 cursor-not-allowed' 
                                 : connectingId === exam.id
@@ -521,16 +521,16 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
                   <table className="w-full text-left text-sm text-slate-600">
                     <thead className="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-widest">
                       <tr>
-                        <th className="px-6 py-4">{translateContent('Exam')}</th>
-                        <th className="px-6 py-4">{translateContent('Date')}</th>
-                        <th className="px-6 py-4">{translateContent('Result')}</th>
-                        <th className="px-6 py-4 text-right">{translateContent('Certificate')}</th>
+                        <th className="px-4 md:px-6 py-4">{translateContent('Exam')}</th>
+                        <th className="px-4 md:px-6 py-4">{translateContent('Date')}</th>
+                        <th className="px-4 md:px-6 py-4">{translateContent('Result')}</th>
+                        <th className="px-4 md:px-6 py-4 text-right">{translateContent('Certificate')}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                       {historyExams.length > 0 ? historyExams.map(exam => (
                         <tr key={exam.id} className="hover:bg-slate-50/50 transition-colors">
-                          <td className="px-6 py-4">
+                          <td className="px-4 md:px-6 py-4">
                             <div className="exam-title font-bold text-charcoal">{exam.title}</div>
                             <div className="candidate-tooltip group relative inline-block font-mono text-[10px] text-slate-400 mt-0.5 cursor-help">
                               {exam.code}
@@ -539,8 +539,8 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
                               </span>
                             </div>
                           </td>
-                          <td className="px-6 py-4 font-medium">{new Date(exam.date).toLocaleDateString('en-GB')}</td>
-                          <td className="px-6 py-4">
+                          <td className="px-4 md:px-6 py-4 font-medium">{new Date(exam.date).toLocaleDateString('en-GB')}</td>
+                          <td className="px-4 md:px-6 py-4">
                             <span className={`px-2.5 py-1 rounded-md text-xs font-bold ${
                               exam.result === 'Pass' ? 'bg-emerald-100 text-emerald-700' : 
                               exam.result === 'Fail' ? 'bg-brand-red/10 text-brand-red' : 
@@ -549,7 +549,7 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
                               {translateContent(exam.result || 'Pending')}
                             </span>
                           </td>
-                          <td className="px-6 py-4 text-right">
+                          <td className="px-4 md:px-6 py-4 text-right">
                             {exam.result === 'Pass' && (
                               <button 
                                 onClick={() => handleDownloadCert(exam.title)}
@@ -563,7 +563,7 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
                         </tr>
                       )) : (
                         <tr>
-                          <td colSpan={4} className="px-6 py-8 text-center text-slate-500">{translateContent('No history found')}</td>
+                          <td colSpan={4} className="px-4 md:px-6 py-4 md:py-8 text-center text-slate-500">{translateContent('No history found')}</td>
                         </tr>
                       )}
                     </tbody>
@@ -598,7 +598,7 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
                   </div>
                   <h2 className="text-xl font-bold text-charcoal tracking-tight">{translateContent("Action Required")}</h2>
                 </div>
-                <div className="bg-amber-50 rounded-2xl border border-amber-200 p-6 shadow-sm">
+                <div className="bg-amber-50 rounded-2xl border border-amber-200 p-4 md:p-6 shadow-sm">
                   <h3 className="text-sm font-bold text-amber-900 mb-4 flex items-center gap-2 uppercase tracking-wider">
                     {translateContent("Required Retests")}
                   </h3>

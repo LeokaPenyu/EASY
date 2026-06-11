@@ -54,9 +54,9 @@ export const ResultSlipPrint: React.FC<ResultSlipPrintProps> = ({ exam, onClose 
         </div>
       </div>
 
-      <div id="print-result-slips" className="max-w-4xl mx-auto bg-white border border-gray-300 p-8">
+      <div id="print-result-slips" className="max-w-4xl mx-auto bg-white border border-gray-300 p-4 md:p-8">
         {exam.candidates?.map((candidate, index) => (
-          <div key={candidate.id} className="p-8 border border-black h-[140mm] flex flex-col justify-center mb-8 page-break">
+          <div key={candidate.id} className="p-4 md:p-8 border border-black h-[140mm] flex flex-col justify-center mb-8 page-break">
             <div className="text-center mb-8">
               <h1 className="text-[28px] font-black uppercase leading-tight">MALAYSIAN RED CRESCENT</h1>
               <h2 className="text-[28px] font-black uppercase leading-tight">(SARAWAK BRANCH)</h2>

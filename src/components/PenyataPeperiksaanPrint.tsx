@@ -31,8 +31,8 @@ export const PenyataPeperiksaanPrint: React.FC<Props> = ({ exam, onClose }) => {
   return (
     <div className="fixed inset-0 z-50 bg-gray-500 overflow-y-auto w-full h-full p-4 sm:p-8 flex items-start justify-center print:bg-white print:p-0">
       <div className="sticky top-4 flex gap-4 print:hidden z-10 mr-4">
-        <button className="px-6 py-2 bg-action-teal text-white font-bold rounded shadow-md hover:bg-teal-700" onClick={() => window.print()}>Cetak</button>
-        <button className="px-6 py-2 bg-white text-charcoal font-bold rounded shadow-md border hover:bg-gray-50" onClick={onClose}>Tutup</button>
+        <button className="px-4 md:px-6 py-2 bg-action-teal text-white font-bold rounded shadow-md hover:bg-teal-700" onClick={() => window.print()}>Cetak</button>
+        <button className="px-4 md:px-6 py-2 bg-white text-charcoal font-bold rounded shadow-md border hover:bg-gray-50" onClick={onClose}>Tutup</button>
       </div>
 
       <div className="w-[21cm] min-h-[29.7cm] bg-white mx-auto shadow-2xl print:shadow-none p-[1cm] text-black text-[12px] font-sans relative">
@@ -196,7 +196,7 @@ export const PenyataPeperiksaanPrint: React.FC<Props> = ({ exam, onClose }) => {
         </div>
 
         {/* Results Summary & Signatures */}
-        <div className="grid grid-cols-[200px_1fr] gap-8 mt-12 break-inside-avoid">
+        <div className="grid grid-cols-[200px_1fr] gap-4 md:gap-8 mt-12 break-inside-avoid">
           {/* Laporan dan Ulasan */}
           <div className="border border-black p-3">
             <h4 className="font-bold border-b border-black pb-1 mb-2">Laporan dan Ulasan Pemeriksa</h4>
@@ -221,7 +221,7 @@ export const PenyataPeperiksaanPrint: React.FC<Props> = ({ exam, onClose }) => {
           </div>
 
           {/* Signatures */}
-          <div className="grid grid-cols-2 gap-8 text-center pt-8">
+          <div className="grid grid-cols-2 gap-4 md:gap-8 text-center pt-8">
             <div className="space-y-12">
               <div className="border-b border-dashed border-black mx-4"></div>
               <div className="font-bold">Pemeriksa</div>

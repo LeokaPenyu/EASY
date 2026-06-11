@@ -107,7 +107,7 @@ export const Jurulatih: React.FC = () => {
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden text-sm">
         
         {/* Header */}
-        <div className="p-6 flex justify-between items-center border-b border-gray-100 bg-white">
+        <div className="p-4 md:p-6 flex justify-between items-center border-b border-gray-100 bg-white">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-rose-50 text-brand-red rounded-lg">
               <UserSquare2 className="w-5 h-5" />
@@ -123,7 +123,7 @@ export const Jurulatih: React.FC = () => {
         </div>
 
         {/* Filter Section */}
-        <div className="p-6 border-b border-gray-100 bg-gray-50/50 space-y-4 max-w-2xl">
+        <div className="p-4 md:p-6 border-b border-gray-100 bg-gray-50/50 space-y-4 max-w-2xl">
           <div className="flex items-center gap-4">
             <label className="w-48 text-right font-medium text-gray-700 text-xs text-nowrap">{t('trainerName')} :</label>
             <input 
@@ -160,7 +160,7 @@ export const Jurulatih: React.FC = () => {
         </div>
 
         {/* Content Area */}
-        <div className="p-6">
+        <div className="p-4 md:p-6">
           <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-sm">
@@ -202,7 +202,7 @@ export const Jurulatih: React.FC = () => {
                   ))}
                   {filteredData.length === 0 && (
                     <tr>
-                      <td colSpan={5} className="px-4 py-8 text-center text-gray-500 italic">
+                      <td colSpan={5} className="px-4 py-4 md:py-8 text-center text-gray-500 italic">
                         {t('noItemFound')}
                       </td>
                     </tr>
@@ -242,7 +242,7 @@ export const Jurulatih: React.FC = () => {
             className="bg-white shadow-xl rounded-xl w-full max-w-lg flex flex-col overflow-hidden"
           >
             {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white">
+            <div className="px-4 md:px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white">
               <h3 className="font-bold text-lg text-gray-900">
                 {editingId ? t('ubahJurulatih') : t('addTrainer')}
               </h3>
@@ -255,7 +255,7 @@ export const Jurulatih: React.FC = () => {
             </div>
             
             {/* Modal Content */}
-            <div className="p-6 bg-white space-y-5">
+            <div className="p-4 md:p-6 bg-white space-y-5">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">
                   {t('trainerName')} <span className="text-brand-red">*</span>
@@ -311,13 +311,13 @@ export const Jurulatih: React.FC = () => {
               <div className="flex justify-end gap-3 pt-6 border-t border-gray-100 mt-8">
                 <button 
                   onClick={() => setIsModalOpen(false)}
-                  className="px-6 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center gap-2"
+                  className="px-4 md:px-6 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center gap-2"
                 >
                   Batal
                 </button>
                 <button 
                   onClick={handleSave}
-                  className="px-6 py-2 bg-action-teal hover:bg-teal-700 text-white rounded-lg text-sm font-medium flex items-center gap-2 transition-colors shadow-sm"
+                  className="px-4 md:px-6 py-2 bg-action-teal hover:bg-teal-700 text-white rounded-lg text-sm font-medium flex items-center gap-2 transition-colors shadow-sm"
                 >
                   <Save className="w-5 h-5" /> {t('simpan') || 'Simpan'}
                 </button>

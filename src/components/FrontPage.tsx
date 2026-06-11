@@ -21,7 +21,7 @@ export const FrontPage: React.FC<FrontPageProps> = ({ onSelectRole }) => {
       
       {/* Left Panel - Branding */}
       <div 
-        className="hidden md:flex md:w-5/12 lg:w-1/2 border-r border-red-800 flex-col justify-between p-6 xl:p-10 relative overflow-hidden shadow-2xl z-10"
+        className="hidden md:flex md:w-5/12 lg:w-1/2 border-r border-red-800 flex-col justify-between p-4 md:p-6 xl:p-10 relative overflow-hidden shadow-2xl z-10"
         style={{
           backgroundImage: `url('https://images.unsplash.com/photo-1584697964190-73812548770a?q=80&w=1920&auto=format&fit=crop')`,
           backgroundSize: 'cover',
@@ -106,7 +106,7 @@ export const FrontPage: React.FC<FrontPageProps> = ({ onSelectRole }) => {
       </div>
 
       {/* Right Panel - Login Form */}
-      <div className="w-full md:w-7/12 lg:w-1/2 bg-surface-cream flex items-center justify-center p-6 md:p-8 relative overflow-hidden">
+      <div className="w-full md:w-7/12 lg:w-1/2 bg-surface-cream flex items-center justify-center p-4 md:p-6 md:p-8 relative overflow-hidden">
         {/* Subtle background element */}
         <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-red-100/30 rounded-full blur-3xl pointer-events-none"></div>
 

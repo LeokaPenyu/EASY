@@ -141,7 +141,7 @@ export const ProfilPengguna = () => {
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden text-sm">
         
         {/* Header Actions */}
-        <div className="p-6 flex justify-between items-center border-b border-gray-100 bg-white">
+        <div className="p-4 md:p-6 flex justify-between items-center border-b border-gray-100 bg-white">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-rose-50 text-brand-red rounded-lg">
               <Settings className="w-5 h-5" />
@@ -185,8 +185,8 @@ export const ProfilPengguna = () => {
           {view === 'list' && (
             <>
               {/* Filter Section */}
-              <div className="p-6 border-b border-gray-100 bg-gray-50/50">
-                <div className="flex flex-col md:flex-row gap-6 items-start md:items-center mb-4">
+              <div className="p-4 md:p-6 border-b border-gray-100 bg-gray-50/50">
+                <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-start md:items-center mb-4">
                   <div className="flex items-center gap-3">
                     <label className="font-medium text-gray-700 text-sm">Name:</label>
                     <input 
@@ -246,10 +246,10 @@ export const ProfilPengguna = () => {
                 <table className="w-full text-sm text-left border-collapse">
                   <thead className="bg-gray-50 text-gray-500 uppercase text-xs font-semibold tracking-wider border-b border-gray-100">
                     <tr>
-                      <th className="px-6 py-4 text-center w-16">No.</th>
-                      <th className="px-6 py-4">Nama User</th>
-                      <th className="px-6 py-4">Email</th>
-                      <th className="px-6 py-4 text-center w-28">Peranan</th>
+                      <th className="px-4 md:px-6 py-4 text-center w-16">No.</th>
+                      <th className="px-4 md:px-6 py-4">Nama User</th>
+                      <th className="px-4 md:px-6 py-4">Email</th>
+                      <th className="px-4 md:px-6 py-4 text-center w-28">Peranan</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -259,10 +259,10 @@ export const ProfilPengguna = () => {
                         onClick={() => handleRowClick(user)}
                         className="border-b border-gray-50 hover:bg-blue-50/50 cursor-pointer transition-colors"
                       >
-                        <td className="px-6 py-4 text-center font-medium text-gray-500">{index + 1}</td>
-                        <td className="px-6 py-4 text-action-teal font-medium uppercase text-sm">{user.name}</td>
-                        <td className="px-6 py-4 text-gray-600 text-sm">{user.email}</td>
-                        <td className="px-6 py-4 text-center text-gray-700">
+                        <td className="px-4 md:px-6 py-4 text-center font-medium text-gray-500">{index + 1}</td>
+                        <td className="px-4 md:px-6 py-4 text-action-teal font-medium uppercase text-sm">{user.name}</td>
+                        <td className="px-4 md:px-6 py-4 text-gray-600 text-sm">{user.email}</td>
+                        <td className="px-4 md:px-6 py-4 text-center text-gray-700">
                           {user.hasRole ? <Check className="w-5 h-5 text-green-600 mx-auto" /> : <X className="w-5 h-5 text-gray-300 mx-auto" />}
                         </td>
                       </tr>
@@ -275,7 +275,7 @@ export const ProfilPengguna = () => {
 
           {/* ----- VIEW DETAILS ----- */}
           {view === 'view' && selectedUser && (
-            <div className="p-6">
+            <div className="p-4 md:p-6">
                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6 mb-10 max-w-4xl">
                  <div>
                     <div className="text-sm font-medium text-gray-500 mb-1">User ID <span className="text-brand-red">*</span></div>
@@ -310,18 +310,18 @@ export const ProfilPengguna = () => {
                  <table className="w-full text-left">
                     <thead className="bg-white text-gray-500 text-xs font-medium border-b border-gray-200 uppercase tracking-wider">
                       <tr>
-                        <th className="px-6 py-3 text-center w-16">No.</th>
-                        <th className="px-6 py-3">Agency</th>
-                        <th className="px-6 py-3">Branch</th>
-                        <th className="px-6 py-3">Designation</th>
+                        <th className="px-4 md:px-6 py-3 text-center w-16">No.</th>
+                        <th className="px-4 md:px-6 py-3">Agency</th>
+                        <th className="px-4 md:px-6 py-3">Branch</th>
+                        <th className="px-4 md:px-6 py-3">Designation</th>
                       </tr>
                     </thead>
                     <tbody className="bg-white">
                       <tr className="border-b border-gray-50 text-sm text-gray-900">
-                        <td className="px-6 py-4 text-center text-gray-500">1</td>
-                        <td className="px-6 py-4 font-medium">{selectedUser.agency}</td>
-                        <td className="px-6 py-4">{selectedUser.branch}</td>
-                        <td className="px-6 py-4">{selectedUser.designation}</td>
+                        <td className="px-4 md:px-6 py-4 text-center text-gray-500">1</td>
+                        <td className="px-4 md:px-6 py-4 font-medium">{selectedUser.agency}</td>
+                        <td className="px-4 md:px-6 py-4">{selectedUser.branch}</td>
+                        <td className="px-4 md:px-6 py-4">{selectedUser.designation}</td>
                       </tr>
                     </tbody>
                  </table>
@@ -331,7 +331,7 @@ export const ProfilPengguna = () => {
 
           {/* ----- ADD / EDIT FORM ----- */}
           {(view === 'add' || view === 'edit') && (
-            <div className="p-6 max-w-3xl">
+            <div className="p-4 md:p-6 max-w-3xl">
               <div className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Authentication method <span className="text-brand-red">*</span></label>
@@ -341,7 +341,7 @@ export const ProfilPengguna = () => {
                   </label>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1.5">User ID <span className="text-brand-red">*</span></label>
                     <input type="text" value={formData.userId} onChange={e => setFormData({...formData, userId: e.target.value})} className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:border-action-teal focus:ring-2 focus:ring-action-teal/20 outline-none transition-all" />
@@ -368,7 +368,7 @@ export const ProfilPengguna = () => {
                   </div>
                 </div>
 
-                <div className="border-t border-gray-100 pt-6 mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="border-t border-gray-100 pt-6 mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1.5">Agency <span className="text-brand-red">*</span></label>
                     <div className="font-medium text-gray-900 py-2">{formData.agency}</div>
@@ -386,7 +386,7 @@ export const ProfilPengguna = () => {
                 </div>
 
                 {view === 'add' && (
-                  <div className="border-t border-gray-100 pt-6 mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="border-t border-gray-100 pt-6 mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">Password <span className="text-brand-red">*</span></label>
                       <input type="password" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:border-action-teal focus:ring-2 focus:ring-action-teal/20 outline-none transition-all" />

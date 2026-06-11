@@ -36,7 +36,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
       </div>
 
       {/* Right Side: Login Form */}
-      <div className="w-full md:w-[45%] flex flex-col justify-center px-8 py-10 sm:px-16 lg:px-24 bg-white relative">
+      <div className="w-full md:w-[45%] flex flex-col justify-center px-4 md:px-8 py-10 sm:px-16 lg:px-24 bg-white relative">
         <div className="w-full max-w-sm mx-auto">
           
           <div className="flex justify-center mb-10 w-full">

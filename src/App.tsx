@@ -453,7 +453,7 @@ export default function App() {
         role={role}
       />
       
-      <main className={`flex-1 ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} min-h-screen flex flex-col w-full transition-all duration-300`}>
+      <main className={`flex-1 lg:ml-72 min-h-screen flex flex-col w-full transition-all duration-300`}>
         <Header 
           role={role} 
           setRole={setRole} 

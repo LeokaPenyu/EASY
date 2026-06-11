@@ -10,7 +10,7 @@ export const OnlineExamModule = () => {
   
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-      <div className="card shadow-sm border border-gray-100 p-6">
+      <div className="card shadow-sm border border-gray-100 p-4 md:p-6">
         <h2 className="text-xl font-black text-charcoal mb-4">Peperiksaan Dalam Talian</h2>
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div className={`p-4 rounded-xl border ${isLocked ? 'bg-amber-50 border-amber-200' : 'bg-green-50 border-green-200'}`}>

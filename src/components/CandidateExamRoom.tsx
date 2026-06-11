@@ -36,11 +36,11 @@ export const CandidateExamRoom = ({ examTitle, onFinish }: { examTitle: string, 
 
   if (!q) {
     return (
-      <div className="p-8 text-center bg-white rounded-xl shadow-sm border border-gray-100 max-w-2xl mx-auto mt-12">
+      <div className="p-4 md:p-8 text-center bg-white rounded-xl shadow-sm border border-gray-100 max-w-2xl mx-auto mt-12">
         <AlertTriangle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
         <h3 className="text-lg font-bold text-charcoal mb-2">{translateContent('Ralat Peperiksaan')}</h3>
         <p className="text-gray-500 mb-6">{translateContent('Soalan tidak ditemui. Sila hubungi Penyelaras Peperiksaan.')}</p>
-        <button onClick={onFinish} className="bg-gray-100 hover:bg-gray-200 text-charcoal font-bold py-2 px-6 rounded-lg transition-colors">{translateContent('Kembali')}</button>
+        <button onClick={onFinish} className="bg-gray-100 hover:bg-gray-200 text-charcoal font-bold py-2 px-4 md:px-6 rounded-lg transition-colors">{translateContent('Kembali')}</button>
       </div>
     );
   }
@@ -57,13 +57,13 @@ export const CandidateExamRoom = ({ examTitle, onFinish }: { examTitle: string, 
 
   if (submitted) {
     return (
-      <div className="max-w-2xl mx-auto p-8 bg-white shadow-xl border border-gray-100 rounded-2xl flex flex-col items-center mt-12 text-center">
+      <div className="max-w-2xl mx-auto p-4 md:p-8 bg-white shadow-xl border border-gray-100 rounded-2xl flex flex-col items-center mt-12 text-center">
         <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mb-6">
           <CheckCircle className="w-10 h-10 text-green-500" />
         </div>
         <h2 className="text-2xl font-bold text-charcoal mb-2">{translateContent('Peperiksaan Selesai')}</h2>
         <p className="text-gray-500 mb-8 max-w-md">{translateContent('Terima kasih kerana melengkapkan peperiksaan. Jawapan anda telah direkodkan. Sila rujuk Penyelaras Peperiksaan untuk maklumat lanjut.')}</p>
-        <button onClick={onFinish} className="bg-brand-red hover:bg-brand-red-deep text-white font-bold py-3 px-6 rounded-lg transition-colors w-full max-w-sm">
+        <button onClick={onFinish} className="bg-brand-red hover:bg-brand-red-deep text-white font-bold py-3 px-4 md:px-6 rounded-lg transition-colors w-full max-w-sm">
           {translateContent('Kembali ke Papan Pemuka')}
         </button>
       </div>
@@ -72,11 +72,11 @@ export const CandidateExamRoom = ({ examTitle, onFinish }: { examTitle: string, 
 
   if (!sharedQuestions || sharedQuestions.length === 0) {
     return (
-      <div className="p-8 text-center bg-white rounded-xl shadow-sm border border-gray-100 max-w-2xl mx-auto mt-12">
+      <div className="p-4 md:p-8 text-center bg-white rounded-xl shadow-sm border border-gray-100 max-w-2xl mx-auto mt-12">
         <AlertTriangle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
         <h3 className="text-lg font-bold text-charcoal mb-2">{translateContent('Tiada soalan')}</h3>
         <p className="text-gray-500 mb-6">{translateContent('Penyelaras belum memuat naik sebarang soalan untuk peperiksaan ini.')}</p>
-        <button onClick={onFinish} className="bg-gray-100 hover:bg-gray-200 text-charcoal font-bold py-2 px-6 rounded-lg transition-colors">{translateContent('Kembali')}</button>
+        <button onClick={onFinish} className="bg-gray-100 hover:bg-gray-200 text-charcoal font-bold py-2 px-4 md:px-6 rounded-lg transition-colors">{translateContent('Kembali')}</button>
       </div>
     );
   }
@@ -92,7 +92,7 @@ export const CandidateExamRoom = ({ examTitle, onFinish }: { examTitle: string, 
           <p className="text-gray-500 max-w-md">{translateContent('Sila baca arahan di bawah sebelum memulakan peperiksaan anda.')}</p>
         </div>
 
-        <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 mb-8">
+        <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-6 mb-8">
           <h3 className="text-lg font-bold text-charcoal mb-4 flex items-center gap-2">
             <AlertCircle className="w-5 h-5 text-brand-red" />
             {translateContent('Arahan Penting')}
@@ -122,7 +122,7 @@ export const CandidateExamRoom = ({ examTitle, onFinish }: { examTitle: string, 
               {translateContent('Langkah 1: Pengesahan Identiti')}
             </h3>
 
-            <div className="flex flex-col md:flex-row gap-6">
+            <div className="flex flex-col md:flex-row gap-4 md:gap-6">
               <div className="flex-1 space-y-4">
                 <label className="flex items-start gap-3 cursor-pointer group">
                   <input type="checkbox" checked={checks.doc} onChange={e => setChecks({...checks, doc: e.target.checked})} className="mt-1 w-5 h-5 text-action-teal rounded border-gray-300 focus:ring-action-teal" />
@@ -140,7 +140,7 @@ export const CandidateExamRoom = ({ examTitle, onFinish }: { examTitle: string, 
         <button 
           disabled={!allChecksPassed}
           onClick={() => setHasStarted(true)} 
-          className={`w-full font-bold py-4 px-6 rounded-xl transition-all flex items-center justify-center gap-3 text-lg
+          className={`w-full font-bold py-4 px-4 md:px-6 rounded-xl transition-all flex items-center justify-center gap-3 text-lg
             ${allChecksPassed 
               ? 'bg-action-teal hover:bg-teal-700 text-white shadow-md hover:shadow-lg' 
               : 'bg-gray-200 text-gray-400 cursor-not-allowed border border-gray-300'}`}
@@ -153,7 +153,7 @@ export const CandidateExamRoom = ({ examTitle, onFinish }: { examTitle: string, 
   }
 
   return (
-    <div className="max-w-2xl mx-auto py-6 px-4">
+    <div className="max-w-2xl mx-auto py-4 md:py-6 px-4">
       
       <div className="mb-4 flex items-center justify-between bg-white p-3 rounded-xl shadow-sm border border-brand-red/10">
         <div className="flex items-center gap-3">
@@ -215,14 +215,14 @@ export const CandidateExamRoom = ({ examTitle, onFinish }: { examTitle: string, 
             </button>
             
             {currentQIndex === sharedQuestions.length - 1 ? (
-               <button onClick={() => setSubmitted(true)} className="bg-action-teal hover:bg-teal-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+               <button onClick={() => setSubmitted(true)} className="bg-action-teal hover:bg-teal-700 text-white font-bold py-2 px-4 md:px-6 rounded-lg transition-colors">
                  {translateContent('Hantar Jawapan')}
                </button>
             ) : (
               <button 
                 disabled={!answers[q.id]}
                 onClick={() => setCurrentQIndex(prev => prev + 1)}
-                className="flex items-center gap-2 px-6 py-2 bg-action-teal hover:bg-teal-700 text-white font-bold rounded-lg disabled:opacity-50 transition-colors"
+                className="flex items-center gap-2 px-4 md:px-6 py-2 bg-action-teal hover:bg-teal-700 text-white font-bold rounded-lg disabled:opacity-50 transition-colors"
               >
                 {translateContent('Seterusnya')}
                 <ArrowRight className="w-4 h-4" />

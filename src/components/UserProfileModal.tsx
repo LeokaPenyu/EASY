@@ -139,7 +139,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onCl
             </button>
           </div>
 
-          <div className="p-6 overflow-y-auto">
+          <div className="p-4 md:p-6 overflow-y-auto">
             {saveSuccess ? (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center justify-center py-12 text-center">
                 <CheckCircle className="w-16 h-16 text-green-500 mb-4" />

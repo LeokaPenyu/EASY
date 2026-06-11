@@ -242,7 +242,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
     <div className="bg-slate-50 p-4 md:p-6 lg:p-8 min-h-screen font-sans">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Top Stats Row */}
-        <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4">
           {stats.map((stat) => (
             <div
               key={stat.label}
@@ -267,7 +267,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           ))}
         </div>
 
-        <div className="flex flex-col xl:grid xl:grid-cols-2 gap-6 w-full">
+        <div className="flex flex-col xl:grid xl:grid-cols-2 gap-4 md:gap-6 w-full">
           {/* Worklist Panel */}
           <div className="xl:col-span-1 order-1 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden self-start">
               <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-white">
@@ -361,7 +361,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     })}
                     {exams.length === 0 && (
                       <tr>
-                        <td colSpan={4} className="py-8 text-center text-gray-400 text-sm">
+                        <td colSpan={4} className="py-4 md:py-8 text-center text-gray-400 text-sm">
                           Tiada peperiksaan untuk dipaparkan.
                         </td>
                       </tr>

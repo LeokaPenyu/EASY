@@ -67,7 +67,7 @@ export const ProfilDaerah = () => {
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         {/* Header */}
-        <div className="p-6 flex justify-between items-center border-b border-gray-100">
+        <div className="p-4 md:p-6 flex justify-between items-center border-b border-gray-100">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-rose-50 text-brand-red rounded-lg">
               <Settings className="w-5 h-5" />
@@ -86,19 +86,19 @@ export const ProfilDaerah = () => {
           <table className="w-full text-sm text-left">
             <thead className="bg-gray-50 text-gray-500 uppercase text-xs font-semibold tracking-wider border-b border-gray-100">
               <tr>
-                <th className="px-6 py-4 text-center w-16">No.</th>
-                <th className="px-6 py-4">Nama Daerah</th>
-                <th className="px-6 py-4 text-center">Kod Daerah</th>
-                <th className="px-6 py-4 text-center w-28">Tindakan</th>
+                <th className="px-4 md:px-6 py-4 text-center w-16">No.</th>
+                <th className="px-4 md:px-6 py-4">Nama Daerah</th>
+                <th className="px-4 md:px-6 py-4 text-center">Kod Daerah</th>
+                <th className="px-4 md:px-6 py-4 text-center w-28">Tindakan</th>
               </tr>
             </thead>
             <tbody>
               {daerahList.map((daerah, index) => (
                 <tr key={daerah.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
-                  <td className="px-6 py-4 text-center font-medium text-gray-500">{index + 1}</td>
-                  <td className="px-6 py-4 font-medium text-gray-900">{daerah.name}</td>
-                  <td className="px-6 py-4 text-center text-gray-600">{daerah.code}</td>
-                  <td className="px-6 py-4">
+                  <td className="px-4 md:px-6 py-4 text-center font-medium text-gray-500">{index + 1}</td>
+                  <td className="px-4 md:px-6 py-4 font-medium text-gray-900">{daerah.name}</td>
+                  <td className="px-4 md:px-6 py-4 text-center text-gray-600">{daerah.code}</td>
+                  <td className="px-4 md:px-6 py-4">
                     <div className="flex items-center justify-center gap-3">
                       <button onClick={() => handleOpenModal(daerah)} className="p-2 text-gray-400 hover:text-action-teal hover:bg-teal-50 rounded-lg transition-colors" title="Kemaskini">
                         <Edit className="w-4 h-4" />
@@ -122,15 +122,15 @@ export const ProfilDaerah = () => {
             animate={{ scale: 1, opacity: 1 }} 
             className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col"
           >
-            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+            <div className="px-4 md:px-6 py-4 border-b border-gray-100 flex justify-between items-center">
               <h3 className="font-bold text-lg text-gray-900">{editingId ? 'Kemaskini Profil Daerah' : 'Tambah Profil Daerah'}</h3>
               <button onClick={handleCloseModal} className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-50 rounded-lg">
                 <X className="w-5 h-5" />
               </button>
             </div>
             
-            <div className="p-6 flex-1 flex flex-col">
-              <div className="flex gap-2 border-b border-gray-100 mb-6">
+            <div className="p-4 md:p-6 flex-1 flex flex-col">
+              <div className="flex gap-2 border-b border-gray-100 mb-6 overflow-x-auto">
                 <button 
                   className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'EN' ? 'border-action-teal text-action-teal' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
                   onClick={() => setActiveTab('EN')}

@@ -165,7 +165,7 @@ export const ExamApplicationModule: React.FC<ExamApplicationModuleProps> = ({
     <div className="space-y-6">
       {/* Tab Navigation */}
       {!isSummaryReadyMode && (
-        <div className="flex gap-2 border-b border-gray-100 bg-white p-2 rounded-t-xl shadow-sm">
+        <div className="flex gap-2 border-b border-gray-100 bg-white p-2 rounded-t-xl shadow-sm overflow-x-auto">
           {[
             { id: 'borang', label: 'Borang Permohonan', icon: FileText },
             { id: 'rumusan', label: 'Rumusan Peperiksaan', icon: CheckCircle2 },
@@ -177,7 +177,7 @@ export const ExamApplicationModule: React.FC<ExamApplicationModuleProps> = ({
                 setActiveTab(tab.id as any);
                 if (onTabChange) onTabChange(tab.id as any);
               }}
-              className={`flex items-center gap-2 px-6 py-4 text-xs font-black uppercase tracking-widest transition-all border-b-2 rounded-t-lg ${
+              className={`flex items-center gap-2 px-4 md:px-6 py-4 text-xs font-black uppercase tracking-widest transition-all border-b-2 rounded-t-lg ${
                 activeTab === tab.id 
                   ? 'border-brand-red text-brand-red bg-brand-red/5 shadow-inner' 
                   : 'border-transparent text-gray-400 hover:text-gray-600 hover:bg-gray-50/50'
@@ -216,7 +216,7 @@ export const ExamApplicationModule: React.FC<ExamApplicationModuleProps> = ({
           <div className="grid grid-cols-1 gap-y-3">
             {/* Row 1: Status */}
             {!isSummaryReadyMode && !isNewApplicationListMode && !isVerificationListMode && (
-              <div className="grid grid-cols-[160px_1fr] items-center gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] items-center gap-4">
                 <label className="text-[11px] font-bold text-charcoal text-right">Status :</label>
                 <div className="w-1/2">
                   <select 
@@ -236,7 +236,7 @@ export const ExamApplicationModule: React.FC<ExamApplicationModuleProps> = ({
             )}
 
             {/* Row 2: Subjek */}
-            <div className="grid grid-cols-[160px_1fr] items-center gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] items-center gap-4">
               <label className="text-[11px] font-bold text-charcoal text-right">Subjek :</label>
               <div className="w-[70%]">
                 <select 
@@ -253,7 +253,7 @@ export const ExamApplicationModule: React.FC<ExamApplicationModuleProps> = ({
             </div>
 
             {/* Row 3: No. Pendaftaran */}
-            <div className="grid grid-cols-[160px_1fr] items-center gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] items-center gap-4">
               <label className="text-[11px] font-bold text-charcoal text-right">No. Pendaftaran :</label>
               <div className="w-1/3">
                 <input 
@@ -267,7 +267,7 @@ export const ExamApplicationModule: React.FC<ExamApplicationModuleProps> = ({
 
             {/* Row 4: Tarikh Peperiksaan */}
             {!isSummaryReadyMode && !isPendingSubmissionMode && !isRejectedMode && (
-              <div className="grid grid-cols-[160px_1fr] items-center gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] items-center gap-4">
                 <label className="text-[11px] font-bold text-charcoal text-right">Tarikh Peperiksaan :</label>
                 <div className="flex items-center gap-2">
                   <span className="text-[11px] text-charcoal">Dari</span>
@@ -300,9 +300,9 @@ export const ExamApplicationModule: React.FC<ExamApplicationModuleProps> = ({
 
             {/* Row 5: Nama Daerah */}
             {!isSummaryReadyMode && !isPendingSubmissionMode && !isRejectedMode && (
-              <div className="grid grid-cols-[160px_1fr] items-center gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] items-center gap-4">
                 <label className="text-[11px] font-bold text-charcoal text-right">Nama Daerah :</label>
-                <div className="w-[120px]">
+                <div className="w-full md:w-[120px]">
                   <select 
                     value={filters.district}
                     onChange={(e) => handleFilterChange('district', e.target.value)}
@@ -319,7 +319,7 @@ export const ExamApplicationModule: React.FC<ExamApplicationModuleProps> = ({
 
             {/* Checkboxes */}
             {!isSummaryReadyMode && !isPendingSubmissionMode && !isRejectedMode && (
-              <div className="grid grid-cols-[160px_1fr] gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-4">
                 <div></div>
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 cursor-pointer">
@@ -345,7 +345,7 @@ export const ExamApplicationModule: React.FC<ExamApplicationModuleProps> = ({
             )}
 
             {/* Action Buttons */}
-            <div className="grid grid-cols-[160px_1fr] gap-4 mt-2">
+            <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-4 mt-2">
               <div></div>
               <div className="flex items-center gap-2">
                 <button 
@@ -468,7 +468,7 @@ export const ExamApplicationModule: React.FC<ExamApplicationModuleProps> = ({
         </div>
 
         {/* Pagination */}
-        <div className="bg-gray-50 px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-gray-200">
+        <div className="bg-gray-50 px-4 md:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-gray-200">
           <p className="text-xs text-gray-500 font-medium">
             {t('totalRecords')}: <span className="text-charcoal font-bold">{filteredData.length}</span>
           </p>

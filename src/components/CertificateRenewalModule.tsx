@@ -213,7 +213,7 @@ export const CertificateRenewalModule: React.FC<CertificateRenewalModuleProps> =
 
         <div className="card shadow-sm border-gray-200/60 pb-6 bg-[#fcfcfc]">
           <div className="grid grid-cols-1 gap-y-3">
-            <div className="grid grid-cols-[160px_1fr] items-center gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] items-center gap-4">
               <label className="text-[11px] font-bold text-charcoal text-right">Carian :</label>
               <div className="relative w-[70%]">
                 <Search className="w-4 h-4 absolute left-3 top-1.5 text-gray-400" />
@@ -224,7 +224,7 @@ export const CertificateRenewalModule: React.FC<CertificateRenewalModuleProps> =
                 />
               </div>
             </div>
-            <div className="grid grid-cols-[160px_1fr] items-center gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] items-center gap-4">
               <div className="col-start-2 flex gap-3 mt-2">
                 <button className="btn-primary text-[11px] py-1.5 px-5 shadow-sm">Cari</button>
                 <button className="btn-outline text-[11px] py-1.5 px-5 shadow-sm">Set Semula</button>
@@ -258,7 +258,7 @@ export const CertificateRenewalModule: React.FC<CertificateRenewalModuleProps> =
               <tbody className="divide-y divide-gray-100 text-[13px]">
                 {visibleApplications.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="p-8 text-center text-gray-500 bg-white">
+                    <td colSpan={7} className="p-4 md:p-8 text-center text-gray-500 bg-white">
                       <div className="flex flex-col items-center gap-3">
                         <FileText className="w-8 h-8 text-gray-300" />
                         <p>Tiada rekod permohonan ditemui.</p>
@@ -360,7 +360,7 @@ export const CertificateRenewalModule: React.FC<CertificateRenewalModuleProps> =
           )}
         </AnimatePresence>
 
-        <div className="p-8 text-[11px] text-gray-800 font-sans leading-relaxed">
+        <div className="p-4 md:p-8 text-[11px] text-gray-800 font-sans leading-relaxed">
           <div className="text-center mb-6">
             <h1 className="font-bold text-sm relative inline-block px-12">
               <span className="absolute left-0 top-1/2 w-8 border-t border-black"></span>
@@ -371,49 +371,49 @@ export const CertificateRenewalModule: React.FC<CertificateRenewalModuleProps> =
           </div>
 
           <div className="space-y-1.5 mb-8">
-            <div className="grid grid-cols-[200px_1fr]">
+            <div className="grid grid-cols-1 md:grid-cols-[200px_1fr]">
               <span className="text-gray-500 font-medium text-right pr-4">No. Pendaftaran:</span>
               <span className="font-bold text-sm">STP/2026/0034</span>
             </div>
-            <div className="grid grid-cols-[200px_1fr]">
+            <div className="grid grid-cols-1 md:grid-cols-[200px_1fr]">
               <span className="text-gray-500 font-medium text-right pr-4">Status:</span>
               <span>{status}</span>
             </div>
-            <div className="grid grid-cols-[200px_1fr]">
+            <div className="grid grid-cols-1 md:grid-cols-[200px_1fr]">
               <span className="text-gray-500 font-medium text-right pr-4">Tarikh Akhir Penyerahan:</span>
               <span>23/05/2026</span>
             </div>
           </div>
 
           <div className="space-y-1.5 mb-8">
-            <div className="grid grid-cols-[200px_1fr]">
+            <div className="grid grid-cols-1 md:grid-cols-[200px_1fr]">
               <span className="text-gray-500 font-medium text-right pr-4">Nama Daerah:</span>
               <span>{form.districtName}</span>
             </div>
-            <div className="grid grid-cols-[200px_1fr]">
+            <div className="grid grid-cols-1 md:grid-cols-[200px_1fr]">
               <span className="text-gray-500 font-medium text-right pr-4">Nama Unit/Organisasi:</span>
               <span>{form.unitName}</span>
             </div>
-            <div className="grid grid-cols-[200px_1fr]">
+            <div className="grid grid-cols-1 md:grid-cols-[200px_1fr]">
               <span className="text-gray-500 font-medium text-right pr-4">Kategori Unit/Organisasi:</span>
               <span>{form.unitCategory}</span>
             </div>
-            <div className="grid grid-cols-[200px_1fr]">
+            <div className="grid grid-cols-1 md:grid-cols-[200px_1fr]">
               <span className="text-gray-500 font-medium text-right pr-4">Tarikh Mula Kursus:</span>
               <span>{form.courseStart || '12/05/2026'}</span>
             </div>
-            <div className="grid grid-cols-[200px_1fr]">
+            <div className="grid grid-cols-1 md:grid-cols-[200px_1fr]">
               <span className="text-gray-500 font-medium text-right pr-4">Tarikh Tamat Kursus:</span>
               <span>{form.courseEnd || '13/05/2026'}</span>
             </div>
-            <div className="grid grid-cols-[200px_1fr]">
+            <div className="grid grid-cols-1 md:grid-cols-[200px_1fr]">
               <span className="text-gray-500 font-medium text-right pr-4">Nama dan Alamat Latihan O/C:</span>
               <span className="uppercase">{form.ocName}, {form.ocAddress}</span>
             </div>
           </div>
 
           <div className="mb-4">
-            <div className="grid grid-cols-[200px_1fr] items-start">
+            <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] items-start">
               <span className="text-gray-500 font-medium text-right pr-4 mt-1">Senarai Jurulatih:</span>
               <table className="w-full border-collapse bg-gray-200/50">
                 <thead>
@@ -436,13 +436,13 @@ export const CertificateRenewalModule: React.FC<CertificateRenewalModuleProps> =
             </div>
           </div>
 
-          <div className="grid grid-cols-[200px_1fr] mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] mb-4">
             <span className="text-gray-500 font-medium text-right pr-4">Subjek:</span>
             <span>800/2 - Pertolongan Cemas Asas, CPR dan AED</span>
           </div>
 
           <div className="mb-6">
-            <div className="grid grid-cols-[200px_1fr] items-start">
+            <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] items-start">
               <span className="text-gray-500 font-medium text-right pr-4 mt-1">Senarai Peserta:</span>
               <table className="w-full border-collapse border border-gray-300">
                 <thead>
@@ -469,7 +469,7 @@ export const CertificateRenewalModule: React.FC<CertificateRenewalModuleProps> =
             </div>
           </div>
 
-          <div className="grid grid-cols-[200px_1fr] mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] mb-6">
             <span className="text-gray-500 font-medium text-right pr-4">Bilangan Peserta:</span>
             <div>
               <div className="mb-1">Jumlah Calon: <span className="font-bold text-sm ml-2">{participants.length}</span></div>
@@ -485,7 +485,7 @@ export const CertificateRenewalModule: React.FC<CertificateRenewalModuleProps> =
           </div>
 
           <div className="bg-[#FFE5E5] p-4 mt-8">
-            <div className="grid grid-cols-[200px_1fr]">
+            <div className="grid grid-cols-1 md:grid-cols-[200px_1fr]">
               <span className="font-medium text-right pr-4">Pembayaran:</span>
               <div className="space-y-2">
                 <div>Bayaran yuran peperiksaan (Ahli) <span className="font-bold">{membersCount}</span> x RM 10/peserta = RM {(membersCount * 10).toFixed(2)}</div>
@@ -565,7 +565,7 @@ export const CertificateRenewalModule: React.FC<CertificateRenewalModuleProps> =
                     <X className="w-5 h-5" />
                   </button>
                 </div>
-                <div className="p-6">
+                <div className="p-4 md:p-6">
                   <p className="text-sm text-gray-600 mb-4">Sila nyatakan sebab permohonan ini dikembalikan atau ditolak. DEC akan menerima maklumat ini.</p>
                   <textarea 
                     rows={4}
@@ -613,7 +613,7 @@ export const CertificateRenewalModule: React.FC<CertificateRenewalModuleProps> =
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         {/* Form Header */}
-        <div className="bg-white border-b border-gray-200 px-6 py-5">
+        <div className="bg-white border-b border-gray-200 px-4 md:px-6 py-5">
           <h1 className="text-xl font-bold text-charcoal mb-3">Borang Permohonan untuk Pembaharuan Sijil</h1>
           <div className="flex flex-wrap gap-4 text-gray-600 text-sm">
             <div className="flex items-center gap-1.5">
@@ -635,7 +635,7 @@ export const CertificateRenewalModule: React.FC<CertificateRenewalModuleProps> =
           </div>
         </div>
 
-        <div className="p-6 md:p-8 space-y-10">
+        <div className="p-4 md:p-6 md:p-8 space-y-10">
           
           {/* Section 1: Org Details */}
           <section className="space-y-4">
@@ -732,7 +732,7 @@ export const CertificateRenewalModule: React.FC<CertificateRenewalModuleProps> =
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {instructors.length === 0 ? (
-                    <tr><td colSpan={isReadOnly ? 4 : 5} className="p-6 text-center text-sm text-gray-400">Tiada jurulatih dimasukkan.</td></tr>
+                    <tr><td colSpan={isReadOnly ? 4 : 5} className="p-4 md:p-6 text-center text-sm text-gray-400">Tiada jurulatih dimasukkan.</td></tr>
                   ) : instructors.map((inst, idx) => (
                     <tr key={inst.id} className="bg-white hover:bg-gray-50/50">
                       {!isReadOnly && (
@@ -791,7 +791,7 @@ export const CertificateRenewalModule: React.FC<CertificateRenewalModuleProps> =
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {participants.length === 0 ? (
-                    <tr><td colSpan={isReadOnly ? 7 : 8} className="p-6 text-center text-sm text-gray-400">Tiada peserta.</td></tr>
+                    <tr><td colSpan={isReadOnly ? 7 : 8} className="p-4 md:p-6 text-center text-sm text-gray-400">Tiada peserta.</td></tr>
                   ) : participants.map((p, idx) => (
                     <tr key={p.id} className="bg-white hover:bg-gray-50/50">
                       {!isReadOnly && (
@@ -849,7 +849,7 @@ export const CertificateRenewalModule: React.FC<CertificateRenewalModuleProps> =
               4. Pembayaran & Lampiran
             </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className="bg-slate-50 p-5 rounded-xl border border-gray-200">
                 <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Ringkasan Yuran</h3>
                 
@@ -872,7 +872,7 @@ export const CertificateRenewalModule: React.FC<CertificateRenewalModuleProps> =
               <div className="bg-slate-50 p-5 rounded-xl border border-gray-200 flex flex-col justify-center">
                 <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Bukti Pembayaran / Resit</h3>
                 {!isReadOnly ? (
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center bg-white hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => setFileAttached(true)}>
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 md:p-6 flex flex-col items-center justify-center bg-white hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => setFileAttached(true)}>
                     {fileAttached ? (
                       <>
                         <CheckCircle2 className="w-8 h-8 text-green-500 mb-2" />
@@ -983,7 +983,7 @@ export const CertificateRenewalModule: React.FC<CertificateRenewalModuleProps> =
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              <div className="p-6">
+              <div className="p-4 md:p-6">
                 <p className="text-sm text-gray-600 mb-4">Sila nyatakan sebab permohonan ini dikembalikan atau ditolak. DEC akan menerima maklumat ini.</p>
                 <textarea 
                   rows={4}

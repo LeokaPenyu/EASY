@@ -227,12 +227,12 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
       {/* Confirm Dialog */}
       {confirmDialog && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white rounded-xl shadow-2xl overflow-hidden max-w-sm w-full mx-auto p-6 space-y-6">
+          <div className="bg-white rounded-xl shadow-2xl overflow-hidden max-w-sm w-full mx-auto p-4 md:p-6 space-y-6">
             <h3 className="text-lg font-bold text-charcoal">{confirmDialog.message}</h3>
             <div className="flex gap-3 justify-end pt-4">
               <button 
                 onClick={() => setConfirmDialog(null)}
-                className="px-6 py-2 border border-gray-200 text-gray-600 bg-gray-50 rounded shadow-sm font-bold text-sm hover:bg-gray-100"
+                className="px-4 md:px-6 py-2 border border-gray-200 text-gray-600 bg-gray-50 rounded shadow-sm font-bold text-sm hover:bg-gray-100"
               >
                 Batal
               </button>
@@ -253,7 +253,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
       {/* Alert Dialog */}
       {alertDialog && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white rounded-xl shadow-2xl overflow-hidden max-w-sm w-full mx-auto p-6 space-y-6 border-t-4 border-action-teal">
+          <div className="bg-white rounded-xl shadow-2xl overflow-hidden max-w-sm w-full mx-auto p-4 md:p-6 space-y-6 border-t-4 border-action-teal">
             <h3 className="text-xl font-black text-action-teal uppercase flex items-center gap-2">
               <CheckCircle2 className="w-6 h-6" />
               Notifikasi
@@ -265,7 +265,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
                   if (alertDialog.onClose) alertDialog.onClose();
                   setAlertDialog(null);
                 }}
-                className="btn-primary shadow-md text-sm px-8 justify-center"
+                className="btn-primary shadow-md text-sm px-4 md:px-8 justify-center"
               >
                 Tutup
               </button>
@@ -286,7 +286,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         {/* Form Header */}
-        <div className="bg-white border-b border-gray-200 px-6 py-5">
+        <div className="bg-white border-b border-gray-200 px-4 md:px-6 py-5">
           <h1 className="text-xl font-bold text-charcoal mb-3">Borang Permohonan untuk Peperiksaan</h1>
           <div className="flex flex-wrap gap-4 text-gray-600 text-sm">
             <div className="flex items-center gap-1.5">
@@ -300,14 +300,14 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
           </div>
         </div>
 
-        <div className="p-6 md:p-8 space-y-10">
+        <div className="p-4 md:p-6 md:p-8 space-y-10">
 
           <div className="bg-brand-red/[0.02] border-l-4 border-brand-red shadow-sm border-y border-r border-gray-100 rounded-r-lg p-5">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-1.5 h-1.5 rounded-full bg-brand-red" />
               <h4 className="font-bold text-brand-red text-sm uppercase tracking-widest">{t('registrationInstructions')}</h4>
             </div>
-            <ul className="text-xs text-charcoal/70 grid grid-cols-1 md:grid-cols-3 gap-6 list-disc pl-5 leading-relaxed font-medium">
+            <ul className="text-xs text-charcoal/70 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 list-disc pl-5 leading-relaxed font-medium">
               <li>{t('instructionDate')}</li>
               <li>{t('instructionFee')}</li>
               <li>{t('instructionCsv')}</li>
@@ -338,7 +338,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">{t('categoryLabel')} <span className="text-brand-red">*</span></label>
-                <div className="flex flex-wrap gap-8 items-center px-1 pt-1 h-[40px]">
+                <div className="flex flex-wrap gap-4 md:gap-8 items-center px-1 pt-1 h-[40px]">
                   <label className="flex items-center gap-3 cursor-pointer group">
                     <div className="relative flex items-center justify-center">
                       <input 
@@ -400,7 +400,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
               2. {t('officerInfo')} & Maklumat Peperiksaan
             </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">{t('officerNameLabel')} <span className="text-brand-red">*</span></label>
                 <div className="relative group">
@@ -426,7 +426,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-gray-100 mt-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 pt-6 border-t border-gray-100 mt-2">
               <div className="space-y-2">
                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Tarikh Peperiksaan <span className="text-brand-red">*</span></label>
                  {(!initialExamType || !initialExamType.includes(' - ')) ? (
@@ -477,7 +477,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
               <div className="space-y-8">
                 <div className="space-y-4">
                   <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Pilihan bahasa dalam peperiksaan <span className="text-brand-red">*</span></label>
-                  <div className="flex flex-wrap gap-6 px-1 items-center">
+                  <div className="flex flex-wrap gap-4 md:gap-6 px-1 items-center">
                     <label className="flex items-center gap-3 cursor-pointer">
                       <input type="checkbox" className="w-5 h-5 accent-action-teal border-gray-300 rounded cursor-pointer" checked={form.languageBM} onChange={(e) => handleInputChange('languageBM', e.target.checked)} />
                       <span className="font-bold text-sm text-charcoal">BM</span>
@@ -535,7 +535,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
                   />
                   <div 
                     onClick={() => fileInputRef.current?.click()}
-                    className={`border-2 border-dashed rounded-[12px] p-6 text-center space-y-3 transition-all cursor-pointer group ${
+                    className={`border-2 border-dashed rounded-[12px] p-4 md:p-6 text-center space-y-3 transition-all cursor-pointer group ${
                       form.attachment 
                         ? 'border-green-300 bg-green-50/30' 
                         : 'border-gray-200 bg-gray-50/50 hover:border-action-teal/40 hover:bg-action-teal/[0.02]'
@@ -571,13 +571,13 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
           <div className="bg-gray-50 border-t border-gray-200 p-4 md:px-8 py-5 flex flex-wrap gap-3 items-center justify-end -mx-6 md:-mx-8 -mb-6 md:-mb-8 mt-10">
             <button 
               onClick={goBack}
-              className="w-full md:w-auto px-8 py-3 text-sm font-bold text-gray-400 hover:text-charcoal transition-colors tracking-wide uppercase"
+              className="w-full md:w-auto px-4 md:px-8 py-3 text-sm font-bold text-gray-400 hover:text-charcoal transition-colors tracking-wide uppercase"
             >
               {t('back')}
             </button>
             <button 
               onClick={handleSaveDraft}
-              className="btn-secondary w-full md:w-auto h-12 flex justify-center items-center px-8 text-sm shadow-sm uppercase tracking-wide"
+              className="btn-secondary w-full md:w-auto h-12 flex justify-center items-center px-4 md:px-8 text-sm shadow-sm uppercase tracking-wide"
             >
               <Save className="w-4 h-4 mr-2" />
               {t('save')}

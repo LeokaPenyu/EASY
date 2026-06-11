@@ -46,7 +46,7 @@ export const ExamTypeSelection: React.FC<ExamTypeSelectionProps> = ({ onBack, on
         </div>
 
         {/* Content */}
-        <div className="px-8 py-10 flex border-b border-gray-200 bg-white">
+        <div className="px-4 md:px-8 py-10 flex border-b border-gray-200 bg-white">
           <div className="w-1/4 text-right pr-4">
             <label className="text-sm font-bold text-gray-700">
               <span className="text-brand-red mr-1">*</span>Nama:
@@ -98,7 +98,7 @@ export const ExamTypeSelection: React.FC<ExamTypeSelectionProps> = ({ onBack, on
         </div>
 
         {/* Footer */}
-        <div className="bg-surface-cream px-6 py-4 flex items-center justify-center gap-3">
+        <div className="bg-surface-cream px-4 md:px-6 py-4 flex items-center justify-center gap-3">
           <button 
             onClick={onBack}
             className="btn-outline min-w-[100px] shadow-sm text-sm"

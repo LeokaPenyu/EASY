@@ -131,7 +131,7 @@ export const ProfilSubjek = () => {
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="p-6 flex justify-between items-center border-b border-gray-100">
+        <div className="p-4 md:p-6 flex justify-between items-center border-b border-gray-100">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-rose-50 text-brand-red rounded-lg">
               <Settings className="w-5 h-5" />
@@ -150,13 +150,13 @@ export const ProfilSubjek = () => {
           <table className="w-full text-sm text-left border-collapse">
             <thead className="bg-gray-50 text-gray-500 uppercase text-xs font-semibold tracking-wider border-b border-gray-100">
               <tr>
-                <th className="px-6 py-4 text-center w-12 border-b border-gray-100" rowSpan={2}>No.</th>
-                <th className="px-6 py-4 border-b border-gray-100" rowSpan={2}>Nama Subjek</th>
-                <th className="px-6 py-4 text-center whitespace-nowrap border-b border-gray-100" rowSpan={2}>Kod Subjek</th>
-                <th className="px-6 py-4 text-center whitespace-nowrap border-b border-gray-100" rowSpan={2}>Waktu Subjek</th>
-                <th className="px-6 py-4 text-center whitespace-nowrap border-b border-gray-100" rowSpan={2}>Bahasa Subjek</th>
-                <th className="px-6 py-2 text-center border-b border-gray-100" colSpan={3}>Jenis Subjek Untuk Peperiksaan</th>
-                <th className="px-6 py-4 text-center w-28 border-b border-gray-100" rowSpan={2}>Tindakan</th>
+                <th className="px-4 md:px-6 py-4 text-center w-12 border-b border-gray-100" rowSpan={2}>No.</th>
+                <th className="px-4 md:px-6 py-4 border-b border-gray-100" rowSpan={2}>Nama Subjek</th>
+                <th className="px-4 md:px-6 py-4 text-center whitespace-nowrap border-b border-gray-100" rowSpan={2}>Kod Subjek</th>
+                <th className="px-4 md:px-6 py-4 text-center whitespace-nowrap border-b border-gray-100" rowSpan={2}>Waktu Subjek</th>
+                <th className="px-4 md:px-6 py-4 text-center whitespace-nowrap border-b border-gray-100" rowSpan={2}>Bahasa Subjek</th>
+                <th className="px-4 md:px-6 py-2 text-center border-b border-gray-100" colSpan={3}>Jenis Subjek Untuk Peperiksaan</th>
+                <th className="px-4 md:px-6 py-4 text-center w-28 border-b border-gray-100" rowSpan={2}>Tindakan</th>
               </tr>
               <tr className="bg-gray-50 text-gray-500 uppercase text-[10px] font-semibold tracking-wider">
                 <th className="px-4 py-2 text-center border-b border-gray-100">Teori</th>
@@ -167,11 +167,11 @@ export const ProfilSubjek = () => {
             <tbody>
               {subjekList.map((subjek, index) => (
                 <tr key={subjek.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
-                  <td className="px-6 py-4 text-center font-medium text-gray-500">{index + 1}</td>
-                  <td className="px-6 py-4 font-medium text-gray-900">{subjek.name}</td>
-                  <td className="px-6 py-4 text-center text-gray-600">{subjek.code}</td>
-                  <td className="px-6 py-4 text-center text-gray-600 truncate max-w-[100px]">{subjek.duration}</td>
-                  <td className="px-6 py-4 text-center text-gray-600">{subjek.languages.join(', ')}</td>
+                  <td className="px-4 md:px-6 py-4 text-center font-medium text-gray-500">{index + 1}</td>
+                  <td className="px-4 md:px-6 py-4 font-medium text-gray-900">{subjek.name}</td>
+                  <td className="px-4 md:px-6 py-4 text-center text-gray-600">{subjek.code}</td>
+                  <td className="px-4 md:px-6 py-4 text-center text-gray-600 truncate max-w-[100px]">{subjek.duration}</td>
+                  <td className="px-4 md:px-6 py-4 text-center text-gray-600">{subjek.languages.join(', ')}</td>
                   <td className="px-4 py-4 text-center text-green-600">
                     {subjek.types.teori && <Check className="w-4 h-4 mx-auto" />}
                   </td>
@@ -181,7 +181,7 @@ export const ProfilSubjek = () => {
                   <td className="px-4 py-4 text-center text-green-600">
                     {subjek.types.praktikal && <Check className="w-4 h-4 mx-auto" />}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-4 md:px-6 py-4">
                     <div className="flex items-center justify-center gap-3">
                       <button onClick={() => handleOpenModal(subjek)} className="p-2 text-gray-400 hover:text-action-teal hover:bg-teal-50 rounded-lg transition-colors" title="Kemaskini">
                         <Edit className="w-4 h-4" />
@@ -213,7 +213,7 @@ export const ProfilSubjek = () => {
             </div>
             
             <div className="p-4 md:p-5 flex-1 flex flex-col bg-white overflow-y-auto custom-scrollbar">
-              <div className="flex gap-2 border-b border-gray-100 mb-4">
+              <div className="flex gap-2 border-b border-gray-100 mb-4 overflow-x-auto">
                 <button 
                   className={`px-3 py-1.5 text-xs font-bold border-b-2 transition-colors ${activeTab === 'EN' ? 'border-action-teal text-action-teal' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
                   onClick={() => setActiveTab('EN')}

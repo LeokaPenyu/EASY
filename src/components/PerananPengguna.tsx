@@ -237,7 +237,7 @@ export const PerananPengguna = () => {
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden text-sm">
         
         {/* Header */}
-        <div className="p-6 flex justify-between items-center border-b border-gray-100 bg-white">
+        <div className="p-4 md:p-6 flex justify-between items-center border-b border-gray-100 bg-white">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-rose-50 text-brand-red rounded-lg">
               <Settings className="w-5 h-5" />
@@ -247,7 +247,7 @@ export const PerananPengguna = () => {
         </div>
 
         {/* Top Controls */}
-        <div className="px-6 py-4 flex flex-wrap items-center justify-between border-b border-gray-100 bg-gray-50/50">
+        <div className="px-4 md:px-6 py-4 flex flex-wrap items-center justify-between border-b border-gray-100 bg-gray-50/50">
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2 text-gray-700">
               <span className="font-medium text-sm">Diatur Mengikut:</span>
@@ -288,9 +288,9 @@ export const PerananPengguna = () => {
         </div>
 
         {/* Content Area */}
-        <div className="p-6 space-y-6">
+        <div className="p-4 md:p-6 space-y-6">
           {/* Peringkat Negeri */}
-          <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+          <div className="border border-gray-200 rounded-xl overflow-x-auto shadow-sm">
             <div className="bg-gray-50 px-5 py-3 font-semibold text-gray-800 flex items-center gap-2 border-b border-gray-200 text-sm">
               Peringkat Negeri <Info className="w-4 h-4 text-action-teal" />
             </div>
@@ -335,7 +335,7 @@ export const PerananPengguna = () => {
           </div>
 
           {/* Peringkat Daerah */}
-          <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+          <div className="border border-gray-200 rounded-xl overflow-x-auto shadow-sm">
             <div className="bg-gray-50 px-5 py-3 font-semibold text-gray-800 flex items-center gap-2 border-b border-gray-200 text-sm">
               Peringkat Daerah <Info className="w-4 h-4 text-action-teal" />
             </div>
@@ -403,7 +403,7 @@ export const PerananPengguna = () => {
             className="bg-white shadow-xl rounded-xl w-full max-w-5xl flex flex-col overflow-hidden max-h-[90vh]"
           >
             {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white shrink-0">
+            <div className="px-4 md:px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white shrink-0">
               <h3 className="font-bold text-lg text-gray-900">{modalTitle}</h3>
               <button onClick={handleCloseModal} className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors rounded-lg">
                 <X className="w-5 h-5" />
@@ -411,7 +411,7 @@ export const PerananPengguna = () => {
             </div>
             
             {/* Modal Content - Split View */}
-            <div className="p-6 flex flex-col md:flex-row gap-6 bg-gray-50/30 flex-1 min-h-0 overflow-hidden">
+            <div className="p-4 md:p-6 flex flex-col md:flex-row gap-4 md:gap-6 bg-gray-50/30 flex-1 min-h-0 overflow-hidden">
                 
               {/* Left Side: Search & User List */}
               <div className="flex-1 bg-white border border-gray-200 rounded-xl flex flex-col h-[50vh] md:h-full min-h-0 overflow-hidden shadow-sm">
@@ -521,7 +521,7 @@ export const PerananPengguna = () => {
                     <tbody>
                       {selectedUsers.length === 0 ? (
                         <tr>
-                          <td colSpan={3} className="px-6 py-12 text-center text-gray-400 font-medium bg-gray-50/50 text-sm">
+                          <td colSpan={3} className="px-4 md:px-6 py-12 text-center text-gray-400 font-medium bg-gray-50/50 text-sm">
                             <div className="flex flex-col items-center justify-center">
                               <Info className="w-8 h-8 text-gray-300 mb-2" />
                               Tiada pengguna dipilih
