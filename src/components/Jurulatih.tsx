@@ -124,8 +124,8 @@ export const Jurulatih: React.FC = () => {
 
         {/* Filter Section */}
         <div className="p-4 md:p-6 border-b border-gray-100 bg-gray-50/50 space-y-4 max-w-2xl">
-          <div className="flex items-center gap-4">
-            <label className="w-48 text-right font-medium text-gray-700 text-xs text-nowrap">{t('trainerName')} :</label>
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4">
+            <label className="w-auto md:w-48 text-left md:text-right font-medium text-gray-700 text-xs ">{t('trainerName')} :</label>
             <input 
               type="text" 
               value={filterNama}
@@ -133,8 +133,8 @@ export const Jurulatih: React.FC = () => {
               className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-action-teal focus:border-action-teal bg-white"
             />
           </div>
-          <div className="flex items-center gap-4">
-            <label className="w-48 text-right font-medium text-gray-700 text-xs text-nowrap">{t('trainerIc')} :</label>
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4">
+            <label className="w-auto md:w-48 text-left md:text-right font-medium text-gray-700 text-xs ">{t('trainerIc')} :</label>
             <input 
               type="text" 
               value={filterNoKp}
@@ -142,8 +142,8 @@ export const Jurulatih: React.FC = () => {
               className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-action-teal focus:border-action-teal bg-white"
             />
           </div>
-          <div className="flex items-center gap-4">
-            <label className="w-48 text-right font-medium text-gray-700 text-xs text-nowrap">{t('noWaranTrainer')} :</label>
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4">
+            <label className="w-auto md:w-48 text-left md:text-right font-medium text-gray-700 text-xs ">{t('noWaranTrainer')} :</label>
             <input 
               type="text" 
               value={filterNoWaran}

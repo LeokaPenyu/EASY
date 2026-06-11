@@ -63,7 +63,7 @@ export const FrontPage: React.FC<FrontPageProps> = ({ onSelectRole }) => {
                 transition={{ duration: 0.3 }}
               >
                 <h1 className="text-2xl lg:text-3xl xl:text-4xl font-black text-white tracking-tight leading-tight mb-3">
-                  EASY <br />
+                  <span className="notranslate" translate="no">EASY</span> <br />
                   <span className="text-red-200 text-lg lg:text-xl xl:text-2xl font-bold tracking-normal block mt-1">
                     Examination <br /> 
                     Administration <br /> 

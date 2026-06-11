@@ -222,7 +222,7 @@ export const CandidateTable: React.FC<CandidateTableProps> = ({ candidates, setC
               </div>
             </div>
 
-            <div className="overflow-y-auto p-4 bg-white flex-1 min-h-[300px]">
+            <div className="overflow-auto p-4 bg-white flex-1 min-h-[300px]">
               <table className="w-full text-sm text-left border border-gray-200 rounded-lg overflow-hidden">
                 <thead className="bg-gray-100 text-[10px] uppercase tracking-widest text-gray-500 font-bold border-b border-gray-200">
                   <tr>

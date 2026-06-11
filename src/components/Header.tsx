@@ -30,7 +30,7 @@ export const Header: React.FC<HeaderProps> = ({ role, setRole, onMenuClick, onLo
   return (
     <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-20">
       <div className="flex items-center gap-4 flex-1">
-        <button onClick={onMenuClick} className="p-2 -ml-2 text-gray-500 hover:bg-gray-100 rounded-lg lg:hidden">
+        <button onClick={onMenuClick} className="p-2 -ml-2 text-gray-500 hover:bg-gray-100 rounded-lg">
           <Menu className="w-6 h-6" />
         </button>
         <div>
@@ -41,7 +41,7 @@ export const Header: React.FC<HeaderProps> = ({ role, setRole, onMenuClick, onLo
               className="h-8 object-contain"
             />
             <div className="flex flex-col justify-center">
-              <h1 className="text-xl font-bold text-charcoal leading-none mb-0.5 tracking-tight">EASY</h1>
+              <h1 className="text-xl font-bold text-charcoal leading-none mb-0.5 tracking-tight notranslate" translate="no">EASY</h1>
               <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider leading-none">MRC SARAWAK BRANCH</span>
             </div>
           </div>
@@ -49,10 +49,10 @@ export const Header: React.FC<HeaderProps> = ({ role, setRole, onMenuClick, onLo
       </div>
 
       <div className="flex items-center gap-3 lg:gap-6">
-        <div className="flex items-center bg-gray-100 p-1 rounded-lg">
+        <div className="flex items-center bg-gray-100 p-1 rounded-lg notranslate" translate="no">
           <button 
             onClick={() => setLanguage(Language.BM)}
-            className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
+            className={`px-3 py-1 text-xs font-bold rounded-md transition-all notranslate ${
               language === Language.BM 
               ? 'bg-white shadow-sm text-brand-red' 
               : 'text-gray-400 hover:text-charcoal'
@@ -62,7 +62,7 @@ export const Header: React.FC<HeaderProps> = ({ role, setRole, onMenuClick, onLo
           </button>
           <button 
             onClick={() => setLanguage(Language.EN)}
-            className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
+            className={`px-3 py-1 text-xs font-bold rounded-md transition-all notranslate ${
               language === Language.EN 
               ? 'bg-white shadow-sm text-brand-red' 
               : 'text-gray-400 hover:text-charcoal'

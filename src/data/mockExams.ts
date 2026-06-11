@@ -226,6 +226,37 @@ export const mockExams: MockExam[] = [
     ]
   },
   {
+    id: '15',
+    no: 15,
+    regNo: 'SRI/2026/0001',
+    district: 'SRI AMAN',
+    date: '2026-08-10',
+    fee: 120.00,
+    candidatesCount: 10,
+    subject: '800/1 - Pertolongan Cemas Asas',
+    updated: 'Ya',
+    status: ExamStatus.REJECTED,
+    organization: 'Klinik Sri Aman',
+    unitName: 'Unit SA 01',
+    category: 'Government',
+    courseStart: '01/08/2026',
+    courseEnd: '03/08/2026',
+    examDate: '10/08/2026',
+    deadline: '17/08/2026',
+    address: 'Bilik Seminar Sri Aman',
+    officerCount: 2,
+    remark: 'Dokumen tak lengkap',
+    applicationLetter: 'no',
+    supportDoc: 'no',
+    certReady: 'no',
+    formA: 'yes',
+    formB: 'no',
+    candidates: [
+      { id: 'c3', name: 'BUDI BIN KASSIM', idNo: '010303-13-3333', membershipNo: 'S-6666', isMember: true, attendance: { theory: false, oral: false, practical: false } }
+    ],
+    examiners: []
+  },
+  {
     id: '8',
     no: 8,
     regNo: 'BTU/2016/0010',

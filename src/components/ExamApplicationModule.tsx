@@ -217,7 +217,7 @@ export const ExamApplicationModule: React.FC<ExamApplicationModuleProps> = ({
             {/* Row 1: Status */}
             {!isSummaryReadyMode && !isNewApplicationListMode && !isVerificationListMode && (
               <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] items-center gap-4">
-                <label className="text-[11px] font-bold text-charcoal text-right">Status :</label>
+                <label className="text-[11px] font-bold text-charcoal md:text-right text-left">Status :</label>
                 <div className="w-1/2">
                   <select 
                     value={filters.status}
@@ -237,7 +237,7 @@ export const ExamApplicationModule: React.FC<ExamApplicationModuleProps> = ({
 
             {/* Row 2: Subjek */}
             <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] items-center gap-4">
-              <label className="text-[11px] font-bold text-charcoal text-right">Subjek :</label>
+              <label className="text-[11px] font-bold text-charcoal md:text-right text-left">Subjek :</label>
               <div className="w-[70%]">
                 <select 
                   value={filters.subject}
@@ -254,7 +254,7 @@ export const ExamApplicationModule: React.FC<ExamApplicationModuleProps> = ({
 
             {/* Row 3: No. Pendaftaran */}
             <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] items-center gap-4">
-              <label className="text-[11px] font-bold text-charcoal text-right">No. Pendaftaran :</label>
+              <label className="text-[11px] font-bold text-charcoal md:text-right text-left">No. Pendaftaran :</label>
               <div className="w-1/3">
                 <input 
                   type="text"
@@ -268,7 +268,7 @@ export const ExamApplicationModule: React.FC<ExamApplicationModuleProps> = ({
             {/* Row 4: Tarikh Peperiksaan */}
             {!isSummaryReadyMode && !isPendingSubmissionMode && !isRejectedMode && (
               <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] items-center gap-4">
-                <label className="text-[11px] font-bold text-charcoal text-right">Tarikh Peperiksaan :</label>
+                <label className="text-[11px] font-bold text-charcoal md:text-right text-left">Tarikh Peperiksaan :</label>
                 <div className="flex items-center gap-2">
                   <span className="text-[11px] text-charcoal">Dari</span>
                   <div className="relative">
@@ -301,7 +301,7 @@ export const ExamApplicationModule: React.FC<ExamApplicationModuleProps> = ({
             {/* Row 5: Nama Daerah */}
             {!isSummaryReadyMode && !isPendingSubmissionMode && !isRejectedMode && (
               <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] items-center gap-4">
-                <label className="text-[11px] font-bold text-charcoal text-right">Nama Daerah :</label>
+                <label className="text-[11px] font-bold text-charcoal md:text-right text-left">Nama Daerah :</label>
                 <div className="w-full md:w-[120px]">
                   <select 
                     value={filters.district}
@@ -395,7 +395,7 @@ export const ExamApplicationModule: React.FC<ExamApplicationModuleProps> = ({
                 <th className="px-3 py-2 text-[11px] font-bold text-[#2D5A8E] border-r border-gray-300 uppercase text-center">JUMLAH CALON</th>
                 <th className="px-3 py-2 text-[11px] font-bold text-[#2D5A8E] border-r border-gray-300 uppercase">SUBJEK</th>
                 {!(isSummaryReadyMode || isSebcListMode) && <th className="px-3 py-2 text-[11px] font-bold text-[#2D5A8E] border-r border-gray-300 uppercase">Status</th>}
-                {!(isSummaryReadyMode || isSebcListMode || isUnlockRequestMode || isVerificationListMode || isNewApplicationListMode || isPrintListMode) && <th className="px-3 py-2 text-[11px] font-bold text-[#2D5A8E] uppercase text-right">Tindakan</th>}
+                {!(isSummaryReadyMode || isSebcListMode || isUnlockRequestMode || isVerificationListMode || isNewApplicationListMode || isPrintListMode) && <th className="px-3 py-2 text-[11px] font-bold text-[#2D5A8E] uppercase md:text-right text-left">Tindakan</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">

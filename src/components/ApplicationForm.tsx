@@ -215,7 +215,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
     setConfirmDialog({
       message: 'Hantar Permohonan ini untuk pengesahan?',
       onConfirm: () => {
-        const newExam = generateNewExam(ExamStatus.SUBMITTED);
+        const newExam = generateNewExam(ExamStatus.PENDING_VERIFICATION);
         console.log('Submitting new exam:', newExam);
         onSubmit(newExam);
       }
@@ -223,7 +223,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
   };
 
   return (
-    <div className="max-w-[1200px] mx-auto space-y-8 pb-20">
+    <div className="max-w-[1200px] mx-auto space-y-8 pb-20 px-2 sm:px-4 md:px-0">
       {/* Confirm Dialog */}
       {confirmDialog && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-in fade-in">
@@ -280,7 +280,14 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({ initialExamTyp
         </button>
         <div>
           <h1 className="text-2xl font-bold tracking-tight">{t('registrationTitle')}</h1>
-          <p className="text-gray-500 text-sm">{t('systemSubtitle')}</p>
+          <p className="text-gray-500 text-sm">
+            {t('systemSubtitle').split('EASY').map((part, i, arr) => (
+              <React.Fragment key={i}>
+                {part}
+                {i < arr.length - 1 && <span className="notranslate" translate="no">EASY</span>}
+              </React.Fragment>
+            ))}
+          </p>
         </div>
       </div>
 

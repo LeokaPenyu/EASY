@@ -306,7 +306,7 @@ export const ProfilPengguna = () => {
                  </span>
                </div>
 
-               <div className="overflow-hidden border border-t-0 border-gray-200 rounded-b-lg">
+               <div className="overflow-x-auto border border-t-0 border-gray-200 rounded-b-lg">
                  <table className="w-full text-left">
                     <thead className="bg-white text-gray-500 text-xs font-medium border-b border-gray-200 uppercase tracking-wider">
                       <tr>

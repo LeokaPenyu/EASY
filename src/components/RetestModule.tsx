@@ -15,6 +15,7 @@ export const RetestModule = () => {
            </div>
         </div>
         
+        <div className="overflow-x-auto">
         <table className="w-full text-sm text-left">
           <thead className="bg-gray-100 text-gray-500 uppercase text-[10px] tracking-widest">
             <tr>
@@ -33,6 +34,7 @@ export const RetestModule = () => {
             </tr>
           </tbody>
         </table>
+        </div>
       </div>
     </motion.div>
   );

@@ -33,10 +33,33 @@ const dummyDataPembaharuan = [
   { name: 'Bintulu', permohonan: 27 },
 ];
 
+const dummyDataJumlahCalonDaerah = [
+  { name: 'Kuching', calon: 5 },
+  { name: 'Sibu', calon: 1 },
+  { name: 'Miri', calon: 1 },
+  { name: 'Bintulu', calon: 3 },
+];
+
+export const dummyCandidatesDaerah = [
+  // Application APP-001
+  { no: 1, appId: 'APP-001', numPendaftaran: 'REG-KCH-001', name: 'Ahmad bin Ali', district: 'Kuching', ic: '900101-13-1234', status: 'Lulus' },
+  { no: 2, appId: 'APP-001', numPendaftaran: 'REG-KCH-002', name: 'Siti binti Abu', district: 'Kuching', ic: '920202-13-5678', status: 'Gagal' },
+  { no: 3, appId: 'APP-001', numPendaftaran: 'REG-SIB-001', name: 'Wong Ah Kau', district: 'Sibu', ic: '950303-13-9012', status: 'Lulus' },
+  { no: 4, appId: 'APP-001', numPendaftaran: 'REG-BIN-001', name: 'Muthu a/l Samy', district: 'Bintulu', ic: '880404-13-3456', status: 'Lulus' },
+  // Application APP-002
+  { no: 5, appId: 'APP-002', numPendaftaran: 'REG-KCH-003', name: 'Chong Wei Ling', district: 'Kuching', ic: '960505-13-7890', status: 'Lulus' },
+  { no: 6, appId: 'APP-002', numPendaftaran: 'REG-KCH-004', name: 'Nurul Huda', district: 'Kuching', ic: '990606-13-1122', status: 'Lulus' },
+  { no: 7, appId: 'APP-002', numPendaftaran: 'REG-KCH-005', name: 'Tan Ah Boon', district: 'Kuching', ic: '970707-13-3344', status: 'Lulus' },
+  { no: 8, appId: 'APP-002', numPendaftaran: 'REG-MIR-001', name: 'Dayang Sofia', district: 'Miri', ic: '930808-13-5566', status: 'Lulus' },
+  { no: 9, appId: 'APP-002', numPendaftaran: 'REG-BIN-002', name: 'John Doe Anak Jimmy', district: 'Bintulu', ic: '910909-13-7788', status: 'Lulus' },
+  { no: 10, appId: 'APP-002', numPendaftaran: 'REG-BIN-003', name: 'Grace Lee', district: 'Bintulu', ic: '941010-13-9900', status: 'Lulus' }
+];
+
 export const ReportsModule = () => {
-  const [selectedReport, setSelectedReport] = useState<string>('Statistik Subjek');
+  const [selectedReport, setSelectedReport] = useState<string>('Rumusan Keputusan');
   const [downloadingFormat, setDownloadingFormat] = useState<string | null>(null);
   const [downloadComplete, setDownloadComplete] = useState<string | null>(null);
+  const [selectedDaerahFilter, setSelectedDaerahFilter] = useState<string>('Semua Daerah');
 
   const handleDownload = (format: string) => {
     setDownloadingFormat(format);
@@ -44,6 +67,34 @@ export const ReportsModule = () => {
     
     // Simulate download processing
     setTimeout(() => {
+      if ((format === 'Excel' || format === 'CSV') && selectedReport === 'Jumlah Calon Ikut Daerah') {
+        const headers = ["No.", "Application ID", "No. Pendaftaran", "Nama Calon", "Daerah", "No IC/Pasport", "Status"];
+        // Filter and sort by district to combine them together neatly
+        const filteredCandidates = selectedDaerahFilter === 'Semua Daerah' 
+          ? [...dummyCandidatesDaerah] 
+          : dummyCandidatesDaerah.filter(c => c.district === selectedDaerahFilter);
+        
+        const sortedCandidates = filteredCandidates.sort((a, b) => a.district.localeCompare(b.district));
+        
+        const csvContent = [
+          headers.join(","),
+          ...sortedCandidates.map(c => 
+            `"${c.no}","${c.appId}","${c.numPendaftaran}","${c.name}","${c.district}","${c.ic}","${c.status}"`
+          )
+        ].join("\n");
+        
+        // Use BOM to force UTF-8 in Excel and ensure proper cell alignment
+        const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        // Both options will download a CSV, which Excel safely opens without warning
+        link.setAttribute("download", `Laporan_Calon_Ikut_Daerah.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+      
       setDownloadingFormat(null);
       setDownloadComplete(`Laporan '${selectedReport}' telah dimuat turun dalam format ${format}.`);
       
@@ -56,18 +107,6 @@ export const ReportsModule = () => {
 
   const renderChart = () => {
     switch (selectedReport) {
-      case 'Statistik Subjek':
-        return (
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={dummyDataStatistik} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-              <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#6B7280' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 12, fill: '#6B7280' }} axisLine={false} tickLine={false} />
-              <RechartsTooltip cursor={{ fill: '#F3F4F6' }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }} />
-              <Bar dataKey="calon" fill="#008B8B" radius={[4, 4, 0, 0]} name="Jumlah Calon" />
-            </BarChart>
-          </ResponsiveContainer>
-        );
       case 'Rumusan Keputusan':
         return (
           <ResponsiveContainer width="100%" height={300}>
@@ -112,6 +151,23 @@ export const ReportsModule = () => {
             </AreaChart>
           </ResponsiveContainer>
         );
+      case 'Jumlah Calon Ikut Daerah': {
+        const filteredData = selectedDaerahFilter === 'Semua Daerah' 
+          ? dummyDataJumlahCalonDaerah 
+          : dummyDataJumlahCalonDaerah.filter(d => d.name === selectedDaerahFilter);
+
+        return (
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={filteredData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+              <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#6B7280' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 12, fill: '#6B7280' }} axisLine={false} tickLine={false} />
+              <RechartsTooltip cursor={{ fill: '#F3F4F6' }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }} />
+              <Bar dataKey="calon" fill="#7288AE" radius={[4, 4, 0, 0]} name="Jumlah Calon Lengkap" />
+            </BarChart>
+          </ResponsiveContainer>
+        );
+      }
       default:
         return null;
     }
@@ -126,7 +182,7 @@ export const ReportsModule = () => {
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-           {['Statistik Subjek', 'Rumusan Keputusan', 'Pembaharuan Sijil', 'Kutipan Yuran'].map(type => (
+           {['Rumusan Keputusan', 'Pembaharuan Sijil', 'Kutipan Yuran', 'Jumlah Calon Ikut Daerah'].map(type => (
              <div 
                 key={type} 
                 onClick={() => setSelectedReport(type)}
@@ -143,7 +199,22 @@ export const ReportsModule = () => {
         </div>
 
         <div className="mb-8 p-4 border border-gray-100 rounded-xl bg-white shadow-sm">
-          <h3 className="font-bold text-gray-700 mb-4 ml-4">{selectedReport}</h3>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 ml-4 mr-4">
+            <h3 className="font-bold text-gray-700">{selectedReport}</h3>
+            {selectedReport === 'Jumlah Calon Ikut Daerah' && (
+              <select 
+                value={selectedDaerahFilter}
+                onChange={(e) => setSelectedDaerahFilter(e.target.value)}
+                className="mt-2 md:mt-0 p-2 border border-gray-300 rounded focus:ring-action-teal focus:border-action-teal outline-none text-sm"
+              >
+                <option value="Semua Daerah">Semua Daerah</option>
+                <option value="Kuching">Kuching</option>
+                <option value="Sibu">Sibu</option>
+                <option value="Miri">Miri</option>
+                <option value="Bintulu">Bintulu</option>
+              </select>
+            )}
+          </div>
           {renderChart()}
         </div>
         

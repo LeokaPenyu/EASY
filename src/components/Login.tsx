@@ -48,13 +48,13 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
               />
                <div className="flex flex-col text-[#C0182A] font-bold leading-tight border-l-2 border-[#C0182A] pl-4">
                  <span className="text-[15px] tracking-wide">SISTEM </span>
-                 <span className="text-[24px] font-black tracking-tight">EASY</span>
+                 <span className="text-[24px] font-black tracking-tight notranslate" translate="no">EASY</span>
                </div>
             </div>
           </div>
 
           <div className="flex flex-col flex-grow">
-            <h2 className="text-[24px] text-gray-800 mb-8 font-medium font-sans">Sign in EASY</h2>
+            <h2 className="text-[24px] text-gray-800 mb-8 font-medium font-sans">Sign in <span className="notranslate" translate="no">EASY</span></h2>
 
             <div className="flex justify-end mb-4">
               <span className="text-[#C0182A] text-[13px] font-medium flex items-center gap-1.5 cursor-pointer hover:underline">
@@ -72,7 +72,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
               
               {/* Username Box */}
               <div className="relative border-[1.5px] border-[#16445B] rounded-[3px] pt-[7px]">
-                <label className="absolute -top-[11px] left-3 bg-white px-1 text-[13px] text-[#16445B] font-medium">EASY Username:</label>
+                <label className="absolute -top-[11px] left-3 bg-white px-1 text-[13px] text-[#16445B] font-medium"><span className="notranslate" translate="no">EASY</span> Username:</label>
                 <div className="bg-[#EAF1FA] m-[2px] mt-0 h-11 flex items-center">
                   <input 
                     type="text" 

@@ -190,13 +190,13 @@ export const CandidateDashboard: React.FC<CandidateDashboardProps> = ({ onLogout
         <div className="flex items-center gap-4 lg:gap-6">
           
           {/* Language Toggle */}
-          <div className="hidden md:flex bg-slate-100 p-1 rounded-full border border-slate-200 items-center">
+          <div className="hidden md:flex bg-slate-100 p-1 rounded-full border border-slate-200 items-center notranslate" translate="no">
             <Globe className="w-4 h-4 text-slate-400 ml-2 mr-1" />
             {['BM', 'EN', 'BC'].map(lang => (
               <button
                 key={lang}
                 onClick={() => setLanguage(lang as any)}
-                className={`text-[10px] font-bold px-2.5 py-1 rounded-full transition-colors ${
+                className={`text-[10px] font-bold px-2.5 py-1 rounded-full transition-colors notranslate ${
                   language === lang 
                     ? 'bg-white text-slate-800 shadow-sm' 
                     : 'text-slate-500 hover:text-slate-700'

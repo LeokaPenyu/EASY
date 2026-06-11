@@ -41,7 +41,7 @@ export default function App() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(true);
   const [activeView, setActiveView] = React.useState<ViewType>('Dashboard');
   const [role, setRole] = React.useState<UserRole>(UserRole.DEC);
-  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(window.innerWidth >= 1024);
   const [examStep, setExamStep] = React.useState<'list' | 'select' | 'form' | 'summary' | 'success'>('list');
   const [selectedExamId, setSelectedExamId] = React.useState<string | null>(null);
   const [selectedExamType, setSelectedExamType] = React.useState<string | null>(null);
@@ -131,7 +131,7 @@ export default function App() {
                 setInitialModuleStatus(ExamStatus.EXPIRED);
                 setExamStep('list');
                 setViewTitle('Menunggu Penyerahan');
-              } else if (key === 'borang-list') {
+              } else if (key === 'rejected-list') {
                 setActiveView('ExamApplication');
                 setExamStep('list');
                 setIsSummaryReadyView(false);
@@ -350,7 +350,7 @@ export default function App() {
             initialExamType={selectedExamType}
             goBack={() => setExamStep('select')} 
             onSubmit={(newExam) => {
-              const submittedWithCorrectStatus = { ...newExam, status: ExamStatus.SUBMITTED };
+              const submittedWithCorrectStatus = { ...newExam, status: ExamStatus.PENDING_VERIFICATION };
               handleAddExam(submittedWithCorrectStatus);
               setSubmittedExam(submittedWithCorrectStatus);
               setExamStep('success');
@@ -368,7 +368,7 @@ export default function App() {
             initialExamType={selectedExamType}
             goBack={() => setActiveView('Dashboard')} 
             onSubmit={(newExam) => {
-              const submittedWithCorrectStatus = { ...newExam, status: ExamStatus.SUBMITTED };
+              const submittedWithCorrectStatus = { ...newExam, status: ExamStatus.PENDING_VERIFICATION };
               handleAddExam(submittedWithCorrectStatus);
               setSubmittedExam(submittedWithCorrectStatus);
               setExamStep('success');
@@ -436,7 +436,7 @@ export default function App() {
         activeView={activeView} 
         setActiveView={(view) => {
           setActiveView(view);
-          setIsSidebarOpen(false);
+          if (window.innerWidth < 1024) setIsSidebarOpen(false);
           if (view === 'ExamApplication') {
             setExamStep('select');
             setIsSummaryReadyView(false);
@@ -453,7 +453,7 @@ export default function App() {
         role={role}
       />
       
-      <main className={`flex-1 lg:ml-72 min-h-screen flex flex-col w-full transition-all duration-300`}>
+      <main className={`flex-1 min-w-0 ${isSidebarOpen ? 'lg:ml-72' : ''} min-h-screen flex flex-col transition-all duration-300`}>
         <Header 
           role={role} 
           setRole={setRole} 
@@ -461,7 +461,7 @@ export default function App() {
           onLogout={() => setAppMode('front')}
         />
         
-        <div className="flex-1 p-4 lg:p-6 overflow-y-auto w-full">
+        <div className="flex-1 min-w-0 p-4 lg:p-6 overflow-y-auto overflow-x-hidden">
           <div className="max-w-[1600px] mx-auto w-full">
             <AnimatePresence mode="wait">
               <motion.div
@@ -485,7 +485,12 @@ export default function App() {
             >
               KEMBALI KE LAMAN UTAMA
             </button>
-            {t('confidentialNotice')}
+            {t('confidentialNotice').split('EASY').map((part, i, arr) => (
+              <React.Fragment key={i}>
+                {part}
+                {i < arr.length - 1 && <span className="notranslate" translate="no">EASY</span>}
+              </React.Fragment>
+            ))}
           </p>
         </footer>
       </main>

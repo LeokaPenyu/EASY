@@ -106,6 +106,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
       e.status === ExamStatus.UNLOCK_REQUESTED,
   ).length;
 
+  const decRejectedCount = exams.filter(
+    (e) => e.status === ExamStatus.REJECTED,
+  ).length;
+
   const secNewApplicationCount = exams.filter(
     (e) => e.status === ExamStatus.PENDING_VERIFICATION,
   ).length;
@@ -139,9 +143,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
       group: "Pending",
     },
     {
-      id: "borang-list",
+      id: "rejected-list",
       label: "Ditolak",
-      count: 0,
+      count: decRejectedCount,
       color: "bg-red-500",
       group: "Alert",
     },
@@ -151,20 +155,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
       count: decSummaryReadyCount,
       color: "bg-[#82c91e]",
       group: "Action",
-    },
-    {
-      id: "attendance-cert",
-      label: "Sijil Kehadiran Perlu Dijana",
-      count: 2,
-      color: "bg-[#3498db]",
-      group: "Action",
-    },
-    {
-      id: "cert-renewal",
-      label: "Sijil Tamat Tempoh (30 hari)",
-      count: 3,
-      color: "bg-[#f39c12]",
-      group: "Alert",
     },
   ];
 
@@ -412,7 +402,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     <Download className="w-4 h-4" /> Garis Panduan Pengguna
                   </h4>
                   <p className="text-xs text-gray-500 leading-relaxed">
-                    Sila muat turun atau lihat garis panduan terkini untuk sistem EASY.
+                    Sila muat turun atau lihat garis panduan terkini untuk sistem <span className="notranslate" translate="no">EASY</span>.
                   </p>
                 </a>
 

@@ -281,28 +281,33 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
 
   const toggleAttendance = (candidateId: string, field: keyof NonNullable<Candidate['attendance']>) => {
     if (!isEditable) return;
-    setCandidates(prev => prev.map(c => {
-      if (c.id !== candidateId) return c;
-      const currentAttendance = c.attendance || { theory: false, oral: false, practical: false };
-      return { 
-        ...c, 
-        attendance: { 
-          ...currentAttendance, 
-          [field]: !currentAttendance[field] 
-        } 
-      };
-    }));
+    setCandidates(prev => {
+      const nextCandidates = prev.map(c => {
+        if (c.id !== candidateId) return c;
+        const currentAttendance = c.attendance || { theory: false, oral: false, practical: false };
+        return { 
+          ...c, 
+          attendance: { 
+            ...currentAttendance, 
+            [field]: !currentAttendance[field] 
+          } 
+        };
+      });
+      return [...nextCandidates];
+    });
   };
 
-  const totals = {
-    theory: candidates.filter(c => c.attendance?.theory).length,
-    oral: candidates.filter(c => c.attendance?.oral).length,
-    practical: candidates.filter(c => c.attendance?.practical).length,
-    members: candidates.filter(c => c.isMember).length,
-    nonMembers: candidates.filter(c => !c.isMember).length,
-    totalCount: candidates.length,
-    lang: (selectedMock as any).lang || { bm: 1, bi: 1, bc: 0 }
-  };
+  const totals = React.useMemo(() => {
+    return {
+      theory: candidates.filter(c => c.attendance && c.attendance.theory === true).length,
+      oral: candidates.filter(c => c.attendance && c.attendance.oral === true).length,
+      practical: candidates.filter(c => c.attendance && c.attendance.practical === true).length,
+      members: candidates.filter(c => c.isMember).length,
+      nonMembers: candidates.filter(c => !c.isMember).length,
+      totalCount: candidates.length,
+      lang: (selectedMock as any).lang || { bm: 1, bi: 1, bc: 0 }
+    };
+  }, [candidates, selectedMock]);
 
   const isExpired = (localStatus === ExamStatus.EXPIRED || localStatus === ExamStatus.UNLOCK_REQUESTED) && !unlockApproved;
 
@@ -1047,9 +1052,9 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                     <tfoot className="bg-white border-t border-gray-300">
                       <tr className="divide-x divide-gray-300">
                         <td colSpan={3} className="px-3 py-2 md:text-right text-left font-bold bg-gray-50">Kehadiran</td>
-                        <td className="px-3 py-2 text-center font-bold text-gray-500">{totals.theory}/{totals.totalCount}</td>
-                        <td className="px-3 py-2 text-center font-bold text-gray-500">{totals.oral}/{totals.totalCount}</td>
-                        <td className="px-3 py-2 text-center font-bold text-gray-500">{totals.practical}/{totals.totalCount}</td>
+                        <td className="px-3 py-2 text-center font-bold text-gray-500 notranslate" translate="no">{totals.theory}/{totals.totalCount}</td>
+                        <td className="px-3 py-2 text-center font-bold text-gray-500 notranslate" translate="no">{totals.oral}/{totals.totalCount}</td>
+                        <td className="px-3 py-2 text-center font-bold text-gray-500 notranslate" translate="no">{totals.practical}/{totals.totalCount}</td>
                       </tr>
                     </tfoot>
                   </table>
@@ -1479,7 +1484,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
                   <span className="text-[13px] text-charcoal">{examData.organization}</span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4 mb-1 border-brand-red">
-                  <span className="text-[13px] font-medium text-gray-500 md:text-right text-left flex justify-end items-center"><span className="text-brand-red font-bold mr-1">*</span> Tarikh Peperiksaan:</span>
+                  <span className="text-[13px] font-medium text-gray-500 md:text-right text-left flex justify-start md:justify-end items-center"><span className="text-brand-red font-bold mr-1">*</span> Tarikh Peperiksaan:</span>
                   <span className="text-[13px] text-charcoal">{examData.examDate}</span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4 mb-6">
@@ -1489,7 +1494,7 @@ export const ExamSummaryView: React.FC<ExamSummaryViewProps> = ({
               </div>
                 
               <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4">
-                  <span className="text-[13px] font-medium text-gray-500 md:text-right text-left flex justify-end items-start mt-2">
+                  <span className="text-[13px] font-medium text-gray-500 md:text-right text-left flex justify-start md:justify-end items-start mt-2">
                     <span className="text-brand-red font-bold mr-1">*</span>Senarai Calon:
                   </span>
                   <div className="overflow-x-auto border border-gray-300 bg-white">

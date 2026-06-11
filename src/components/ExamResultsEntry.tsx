@@ -17,7 +17,8 @@ export const ExamResultsEntry = () => {
       <div className="card shadow-sm border border-gray-100 p-4 md:p-6">
         <h2 className="text-xl font-black text-charcoal mb-4">Pemasukan Markah Praktikal & Subjektif</h2>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
+          <div className="overflow-x-auto">
+        <table className="w-full text-sm text-left">
             <thead className="bg-gray-100 text-gray-500 uppercase text-[10px] tracking-widest">
               <tr>
                 <th className="p-2">Nama Calon</th>
@@ -35,6 +36,7 @@ export const ExamResultsEntry = () => {
               ))}
             </tbody>
           </table>
+        </div>
         </div>
         <button className="btn-primary mt-6 flex items-center justify-center gap-2 w-full">
            <Save className="w-4 h-4" /> Simpan Markah
