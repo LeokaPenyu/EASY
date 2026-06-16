@@ -103,7 +103,7 @@ export enum Language {
   EN = 'EN'
 }
 
-export type ViewType = 'Dashboard' | 'Calon' | 'ExamProfile' | 'ExamSchedule' | 'Jurulatih' | 'Panduan' | 'NewRequest' | 'ExamApplication' | 'CertificateRenewal' | 'AttendanceCertificate' | 'OnlineExam' | 'ExamResults' | 'QuestionBank' | 'Retest' | 'Reports' | 'ProfilDaerah' | 'ProfilSubjek' | 'ProfilPengguna' | 'PerananPengguna' | 'TetapanAm' | 'PeperiksaanMain';
+export type ViewType = 'Dashboard' | 'Calon' | 'ExamProfile' | 'ExamSchedule' | 'Jurulatih' | 'Panduan' | 'NewRequest' | 'ExamApplication' | 'CertificateRenewal' | 'AttendanceCertificate' | 'OnlineExam' | 'ExamResults' | 'QuestionBank' | 'Retest' | 'Reports' | 'ProfilDaerah' | 'ProfilSubjek' | 'ProfilPengguna' | 'PerananPengguna' | 'TetapanAm' | 'PeperiksaanMain' | 'ExamPaperGenerator';
 
 export const TRANSLATIONS = {
   [Language.BM]: {

@@ -1,134 +1,68 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Lock, FileUp, CheckCircle, Database, Edit2, Trash2, Plus, Shuffle, Save, Info, ArrowLeft, Settings, Edit, X, CircleDot, CheckSquare, List, Type, Bold, Italic, Underline, AlignLeft, GripVertical, Check, Search } from 'lucide-react';
-import Papa from 'papaparse';
+import { Save, Database, Edit2, Trash2, Plus, X, BookOpen, ArrowLeft, ChevronDown, ChevronRight } from 'lucide-react';
 import { sharedQuestions, updateSharedQuestions, Question } from '../data/mockQuestions';
-import { useLanguage } from '../context/LanguageContext';
 
-interface Subjek {
-  id: string;
-  name: string;
-  code: string;
-  duration: string;
-  languages: string[];
-  questionCount?: number;
-  category?: string;
-}
+const COURSE_CATEGORIES = [
+  { id: 'Category A', name: 'Principles of First Aid' },
+  { id: 'Category B', name: 'Basic Life Support & CPR' },
+  { id: 'Category C', name: 'Wounds, Bleeding & Shock' },
+  { id: 'Category D', name: 'Musculoskeletal Injuries & Transport' },
+];
 
-const initialSubjek: Subjek[] = [
-  { id: '1', name: 'Pertolongan Cemas Asas dan CPR', code: '800/2', duration: '14', languages: ['BI', 'BM'], questionCount: 40, category: 'Objektif' },
-  { id: '2', name: 'Pertolongan Cemas Asas, CPR dan AED', code: 'CBFA1021', duration: '14', languages: ['BI', 'BM', 'BC'], questionCount: 60, category: 'Objektif & Amali' },
-  { id: '3', name: 'Pendidikan Palang Merah dan Bulan Sabit Merah', code: 'CERC1011', duration: '8', languages: ['BI', 'BM'], questionCount: 20, category: 'Objektif' },
-  { id: '4', name: 'Pendidikan Kesihatan', code: 'CHED1031', duration: '8', languages: ['BI', 'BM'], questionCount: 25, category: 'Objektif' },
-  { id: '5', name: 'Rawatan Rumah', code: 'CHNU1041', duration: '8', languages: ['BI', 'BM'], questionCount: 30, category: 'Subjektif' },
-  { id: '6', name: 'PERTOLONGAN CEMAS LANJUTAN, CPR & AED', code: 'PAFA1042', duration: '18 JAM', languages: ['BI', 'BM'], questionCount: 50, category: 'Objektif & Amali' },
-  { id: '7', name: 'PENGENALAN PERTOLONGAN CEMAS, CPR & AED', code: 'PIFA 1021', duration: '8 JAM', languages: ['BI', 'BM'], questionCount: 15, category: 'Objektif' },
+const initialSubjek = [
+  { id: '1', name: 'Pertolongan Cemas Asas dan CPR', code: '800/2', duration: '14' },
+  { id: '2', name: 'Pertolongan Cemas Asas, CPR dan AED', code: 'CBFA1021', duration: '14' },
+  { id: '3', name: 'Pendidikan Palang Merah dan Bulan Sabit Merah', code: 'CERC1011', duration: '8' },
+  { id: '4', name: 'Pendidikan Kesihatan', code: 'CHED1031', duration: '8' },
+  { id: '5', name: 'Rawatan Rumah', code: 'CHNU1041', duration: '8' },
+  { id: '6', name: 'PERTOLONGAN CEMAS LANJUTAN, CPR & AED', code: 'PAFA1042', duration: '18 JAM' },
+  { id: '7', name: 'PENGENALAN PERTOLONGAN CEMAS, CPR & AED', code: 'PIFA 1021', duration: '8 JAM' },
 ];
 
 export const QuestionBankModule = () => {
-  const [selectedSubject, setSelectedSubject] = useState<Subjek | null>(null);
-
-  const [locked, setLocked] = useState(false);
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [questions, setQuestions] = useState<Question[]>(sharedQuestions);
-  const { translateContent } = useLanguage();
-
-  // Sync back to shared state so candidates see new updates (simulating a database)
-  React.useEffect(() => {
-    updateSharedQuestions(questions);
-  }, [questions]);
-
+  const [selectedCourse, setSelectedCourse] = useState<{name: string, code: string} | null>(null);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   
+  const [questions, setQuestions] = useState<Question[]>(sharedQuestions);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editForm, setEditForm] = useState<Question | null>(null);
   const [isAddingNew, setIsAddingNew] = useState(false);
-  const [uploadSuccessMsg, setUploadSuccessMsg] = useState(false);
-  
-  const [saveSuccessMsg, setSaveSuccessMsg] = useState(false);
-  const [randomizeSuccessMsg, setRandomizeSuccessMsg] = useState(false);
-  const [isRandomized, setIsRandomized] = useState(false);
-  
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleUploadClick = () => {
-    fileInputRef.current?.click();
+  useEffect(() => {
+    updateSharedQuestions(questions);
+  }, [questions]);
+
+  const handleAddNew = (categoryId: string) => {
+    setIsAddingNew(true);
+    setEditForm({ 
+      id: 'q_' + Math.random().toString(36).substr(2, 9), 
+      course: selectedCourse?.code || '',
+      category: categoryId,
+      type: 'Objective',
+      description: '', 
+      options: ['', '', '', ''], 
+      answer: '',
+      score: 1 
+    });
+    setEditingIndex(-1);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      setUploadedFile(file);
-      setUploadSuccessMsg(true);
-      setTimeout(() => setUploadSuccessMsg(false), 5000);
-      
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const text = event.target?.result as string;
-        Papa.parse<string[]>(text, {
-          skipEmptyLines: true,
-          complete: (results) => {
-            const data = results.data;
-            if (data.length === 0) return;
-            
-            let startIndex = 0;
-            const headerStr = data[0].join(' ').toLowerCase();
-            if (headerStr.includes('soalan') || headerStr.includes('question') || headerStr.includes('jawapan')) {
-              startIndex = 1;
-            }
-
-            const parsed: Question[] = data.slice(startIndex).map(row => {
-              const optionA = row[1] && row[1].trim() !== '' ? row[1] : '';
-              const optionB = row[2] && row[2].trim() !== '' ? row[2] : '';
-              const optionC = row[3] && row[3].trim() !== '' ? row[3] : '';
-              const optionD = row[4] && row[4].trim() !== '' ? row[4] : '';
-              
-              const options = [optionA, optionB, optionC, optionD].filter(o => o !== '');
-              const rawAnswer = row[5] ? row[5].trim() : '';
-              let answerText = rawAnswer;
-              if (rawAnswer.toUpperCase() === 'A' && optionA) answerText = optionA;
-              if (rawAnswer.toUpperCase() === 'B' && optionB) answerText = optionB;
-              if (rawAnswer.toUpperCase() === 'C' && optionC) answerText = optionC;
-              if (rawAnswer.toUpperCase() === 'D' && optionD) answerText = optionD;
-
-              return {
-                id: 'q_' + Math.random().toString(36).substr(2, 9),
-                question: row[0] || 'Soalan Tidak Diketahui',
-                options: options.length > 0 ? options : ['Tiada', 'Pilihan', 'Disertakan'],
-                answer: answerText || options[0] || 'Tiada'
-              };
-            });
-            
-            if (parsed.length > 0) {
-              setQuestions([...parsed, ...questions]);
-            }
-          }
-        });
-      };
-      reader.readAsText(file);
+  const saveNew = () => {
+    if (editForm) {
+      setQuestions([editForm, ...questions]);
+      setIsAddingNew(false);
+      setEditingIndex(null);
+      setEditForm(null);
     }
   };
 
-  const handleDelete = (index: number) => {
-    if (locked) return;
-    const newQ = [...questions];
-    newQ.splice(index, 1);
-    setQuestions(newQ);
-  };
-
-  const handleEdit = (index: number) => {
-    if (locked) return;
-    setEditingIndex(index);
-    const q = { ...questions[index] };
-    
-    // Convert full text answer to A, B, C, D if needed
-    if (q.answer && !['A', 'B', 'C', 'D'].includes(q.answer.toUpperCase())) {
-      const optIndex = q.options.findIndex(opt => opt.trim().toLowerCase() === q.answer.trim().toLowerCase());
-      if (optIndex >= 0) {
-        q.answer = String.fromCharCode(65 + optIndex);
-      }
+  const handleEdit = (questionId: string) => {
+    const idx = questions.findIndex(q => q.id === questionId);
+    if (idx !== -1) {
+      setEditingIndex(idx);
+      setEditForm({ ...questions[idx] });
     }
-    
-    setEditForm(q);
   };
 
   const saveEdit = () => {
@@ -142,25 +76,15 @@ export const QuestionBankModule = () => {
     }
   };
 
+  const handleDelete = (questionId: string) => {
+    const newQ = questions.filter(q => q.id !== questionId);
+    setQuestions(newQ);
+  };
+
   const cancelEdit = () => {
     setEditingIndex(null);
     setEditForm(null);
     setIsAddingNew(false);
-  };
-
-  const handleAddNew = () => {
-    setIsAddingNew(true);
-    setEditForm({ id: 'q_' + Math.random().toString(36).substr(2, 9), question: '', options: ['', '', '', ''], answer: '', category: 'Objektif' });
-    setEditingIndex(-1);
-  };
-
-  const saveNew = () => {
-    if (editForm) {
-      setQuestions([editForm, ...questions]);
-      setIsAddingNew(false);
-      setEditingIndex(null);
-      setEditForm(null);
-    }
   };
 
   const renderEditForm = () => {
@@ -169,39 +93,87 @@ export const QuestionBankModule = () => {
       <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
           <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-            <h4 className="font-bold text-gray-900">{isAddingNew ? 'Tambah Soalan Baru' : 'Kemaskini Soalan'}</h4>
+            <h4 className="font-bold text-gray-900">{isAddingNew ? 'Question Setup (New)' : 'Edit Question'}</h4>
             <button onClick={cancelEdit} className="text-gray-400 hover:text-gray-600 transition-colors">
               <X className="w-5 h-5"/>
             </button>
           </div>
           <div className="p-6 overflow-y-auto flex-1 space-y-4">
-            <div>
-              <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Kategori Soalan</label>
-              <select 
-                value={editForm.category || 'Objektif'}
-                onChange={(e) => setEditForm({...editForm, category: e.target.value})}
-                className="w-full border border-gray-200 rounded-md p-2.5 text-sm focus:border-action-teal focus:ring-1 focus:ring-action-teal/20 outline-none bg-white"
-              >
-                <option value="Objektif">Objektif (A/B/C/D)</option>
-                <option value="Subjektif">Subjektif / Esei</option>
-                <option value="Q/A">Q/A (Soal Jawab Pendek)</option>
-                <option value="Lain-lain">Lain-lain</option>
-              </select>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Course</label>
+                <input 
+                  value={editForm.course}
+                  disabled
+                  className="w-full border border-gray-200 bg-gray-50 rounded-md p-2.5 text-sm outline-none text-gray-500 font-medium cursor-not-allowed"
+                />
+              </div>
+              <div>
+                <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Score</label>
+                <input 
+                  type="number"
+                  value={editForm.score}
+                  onChange={(e) => setEditForm({...editForm, score: parseInt(e.target.value) || 0})}
+                  className="w-full border border-gray-200 rounded-md p-2.5 text-sm focus:border-action-teal outline-none"
+                  min="1"
+                />
+              </div>
             </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Type</label>
+                <select 
+                  value={editForm.type}
+                  onChange={(e) => setEditForm({...editForm, type: e.target.value as 'Objective' | 'Subjective'})}
+                  className="w-full border border-gray-200 rounded-md p-2.5 text-sm focus:border-action-teal outline-none bg-white"
+                >
+                  <option value="Objective">Objective</option>
+                  <option value="Subjective">Subjective</option>
+                </select>
+              </div>
+              {editForm.type === 'Objective' && (
+                <div>
+                  <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Option Count</label>
+                  <select 
+                    value={editForm.options.length}
+                    onChange={(e) => {
+                      const count = parseInt(e.target.value);
+                      const currentOptions = [...editForm.options];
+                      if (count > currentOptions.length) {
+                        currentOptions.push(...Array(count - currentOptions.length).fill(''));
+                      } else {
+                        currentOptions.splice(count);
+                      }
+                      setEditForm({...editForm, options: currentOptions});
+                    }}
+                    className="w-full border border-gray-200 rounded-md p-2.5 text-sm focus:border-action-teal outline-none bg-white"
+                  >
+                    {[1, 2, 3, 4, 5, 6].map(num => (
+                      <option key={num} value={num}>{num} Options</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </div>
+
             <div>
-              <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Soalan</label>
+              <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Description</label>
               <textarea 
-                value={editForm.question}
-                onChange={(e) => setEditForm({...editForm, question: e.target.value})}
-                className="w-full border border-gray-200 rounded-md p-2.5 text-sm focus:border-action-teal focus:ring-1 focus:ring-action-teal/20 outline-none"
-                rows={2}
-                placeholder="Masukkan soalan di sini..."
+                value={editForm.description}
+                onChange={(e) => setEditForm({...editForm, description: e.target.value})}
+                className="w-full border border-gray-200 rounded-md p-2.5 text-sm focus:border-action-teal outline-none"
+                rows={3}
+                placeholder="Question Details"
               />
             </div>
-            {(!editForm.category || editForm.category === 'Objektif') && (
+            
+            {editForm.type === 'Objective' && (
               <div>
-                <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2 block">Pilihan Jawapan</label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2 block">
+                  Option of answer
+                </label>
+                <div className="space-y-2">
                   {editForm.options.map((opt, idx) => (
                     <div key={idx} className="flex gap-2 items-center">
                       <span className="w-8 h-8 shrink-0 rounded bg-white border border-gray-200 flex items-center justify-center text-xs font-bold text-gray-500 shadow-sm">
@@ -215,8 +187,8 @@ export const QuestionBankModule = () => {
                           newOps[idx] = e.target.value;
                           setEditForm({...editForm, options: newOps});
                         }}
-                        placeholder={`Pilihan ${String.fromCharCode(65 + idx)}`}
-                        className="flex-1 border border-gray-200 rounded-md p-2.5 text-sm focus:border-action-teal focus:ring-1 focus:ring-action-teal/20 outline-none"
+                        placeholder={`Option Description ${String.fromCharCode(65 + idx)}`}
+                        className="flex-1 border border-gray-200 rounded-md p-2.5 text-sm focus:border-action-teal outline-none"
                       />
                     </div>
                   ))}
@@ -224,34 +196,34 @@ export const QuestionBankModule = () => {
               </div>
             )}
             <div>
-              <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Jawapan Tepat</label>
-              {(!editForm.category || editForm.category === 'Objektif') ? (
+              <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Answer</label>
+              {editForm.type === 'Objective' ? (
                 <select 
                   value={editForm.answer}
                   onChange={(e) => setEditForm({...editForm, answer: e.target.value})}
-                  className="w-full border border-gray-200 rounded-md p-2.5 text-sm focus:border-action-teal focus:ring-1 focus:ring-action-teal/20 outline-none bg-white"
+                  className="w-full border border-gray-200 rounded-md p-2.5 text-sm focus:border-action-teal outline-none bg-white"
                 >
-                  <option value="">-- Sila Pilih Jawapan (A/B/C/D) --</option>
-                  <option value="A">A - {editForm.options[0] || ''}</option>
-                  <option value="B">B - {editForm.options[1] || ''}</option>
-                  <option value="C">C - {editForm.options[2] || ''}</option>
-                  <option value="D">D - {editForm.options[3] || ''}</option>
+                  <option value="">-- Select Answer --</option>
+                  {editForm.options.map((opt, idx) => {
+                    const letter = String.fromCharCode(65 + idx);
+                    return <option key={idx} value={letter}>{letter} - {opt || `(Empty Option)`}</option>
+                  })}
                 </select>
               ) : (
                 <textarea 
                   value={editForm.answer}
                   onChange={(e) => setEditForm({...editForm, answer: e.target.value})}
-                  className="w-full border border-gray-200 rounded-md p-2.5 text-sm focus:border-action-teal focus:ring-1 focus:ring-action-teal/20 outline-none"
+                  className="w-full border border-gray-200 rounded-md p-2.5 text-sm focus:border-action-teal outline-none"
                   rows={2}
-                  placeholder={`Masukkan jawapan ${editForm.category.toLowerCase()} di sini...`}
+                  placeholder="Expected answer or grading rubric..."
                 />
               )}
             </div>
           </div>
           <div className="flex justify-end gap-2 px-6 py-4 border-t border-gray-100 bg-gray-50">
-            <button onClick={cancelEdit} className="px-4 py-2 text-sm font-bold text-gray-500 hover:text-gray-700 bg-white hover:bg-gray-100 border border-gray-200 rounded-md transition-colors">Batal</button>
-            <button onClick={isAddingNew ? saveNew : saveEdit} className="px-5 py-2 bg-action-teal text-white rounded-md text-sm font-bold shadow-sm hover:bg-teal-700 transition-colors flex items-center gap-2">
-              <Save className="w-4 h-4"/> Simpan Soalan
+            <button onClick={cancelEdit} className="px-4 py-2 text-sm font-bold text-gray-500 hover:text-gray-700 bg-white hover:bg-gray-100 border border-gray-200 rounded-md transition-colors">Cancel</button>
+            <button onClick={isAddingNew ? saveNew : saveEdit} disabled={!editForm.category} className="disabled:opacity-50 px-5 py-2 bg-action-teal text-white rounded-md text-sm font-bold shadow-sm hover:bg-teal-700 transition-colors flex items-center gap-2">
+              <Save className="w-4 h-4"/> Save Question
             </button>
           </div>
         </div>
@@ -259,300 +231,161 @@ export const QuestionBankModule = () => {
     );
   };
 
-  if (!selectedSubject) {
+  if (!selectedCourse) {
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden bg-white">
-          <div className="p-4 md:p-6 flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-100 mb-2 gap-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-rose-50 text-brand-red rounded-lg">
-                <Database className="w-5 h-5" />
-              </div>
-              <h2 className="font-bold text-lg text-gray-900">Pilih Subjek untuk Bank Soalan</h2>
-            </div>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 bg-rose-50 text-brand-red rounded-lg">
+            <Database className="w-6 h-6" />
           </div>
+          <h2 className="font-bold text-xl text-gray-900 tracking-tight">Question Collection</h2>
+        </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left border-collapse">
-              <thead className="bg-gray-50 text-gray-500 uppercase text-xs font-semibold tracking-wider border-b border-gray-100">
-                <tr>
-                  <th className="px-4 md:px-6 py-4 text-center w-12 border-b border-gray-100">No.</th>
-                  <th className="px-4 md:px-6 py-4 border-b border-gray-100">Nama Subjek</th>
-                  <th className="px-4 md:px-6 py-4 text-center whitespace-nowrap border-b border-gray-100">Kod Subjek</th>
-                  <th className="px-4 md:px-6 py-4 text-center whitespace-nowrap border-b border-gray-100">Bil Soalan</th>
-                  <th className="px-4 md:px-6 py-4 text-center whitespace-nowrap border-b border-gray-100">Kategori</th>
-                  <th className="px-4 md:px-6 py-4 text-center w-28 border-b border-gray-100">Tindakan</th>
-                </tr>
-              </thead>
-              <tbody>
-                {initialSubjek.map((subjek, index) => (
-                  <tr key={subjek.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors cursor-pointer" onClick={() => setSelectedSubject(subjek)}>
-                    <td className="px-4 md:px-6 py-4 text-center font-medium text-gray-500">{index + 1}</td>
-                    <td className="px-4 md:px-6 py-4 font-medium text-gray-900">{subjek.name}</td>
-                    <td className="px-4 md:px-6 py-4 text-center text-gray-600">{subjek.code}</td>
-                    <td className="px-4 md:px-6 py-4 text-center text-gray-600 font-bold">{subjek.questionCount || 0}</td>
-                    <td className="px-4 md:px-6 py-4 text-center text-gray-600"><span className="bg-gray-100 px-2.5 py-1 rounded-md text-xs font-semibold">{subjek.category || 'Objektif'}</span></td>
-                    <td className="px-4 md:px-6 py-4">
-                      <div className="flex items-center justify-center gap-4">
-                        <button onClick={(e) => { e.stopPropagation(); setSelectedSubject(subjek); }} className="text-slate-400 hover:text-action-teal transition-colors" title="Lihat">
-                          <Search className="w-[18px] h-[18px]" strokeWidth={2} />
-                        </button>
-                        <button onClick={(e) => { e.stopPropagation(); setSelectedSubject(subjek); }} className="text-slate-400 hover:text-action-teal transition-colors" title="Edit">
-                          <Edit className="w-[18px] h-[18px]" strokeWidth={2} />
-                        </button>
-                        <button onClick={(e) => { e.stopPropagation(); }} className="text-slate-400 hover:text-brand-red transition-colors" title="Padam">
-                          <Trash2 className="w-[18px] h-[18px]" strokeWidth={2} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <AnimatePresence>
+            {initialSubjek.map((subjek, index) => (
+              <motion.button
+                key={subjek.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                onClick={() => setSelectedCourse({ name: subjek.name, code: subjek.code })}
+                className="bg-white border border-gray-100 p-5 rounded-xl shadow-sm hover:shadow-md hover:border-action-teal/30 transition-all text-left flex flex-col items-start gap-4 h-full relative group"
+              >
+                <div className="flex bg-action-teal/10 text-action-teal p-3 rounded-lg group-hover:bg-action-teal group-hover:text-white transition-colors">
+                  <BookOpen className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-900 leading-tight mb-2 text-sm md:text-base">{subjek.name}</h3>
+                  <div className="flex items-center gap-2 mt-auto">
+                    <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-bold font-mono inline-block">
+                      {subjek.code}
+                    </span>
+                  </div>
+                </div>
+              </motion.button>
+            ))}
+          </AnimatePresence>
         </div>
       </motion.div>
     );
   }
 
+  const courseQuestions = questions.filter(q => q.course === selectedCourse.code);
+
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-      <div className="card shadow-sm border border-gray-100 p-4 md:p-6 bg-white rounded-xl">
-        <div className="mb-6 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setSelectedSubject(null)}
-              className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-500 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div>
-              <h2 className="text-xl font-black text-charcoal flex items-center gap-2">
-                <Database className="w-6 h-6 text-brand-red" />
-                Bank Soalan
-              </h2>
-              <p className="text-xs font-bold text-gray-500 mt-1.5 flex items-center gap-1.5"><span className="text-action-teal uppercase tracking-widest">{selectedSubject.code}</span> - {selectedSubject.name}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-               <button 
-                 onClick={handleUploadClick}
-                 disabled={locked} 
-                 className="flex items-center gap-2 bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-lg font-bold text-sm shadow-sm hover:bg-gray-50 disabled:opacity-50 transition-all cursor-pointer"
-               >
-                 <FileUp className="w-4 h-4 text-action-teal" />
-                 {uploadedFile ? 'Tukar Fail CSV' : 'Muat Naik CSV'}
-               </button>
-               {uploadedFile && (
-                 <span className="text-sm font-medium text-green-600 flex items-center gap-1.5 px-2 py-1 bg-green-50 rounded-md border border-green-100" title={`${uploadedFile.name} diproses`}>
-                   <CheckCircle className="w-4 h-4" />
-                   <span className="hidden sm:inline text-xs">{uploadedFile.name}</span>
-                 </span>
-               )}
-            </div>
-
-            <input 
-               type="file" 
-               ref={fileInputRef}
-               className="hidden" 
-               accept=".csv"
-               onChange={handleFileChange}
-            />
-
-            {locked ? (
-              <span className="bg-amber-100 text-amber-700 px-3 py-1 text-xs font-bold rounded-full flex items-center gap-1">
-                <Lock className="w-3 h-3" /> Dikunci
-              </span>
-            ) : (
-              <button onClick={() => setLocked(true)} className="flex items-center gap-1.5 px-4 py-2 bg-gray-100 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-200 text-sm font-bold shadow-sm transition-colors cursor-pointer">
-                <Lock className="w-4 h-4" />
-                Kunci Soalan
-              </button>
-            )}
-          </div>
+      <div className="flex items-center gap-3 mb-6">
+        <button 
+          onClick={() => setSelectedCourse(null)}
+          className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg transition-colors mr-2"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+        <div className="p-2 bg-rose-50 text-brand-red rounded-lg">
+          <Database className="w-6 h-6" />
         </div>
-        
-        <AnimatePresence>
-          {uploadSuccessMsg && (
-            <motion.div 
-              initial={{ opacity: 0, y: -20, x: '-50%' }} 
-              animate={{ opacity: 1, y: 0, x: '-50%' }} 
-              exit={{ opacity: 0, y: -20, x: '-50%' }}
-              className="fixed top-20 left-1/2 z-[100] p-4 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between text-green-800 shadow-xl w-11/12 max-w-[400px]"
-            >
-              <div className="flex items-center gap-3">
-                <CheckCircle className="w-5 h-5 text-green-500" />
-                <p className="text-sm font-bold">Berjaya! Bank soalan telah dikemas kini daripada fail CSV anda.</p>
-              </div>
-              <button onClick={() => setUploadSuccessMsg(false)} className="text-green-500 hover:text-green-700 ml-4 cursor-pointer">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {questions.length === 0 && (
-          <div className="border border-dashed border-gray-300 p-8 rounded-xl flex flex-col items-center justify-center text-center bg-gray-50/50 mb-8 mt-4">
-            <FileUp className="w-10 h-10 text-brand-red/50 mb-3" />
-            <p className="text-[15px] font-bold text-gray-800 mb-1">Tiada Soalan Ditemui</p>
-            <p className="text-xs text-gray-500 mb-5">Sila muat naik fail CSV di atas atau tambah soalan secara manual.</p>
-            <button 
-              onClick={handleAddNew}
-              disabled={locked || isAddingNew || editingIndex !== null}
-              className="flex items-center gap-1.5 bg-action-teal text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-teal-700 transition-colors disabled:opacity-50 shadow-sm cursor-pointer"
-            >
-              <Plus className="w-4 h-4" />
-              Tambah Soalan Manual
-            </button>
-          </div>
-        )}
-
-        {questions.length > 0 && (
-          <div className="mt-8">
-            <div className="flex justify-between items-center mb-4 border-b border-gray-100 pb-2">
-              <h3 className="text-lg font-bold text-gray-800">Senarai Soalan Diproses ({questions.length})</h3>
-              <button 
-                onClick={handleAddNew}
-                disabled={locked || isAddingNew || editingIndex !== null}
-                className="flex items-center gap-1.5 bg-action-teal text-white px-4 py-2 rounded-md text-sm font-bold hover:bg-teal-700 transition-colors disabled:opacity-50 shadow-sm cursor-pointer"
-              >
-                <Plus className="w-4 h-4" />
-                Tambah Soalan
-              </button>
-            </div>
-            
-            {renderEditForm()}
-
-            <div className="grid grid-cols-1 gap-4">
-              {questions.map((q, i) => (
-                <div key={i}>
-                  <div className="border border-gray-200 rounded-lg p-5 bg-white shadow-sm hover:border-gray-300 transition-colors group">
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="font-bold text-charcoal text-[15px] pr-8">
-                        <span className="text-brand-red mr-2">{i + 1}.</span>
-                        <span className="bg-gray-100 text-gray-500 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mr-2">{q.category || 'Objektif'}</span>
-                        {q ? translateContent(q.question) : 'Soalan Tidak Sah'}
-                      </div>
-                      {!locked && editingIndex === null && !isAddingNew && (
-                        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button onClick={() => handleEdit(i)} className="p-1.5 text-gray-400 hover:text-action-teal rounded hover:bg-teal-50 cursor-pointer" title="Kemaskini">
-                            <Edit2 className="w-4 h-4" />
-                          </button>
-                          <button onClick={() => handleDelete(i)} className="p-1.5 text-gray-400 hover:text-brand-red rounded hover:bg-red-50 cursor-pointer" title="Padam">
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                    {(!q.category || q.category === 'Objektif') ? (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pl-5">
-                        {q?.options?.map((opt, optIndex) => {
-                          const isCorrect = String.fromCharCode(65 + optIndex) === (q?.answer || '').toUpperCase() || opt.trim().toLowerCase() === (q?.answer || '').trim().toLowerCase();
-                          return (
-                            <div key={optIndex} className={`p-3 rounded-lg border flex items-center gap-3 transition-colors ${
-                              isCorrect 
-                              ? 'bg-green-50/50 border-green-200 text-green-900 shadow-sm' 
-                              : 'bg-gray-50/50 border-gray-100 text-gray-600'
-                            }`}>
-                              <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold border ${
-                                isCorrect ? 'bg-green-500 border-green-600 text-white' : 'bg-white border-gray-200 text-gray-500'
-                              }`}>
-                                {String.fromCharCode(65 + optIndex)}
-                              </span>
-                              <span className={`${isCorrect ? 'font-semibold' : 'font-medium'} text-sm`}>{translateContent(opt)}</span>
-                              {isCorrect && <CheckCircle className="w-5 h-5 ml-auto text-green-500" />}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    ) : (
-                      <div className="pl-5">
-                        <div className="p-4 rounded-lg border bg-green-50/50 border-green-200 text-green-900 shadow-sm">
-                          <div className="text-xs font-bold text-green-800 mb-1 uppercase tracking-wider">Jawapan Tepat / Panduan:</div>
-                          <div className="text-sm font-medium">{q.answer}</div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Action Buttons */}
-        <div className="mt-8 pt-6 border-t border-gray-100 flex justify-end gap-3 z-10 relative">
-          <button 
-            onClick={() => {
-              setIsRandomized(true);
-              setRandomizeSuccessMsg(true);
-              setTimeout(() => setRandomizeSuccessMsg(false), 5000);
-            }}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-[6px] font-bold text-sm shadow-sm transition-all text-center cursor-pointer ${
-              isRandomized 
-                ? 'bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100' 
-                : 'bg-white border border-gray-300 hover:bg-gray-50 text-gray-700'
-            }`}
-          >
-            <Shuffle className="w-4 h-4" />
-            {isRandomized ? 'Peperiksaan Telah Dirawak' : 'Jana Kertas Secara Rawak'}
-          </button>
-          
-          <button 
-            onClick={() => {
-              setSaveSuccessMsg(true);
-              setTimeout(() => setSaveSuccessMsg(false), 5000);
-            }}
-            className="flex items-center gap-2 bg-action-teal hover:bg-teal-700 text-white px-4 md:px-8 py-2.5 rounded-[6px] font-bold text-sm shadow-sm transition-all text-center cursor-pointer"
-          >
-            <Save className="w-4 h-4" />
-            Simpan Bank Soalan
-          </button>
+        <div>
+          <h2 className="font-bold text-xl text-gray-900 tracking-tight">{selectedCourse.code} Questions</h2>
+          <p className="text-sm text-gray-500">{selectedCourse.name}</p>
         </div>
       </div>
-      
-      {/* Popups */}
-      <AnimatePresence>
-        {randomizeSuccessMsg && (
-          <motion.div 
-            key="randomize-success"
-            initial={{ opacity: 0, y: 20, x: '-50%' }} 
-            animate={{ opacity: 1, y: 0, x: '-50%' }} 
-            exit={{ opacity: 0, y: 20, x: '-50%' }}
-            className="fixed bottom-10 left-1/2 z-[100] p-4 bg-blue-50 border border-blue-200 rounded-lg flex items-start gap-4 text-blue-800 shadow-xl max-w-md w-full"
-          >
-            <div className="mt-0.5">
-              <Info className="w-5 h-5 text-blue-500" />
-            </div>
-            <div className="flex-1">
-              <h4 className="text-sm font-bold mb-1">Peperiksaan Rawak Berjaya Diaktifkan</h4>
-              <p className="text-sm text-blue-700">Setiap calon akan menerima susunan soalan yang berbeza secara rawak (Cth: Calon A mendapat Soalan 1, Calon B mendapat Soalan 4 sebagai soalan pertama mereka).</p>
-            </div>
-            <button onClick={() => setRandomizeSuccessMsg(false)} className="text-blue-500 hover:text-blue-700 cursor-pointer">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-            </button>
-          </motion.div>
-        )}
 
-        {saveSuccessMsg && (
-          <motion.div 
-            key="save-success"
-            initial={{ opacity: 0, y: -20, x: '-50%' }} 
-            animate={{ opacity: 1, y: 0, x: '-50%' }} 
-            exit={{ opacity: 0, y: -20, x: '-50%' }}
-            className="fixed top-20 left-1/2 z-[100] p-4 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between text-green-800 shadow-xl w-11/12 max-w-[400px]"
-          >
-            <div className="flex items-center gap-3">
-              <CheckCircle className="w-5 h-5 text-green-500" />
-              <p className="text-sm font-bold">Berjaya! Bank soalan telah disimpan.</p>
+      <div className="space-y-4">
+        {COURSE_CATEGORIES.map(category => {
+          const isExpanded = expandedCategory === category.id;
+          const questionsInCategory = courseQuestions.filter(q => q.category === category.id);
+
+          return (
+            <div key={category.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+              <button 
+                onClick={() => setExpandedCategory(isExpanded ? null : category.id)}
+                className="w-full flex items-center justify-between p-5 sm:p-6 bg-white hover:bg-gray-50 transition-colors text-left"
+              >
+                <div>
+                  <h3 className="font-bold text-lg text-charcoal flex items-center gap-2">
+                    {category.id}: {category.name}
+                  </h3>
+                  <p className="text-sm text-gray-500 mt-1">{questionsInCategory.length} questions</p>
+                </div>
+                <div className="p-2 bg-gray-100 rounded-full text-gray-500">
+                  {isExpanded ? <ChevronDown className="w-5 h-5"/> : <ChevronRight className="w-5 h-5"/>}
+                </div>
+              </button>
+
+              <AnimatePresence>
+                {isExpanded && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="border-t border-gray-100"
+                  >
+                    <div className="p-6">
+                      <div className="flex justify-end mb-4">
+                        <button 
+                          onClick={() => handleAddNew(category.id)}
+                          className="bg-white hover:bg-gray-50 text-action-teal border border-action-teal/30 px-3 py-1.5 text-xs font-bold rounded-md shadow-sm transition-all flex items-center gap-1.5 shrink-0"
+                        >
+                          <Plus className="w-3.5 h-3.5"/> New Question
+                        </button>
+                      </div>
+
+                      <div className="overflow-x-auto rounded-lg border border-gray-100">
+                        <table className="w-full text-left text-sm whitespace-nowrap">
+                          <thead className="bg-gray-50 border-b border-gray-100 text-xs text-gray-500 uppercase tracking-widest font-semibold">
+                            <tr>
+                              <th className="px-6 py-4 text-center">Type</th>
+                              <th className="px-6 py-4 w-1/2">Description</th>
+                              <th className="px-6 py-4 text-center">Score</th>
+                              <th className="px-6 py-4 text-center">Action</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-50">
+                            {questionsInCategory.length === 0 ? (
+                              <tr>
+                                <td colSpan={4} className="px-6 py-12 text-center text-gray-400 font-medium bg-white">No questions in this category.</td>
+                              </tr>
+                            ) : (
+                              questionsInCategory.map((q) => (
+                                <tr key={q.id} className="hover:bg-gray-50/50 bg-white">
+                                  <td className="px-6 py-4 text-center text-gray-600">{q.type}</td>
+                                  <td className="px-6 py-4 text-gray-900 whitespace-normal min-w-[200px]">{q.description}</td>
+                                  <td className="px-6 py-4 text-center text-action-teal font-bold">{q.score}</td>
+                                  <td className="px-6 py-4">
+                                    <div className="flex items-center justify-center gap-2">
+                                      <button 
+                                        onClick={() => handleEdit(q.id)}
+                                        className="p-1.5 text-gray-400 hover:text-action-teal transition-colors"
+                                        title="Edit"
+                                      >
+                                        <Edit2 className="w-4 h-4" />
+                                      </button>
+                                      <button 
+                                        onClick={() => handleDelete(q.id)}
+                                        className="p-1.5 text-gray-400 hover:text-brand-red transition-colors"
+                                        title="Delete"
+                                      >
+                                        <Trash2 className="w-4 h-4" />
+                                      </button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-            <button onClick={() => setSaveSuccessMsg(false)} className="text-green-500 hover:text-green-700 ml-4 cursor-pointer">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          )
+        })}
+      </div>
+      
+      {renderEditForm()}
     </motion.div>
   );
 };

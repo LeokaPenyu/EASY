@@ -23,6 +23,7 @@ import { AttendanceCertificateModule } from './components/AttendanceCertificateM
 import { OnlineExamModule } from './components/OnlineExamModule';
 import { ExamResultsEntry } from './components/ExamResultsEntry';
 import { QuestionBankModule } from './components/QuestionBankModule';
+import { ExamPaperGeneratorModule } from './components/ExamPaperGeneratorModule';
 import { RetestModule } from './components/RetestModule';
 import { ReportsModule } from './components/ReportsModule';
 import { ProfilDaerah } from './components/ProfilDaerah';
@@ -411,6 +412,8 @@ export default function App() {
         return <ExamResultsEntry />;
       case 'QuestionBank':
         return <QuestionBankModule />;
+      case 'ExamPaperGenerator':
+        return <ExamPaperGeneratorModule />;
       case 'Retest':
         return <RetestModule />;
       case 'Reports':

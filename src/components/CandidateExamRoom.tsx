@@ -56,7 +56,7 @@ export const CandidateExamRoom = ({ examTitle, onFinish }: { examTitle: string, 
        sharedQuestions.forEach(q => {
          const userAns = answers[q.id];
          if (userAns) {
-           if (!q.category || q.category === 'Objektif') {
+           if (q.type === 'Objective') {
              const optIndex = q.options.indexOf(userAns);
              const isCorrect = String.fromCharCode(65 + optIndex) === (q?.answer || '').toUpperCase() || userAns.trim().toLowerCase() === (q?.answer || '').trim().toLowerCase();
              if (isCorrect) correctCount++;
@@ -260,11 +260,11 @@ export const CandidateExamRoom = ({ examTitle, onFinish }: { examTitle: string, 
           className="bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-gray-100 min-h-[350px] flex flex-col"
         >
           <h3 className="text-base md:text-lg font-bold text-charcoal mb-6 leading-relaxed">
-            {translateContent(q.question)}
+            {translateContent(q.description)}
           </h3>
 
           <div className="space-y-2 mb-6 flex-1">
-            {(!q.category || q.category === 'Objektif') ? (
+            {q.type === 'Objective' ? (
               q.options.map((opt, i) => {
                 const isSelected = answers[q.id] === opt;
                 const translatedOpt = translateContent(opt);
@@ -291,7 +291,7 @@ export const CandidateExamRoom = ({ examTitle, onFinish }: { examTitle: string, 
                   value={answers[q.id] || ''}
                   onChange={(e) => handleSelectOption(e.target.value)}
                   className="w-full min-h-[150px] p-4 rounded-xl border border-gray-200 focus:border-action-teal focus:ring-1 focus:ring-action-teal outline-none resize-y text-sm text-gray-700 font-medium"
-                  placeholder={q.category === 'Q/A' ? "Taip jawapan pendek anda di sini..." : "Taip jawapan subjektif/esei anda di sini..."}
+                  placeholder="Taip jawapan subjektif/esei anda di sini..."
                 ></textarea>
                 <div className="text-right mt-2 text-xs text-gray-400 font-medium">
                   {((answers[q.id] || '').match(/\S+/g) || []).length} patah perkataan

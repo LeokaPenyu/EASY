@@ -27,10 +27,6 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isOpen, onClose, role }) => {
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const [examOpen, setExamOpen] = useState(false);
-  const [sijilOpen, setSijilOpen] = useState(false);
-  
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfileData>({
     name: 'Ahmad bin Razak',
@@ -42,8 +38,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isO
   const { t } = useLanguage();
 
   const menuItems = [
-    { id: 'Dashboard', icon: LayoutDashboard, label: t('dashboard') },
-    { id: 'Calon', icon: Users, label: t('candidates') },
+    { id: 'Dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+    { id: 'QuestionBank', icon: BookOpen, label: 'Question Collection' },
+    { id: 'ExamPaperGenerator', icon: ClipboardList, label: 'Exam Paper Generator' },
   ];
 
   return (
@@ -95,193 +92,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isO
             {item.label}
           </button>
         ))}
-
-        <div className="space-y-0.5">
-          <button
-            onClick={() => setExamOpen(!examOpen)}
-            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-[6px] text-[13px] font-bold transition-all ${
-              examOpen ? 'text-charcoal' : 'text-charcoal/80'
-            } hover:bg-gray-50 group`}
-          >
-            <div className="flex items-center gap-3">
-              <ClipboardList className={`w-[18px] h-[18px] transition-colors ${examOpen ? 'text-brand-red' : 'text-gray-400 group-hover:text-charcoal'}`} />
-              <span>{t('exam')}</span>
-            </div>
-            <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${examOpen ? 'rotate-180' : ''}`} />
-          </button>
-
-          {examOpen && (
-            <div className="pl-10 space-y-0.5 pb-1">
-              <button
-                onClick={() => setActiveView('ExamSchedule')}
-                className={`w-full text-left px-3 py-2 rounded-[6px] text-[12px] font-medium transition-all ${
-                  activeView === 'ExamSchedule' 
-                  ? 'text-brand-red font-bold bg-gray-50' 
-                  : 'text-charcoal/70 hover:text-charcoal hover:bg-gray-50'
-                }`}
-              >
-                Jadual Peperiksaan Pusat
-              </button>
-              <button
-                onClick={() => setActiveView('OnlineExam')}
-                className={`w-full text-left px-3 py-2 rounded-[6px] text-[12px] font-medium transition-all ${
-                  activeView === 'OnlineExam' 
-                  ? 'text-brand-red font-bold bg-gray-50' 
-                  : 'text-charcoal/70 hover:text-charcoal hover:bg-gray-50'
-                }`}
-              >
-                Peperiksaan Dalam Talian
-              </button>
-              <button
-                onClick={() => setActiveView('QuestionBank')}
-                className={`w-full text-left px-3 py-2 rounded-[6px] text-[12px] font-medium transition-all ${
-                  activeView === 'QuestionBank' 
-                  ? 'text-brand-red font-bold bg-gray-50' 
-                  : 'text-charcoal/70 hover:text-charcoal hover:bg-gray-50'
-                }`}
-              >
-                Bank Soalan
-              </button>
-              <button
-                onClick={() => setActiveView('Retest')}
-                className={`w-full text-left px-3 py-2 rounded-[6px] text-[12px] font-medium transition-all ${
-                  activeView === 'Retest' 
-                  ? 'text-brand-red font-bold bg-gray-50' 
-                  : 'text-charcoal/70 hover:text-charcoal hover:bg-gray-50'
-                }`}
-              >
-                Ujian Semula
-              </button>
-            </div>
-          )}
-        </div>
-
-        <button
-          onClick={() => setActiveView('Jurulatih')}
-          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[6px] text-[13px] font-bold transition-all relative group ${
-            activeView === 'Jurulatih' 
-            ? 'bg-blush-rose text-brand-red-deep shadow-sm' 
-            : 'text-charcoal/80 hover:bg-gray-50'
-          }`}
-        >
-          {activeView === 'Jurulatih' && (
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-3/4 bg-brand-red rounded-r-full" />
-          )}
-          <UserSquare2 className={`w-[18px] h-[18px] transition-colors ${activeView === 'Jurulatih' ? 'text-brand-red' : 'text-gray-400 group-hover:text-charcoal'}`} />
-          {t('trainer')}
-        </button>
-
-        {(role === UserRole.DEC || role === UserRole.SEBC) && (
-          <div className="space-y-0.5">
-            <button
-              onClick={() => setSijilOpen(!sijilOpen)}
-              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-[6px] text-[13px] font-bold transition-all ${
-                sijilOpen ? 'text-charcoal' : 'text-charcoal/80'
-              } hover:bg-gray-50 group`}
-            >
-              <div className="flex items-center gap-3">
-                <Award className={`w-[18px] h-[18px] transition-colors ${sijilOpen ? 'text-brand-red' : 'text-gray-400 group-hover:text-charcoal'}`} />
-                <span>Pengurusan Sijil</span>
-              </div>
-              <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${sijilOpen ? 'rotate-180' : ''}`} />
-            </button>
-
-            {sijilOpen && (
-              <div className="pl-10 space-y-0.5 pb-1">
-                <button
-                  onClick={() => setActiveView('CertificateRenewal')}
-                  className={`w-full text-left px-3 py-2 rounded-[6px] text-[12px] font-medium transition-all ${
-                    activeView === 'CertificateRenewal' 
-                    ? 'text-brand-red font-bold bg-gray-50' 
-                    : 'text-charcoal/70 hover:text-charcoal hover:bg-gray-50'
-                  }`}
-                >
-                  Pembaharuan Sijil
-                </button>
-                <button
-                  onClick={() => setActiveView('AttendanceCertificate')}
-                  className={`w-full text-left px-3 py-2 rounded-[6px] text-[12px] font-medium transition-all ${
-                    activeView === 'AttendanceCertificate' 
-                    ? 'text-brand-red font-bold bg-gray-50' 
-                    : 'text-charcoal/70 hover:text-charcoal hover:bg-gray-50'
-                  }`}
-                >
-                  Sijil Kehadiran
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-
-        <div className="space-y-0.5">
-          <button
-            onClick={() => setSettingsOpen(!settingsOpen)}
-            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-[6px] text-[13px] font-bold transition-all ${
-              settingsOpen ? 'text-charcoal' : 'text-charcoal/80'
-            } hover:bg-gray-50 group`}
-          >
-            <div className="flex items-center gap-3">
-              <Settings className={`w-[18px] h-[18px] transition-colors ${settingsOpen ? 'text-brand-red' : 'text-gray-400 group-hover:text-charcoal'}`} />
-              <span>Tetapan</span>
-            </div>
-            <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${settingsOpen ? 'rotate-180' : ''}`} />
-          </button>
-
-          {settingsOpen && (
-            <div className="pl-10 space-y-0.5 pb-1">
-              {['Profil Daerah', 'Profil Subjek', 'Peranan Pengguna', 'Profil Pengguna', 'Tetapan Am'].map(item => (
-                <button
-                  key={item}
-                  onClick={() => {
-                    if (item === 'Profil Daerah') setActiveView('ProfilDaerah');
-                    if (item === 'Profil Subjek') setActiveView('ProfilSubjek');
-                    if (item === 'Profil Pengguna') setActiveView('ProfilPengguna');
-                    if (item === 'Peranan Pengguna') setActiveView('PerananPengguna');
-                    if (item === 'Tetapan Am') setActiveView('TetapanAm');
-                  }}
-                  className={`w-full text-left px-3 py-2 rounded-[6px] text-[12px] font-medium transition-all ${
-                    (activeView === 'ProfilDaerah' && item === 'Profil Daerah') ||
-                    (activeView === 'ProfilSubjek' && item === 'Profil Subjek') ||
-                    (activeView === 'ProfilPengguna' && item === 'Profil Pengguna') ||
-                    (activeView === 'PerananPengguna' && item === 'Peranan Pengguna') ||
-                    (activeView === 'TetapanAm' && item === 'Tetapan Am')
-                    ? 'text-charcoal font-bold bg-gray-50' : 'text-charcoal/70 hover:text-charcoal hover:bg-gray-50'
-                  }`}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <button
-          onClick={() => setActiveView('Reports')}
-          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[6px] text-[13px] font-bold transition-all relative group ${
-            activeView === 'Reports' 
-            ? 'bg-blush-rose text-brand-red-deep shadow-sm' 
-            : 'text-charcoal/80 hover:bg-gray-50'
-          }`}
-        >
-          {activeView === 'Reports' && (
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-3/4 bg-brand-red rounded-r-full" />
-          )}
-          <BarChart className={`w-[18px] h-[18px] transition-colors ${activeView === 'Reports' ? 'text-brand-red' : 'text-gray-400 group-hover:text-charcoal'}`} />
-          Laporan & Statistik
-        </button>
       </nav>
-
-      {(role === UserRole.DEC || role === UserRole.SEC) && (
-        <div className="p-3 border-t border-gray-100 mt-auto">
-          <button 
-            onClick={() => setActiveView('ExamApplication')}
-            className="w-full btn-primary justify-center text-[13px] py-2"
-          >
-            <Plus className="w-4 h-4" />
-            {t('examApplication')}
-          </button>
-        </div>
-      )}
     </div>
     
     <UserProfileModal 

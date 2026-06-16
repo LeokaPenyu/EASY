@@ -1,21 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Building2, User, Shield, ArrowRight, BookOpen } from 'lucide-react';
+import { Building2, User, Shield, BookOpen } from 'lucide-react';
 
 interface FrontPageProps {
   onSelectRole: (role: 'coordinator' | 'candidate') => void;
 }
 
 export const FrontPage: React.FC<FrontPageProps> = ({ onSelectRole }) => {
-  const [loginType, setLoginType] = useState<'candidate' | 'coordinator'>('candidate');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSelectRole(loginType);
-  };
-
   return (
     <div className="min-h-screen bg-surface-cream flex flex-col md:flex-row selection:bg-red-100">
       
@@ -54,47 +45,23 @@ export const FrontPage: React.FC<FrontPageProps> = ({ onSelectRole }) => {
           </div>
           
           <AnimatePresence mode="wait">
-            {loginType === 'coordinator' ? (
-              <motion.div
-                key="coordinator"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-              >
-                <h1 className="text-2xl lg:text-3xl xl:text-4xl font-black text-white tracking-tight leading-tight mb-3">
-                  <span className="notranslate" translate="no">EASY</span> <br />
-                  <span className="text-red-200 text-lg lg:text-xl xl:text-2xl font-bold tracking-normal block mt-1">
-                    Examination <br /> 
-                    Administration <br /> 
-                    System
-                  </span>
-                </h1>
-                <p className="text-red-100/80 font-medium text-sm xl:text-base max-w-sm mt-4 leading-relaxed">
-                  Sistem pengurusan peperiksaan rasmi Bulan Sabit Merah Malaysia, Cawangan Sarawak.
-                </p>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="candidate"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-              >
-                <h1 className="text-2xl lg:text-3xl xl:text-4xl font-black text-white tracking-tight leading-tight mb-3">
-                  Portal Calon <br />
-                  <span className="text-red-200 text-lg lg:text-xl xl:text-2xl font-bold tracking-normal block mt-1">
-                    Bulan Sabit <br /> 
-                    Merah <br /> 
-                    Malaysia
-                  </span>
-                </h1>
-                <p className="text-red-100/80 font-medium text-sm xl:text-base max-w-sm mt-4 leading-relaxed">
-                  Semak jadual peperiksaan, duduki peperiksaan, dan muat turun sijil digital anda.
-                </p>
-              </motion.div>
-            )}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+            >
+              <h1 className="text-2xl lg:text-3xl xl:text-4xl font-black text-white tracking-tight leading-tight mb-3">
+                <span className="notranslate" translate="no">EASY</span> <br />
+                <span className="text-red-200 text-lg lg:text-xl xl:text-2xl font-bold tracking-normal block mt-1">
+                  Examination <br /> 
+                  System
+                </span>
+              </h1>
+              <p className="text-red-100/80 font-medium text-sm xl:text-base max-w-sm mt-4 leading-relaxed">
+                Sistem pengurusan peperiksaan rasmi Bulan Sabit Merah Malaysia, Cawangan Sarawak.
+              </p>
+            </motion.div>
           </AnimatePresence>
         </div>
 
@@ -118,7 +85,7 @@ export const FrontPage: React.FC<FrontPageProps> = ({ onSelectRole }) => {
         >
           
           {/* Logo */}
-          <div className="w-28 h-28 bg-transparent flex items-center justify-center mb-5 relative">
+          <div className="w-28 h-28 bg-transparent flex items-center justify-center mb-8 relative">
             <img 
               src="https://api.mrcscommunity.org.my/uploads/event/20241025-5d0jbb-mrcs-logo-roundel.png" 
               alt="MRCS Logo" 
@@ -130,101 +97,27 @@ export const FrontPage: React.FC<FrontPageProps> = ({ onSelectRole }) => {
             />
           </div>
           
-          <h2 className="text-lg font-bold text-gray-900 mb-6 tracking-tight">Red Crescent</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-8 tracking-tight text-center">Red Crescent</h2>
 
-          {/* Toggle Tabs */}
-          <div className="w-full relative flex bg-gray-200/60 p-1.5 rounded-lg mb-8 shadow-inner">
-            <button 
-              type="button"
-              onClick={() => setLoginType('candidate')} 
-              className={`flex-1 py-2 text-xs sm:text-sm font-bold z-10 transition-colors flex items-center justify-center gap-2 ${loginType === 'candidate' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
+          <div className="w-full space-y-4">
+            <motion.button 
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => onSelectRole('candidate')}
+              className="w-full bg-white border border-brand-red text-brand-red hover:bg-red-50 font-bold py-3 px-4 rounded-xl transition-all shadow-sm text-sm sm:text-base flex items-center justify-center gap-3"
             >
-              <User className="w-4 h-4" /> Calon Awam
-            </button>
-            <button 
-              type="button"
-              onClick={() => setLoginType('coordinator')} 
-              className={`flex-1 py-2 text-xs sm:text-sm font-bold z-10 transition-colors flex items-center justify-center gap-2 ${loginType === 'coordinator' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
-            >
-              <Building2 className="w-4 h-4" /> Pentadbir
-            </button>
+              <User className="w-5 h-5" /> Calon / Umum
+            </motion.button>
             
-            {/* Animated Tab Background */}
-            <div className="absolute inset-0 p-1.5 pointer-events-none">
-              <motion.div 
-                className="w-1/2 h-full bg-white rounded-md shadow-[0_2px_8px_-2px_rgba(0,0,0,0.1)]"
-                animate={{ x: loginType === 'candidate' ? '0%' : '100%' }}
-                transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}
-              />
-            </div>
+            <motion.button 
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => onSelectRole('coordinator')}
+              className="w-full bg-brand-red hover:bg-brand-red-deep text-white font-bold py-3 px-4 rounded-xl transition-all shadow-sm text-sm sm:text-base flex items-center justify-center gap-3"
+            >
+              <Building2 className="w-5 h-5" /> Pentadbir
+            </motion.button>
           </div>
-
-          {/* Form */}
-          <form className="w-full space-y-3" onSubmit={handleLogin}>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={loginType}
-                initial={{ opacity: 0, x: loginType === 'candidate' ? -10 : 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: loginType === 'candidate' ? 10 : -10 }}
-                transition={{ duration: 0.2 }}
-                className="space-y-3"
-              >
-                <div>
-                  <input 
-                    type="text" 
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder={loginType === 'candidate' ? "ID SarawakID / No K/P" : "ID Pentadbir"} 
-                    className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:bg-white transition-all text-sm font-medium text-gray-900 placeholder:text-gray-400"
-                    required
-                  />
-                </div>
-                
-                <div className="relative">
-                  <input 
-                    type="password" 
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Kata Laluan" 
-                    className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:bg-white transition-all text-sm font-medium text-gray-900 placeholder:text-gray-400"
-                    required
-                  />
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
-                      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                    </svg>
-                  </div>
-                </div>
-
-                <div className="flex justify-end">
-                  <a href="#" className="flex items-center text-[11px] font-bold text-gray-500 hover:text-red-700 transition-colors">
-                    Lupa Kata Laluan?
-                  </a>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-
-            <div className="pt-2 flex flex-col gap-2.5">
-              <motion.button 
-                whileHover={{ scale: 1.01, translateY: -1 }}
-                whileTap={{ scale: 0.98 }}
-                type="submit"
-                className="w-full bg-brand-red hover:bg-brand-red-deep text-white font-bold py-2.5 px-4 rounded-[6px] transition-all shadow-sm hover:shadow-md text-sm flex items-center justify-center gap-2 group"
-              >
-                Log Masuk {loginType === 'candidate' ? 'SarawakID' : 'Sistem'}
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </motion.button>
-              
-              {loginType === 'candidate' && (
-                <button type="button" className="w-full bg-white border border-gray-200 text-charcoal font-bold py-2 px-4 rounded-[6px] hover:bg-gray-50 transition-colors text-sm shadow-sm">
-                  Daftar Akaun Baru
-                </button>
-              )}
-            </div>
-          </form>
-
         </motion.div>
       </div>
     </div>
