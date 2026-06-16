@@ -400,7 +400,7 @@ export const PerananPengguna = () => {
           <motion.div 
             initial={{ scale: 0.95, opacity: 0 }} 
             animate={{ scale: 1, opacity: 1 }} 
-            className="bg-white shadow-xl rounded-xl w-full max-w-5xl flex flex-col overflow-hidden max-h-[90vh]"
+            className="bg-white shadow-xl rounded-xl w-full max-w-5xl flex flex-col overflow-hidden h-[90vh] md:h-[85vh]"
           >
             {/* Modal Header */}
             <div className="px-4 md:px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white shrink-0">
@@ -411,10 +411,10 @@ export const PerananPengguna = () => {
             </div>
             
             {/* Modal Content - Split View */}
-            <div className="p-4 md:p-6 flex flex-col md:flex-row gap-4 md:gap-6 bg-gray-50/30 flex-1 min-h-0 overflow-hidden">
+            <div className="p-4 md:p-6 flex flex-col md:flex-row gap-4 md:gap-6 bg-gray-50/30 flex-1 min-h-0 overflow-y-auto md:overflow-hidden">
                 
               {/* Left Side: Search & User List */}
-              <div className="flex-1 bg-white border border-gray-200 rounded-xl flex flex-col h-[50vh] md:h-full min-h-0 overflow-hidden shadow-sm">
+              <div className="flex-[3] bg-white border border-gray-200 rounded-xl flex flex-col min-h-[500px] md:min-h-0 md:h-full overflow-hidden shadow-sm">
                 {/* Search Form */}
                 <div className="bg-gray-50 p-5 border-b border-gray-200 text-sm space-y-4 shrink-0">
                    <div className="flex items-center gap-4">
@@ -445,19 +445,20 @@ export const PerananPengguna = () => {
 
                 {/* Left Pagination */}
                 <div className="flex justify-between items-center p-3 text-sm text-gray-600 border-b border-gray-200 bg-white shrink-0">
-                  <div className="font-medium text-gray-500 text-xs">Jumlah Rekod: 30</div>
+                  <div className="font-medium text-gray-500 text-xs">Jumlah Rekod: {mockSystemUsers.filter(u => !selectedUsers.find(su => su.id === u.id)).filter(u => u.name.toLowerCase().includes(filterName.toLowerCase()) && u.email.toLowerCase().includes(filterEmail.toLowerCase())).length}</div>
                   <div className="flex items-center gap-2 flex-wrap">
                     <button className="px-2 py-1 text-xs border border-gray-200 rounded text-gray-400 cursor-not-allowed">Pertama</button>
                     <button className="px-2 py-1 text-xs border border-gray-200 rounded text-gray-400 cursor-not-allowed">Sblm</button>
-                    <span className="text-xs">Hal <input type="text" value="1" className="w-8 border border-gray-300 text-center mx-1 py-0.5 rounded" readOnly /> dari 2</span>
-                    <button className="px-2 py-1 text-xs border border-gray-200 rounded text-action-teal hover:bg-gray-50 transition-colors">Setrnya</button>
-                    <button className="px-2 py-1 text-xs border border-gray-200 rounded text-action-teal hover:bg-gray-50 transition-colors">Terakhir</button>
+                    <span className="text-xs">Hal <input type="text" value="1" className="w-8 border border-gray-300 text-center mx-1 py-0.5 rounded" readOnly /> dari 1</span>
+                    <button className="px-2 py-1 text-xs border border-gray-200 rounded text-gray-400 cursor-not-allowed">Setrnya</button>
+                    <button className="px-2 py-1 text-xs border border-gray-200 rounded text-gray-400 cursor-not-allowed">Terakhir</button>
                   </div>
                 </div>
 
                 {/* Left Table */}
-                <div className="flex-1 overflow-auto bg-white min-h-0">
+                <div className="flex-1 overflow-y-auto bg-white min-h-0">
                   <table className="w-full text-left border-collapse text-sm">
+
                     <thead className="bg-gray-50 text-gray-500 uppercase text-xs font-semibold tracking-wider border-b border-gray-200 sticky top-0 z-10 shadow-sm">
                       <tr>
                         <th className="px-4 py-3 border-r border-gray-100 text-center w-12">No.</th>
@@ -468,6 +469,7 @@ export const PerananPengguna = () => {
                     <tbody>
                       {mockSystemUsers
                         .filter(u => !selectedUsers.find(su => su.id === u.id))
+                        .filter(u => u.name.toLowerCase().includes(filterName.toLowerCase()) && u.email.toLowerCase().includes(filterEmail.toLowerCase()))
                         .map((user, idx) => (
                         <tr key={user.id} className="border-b border-gray-50 hover:bg-teal-50/30 transition-colors">
                           <td className="px-4 py-3 border-r border-gray-50 text-center text-gray-500 font-medium">{idx + 1}</td>
@@ -489,27 +491,17 @@ export const PerananPengguna = () => {
                     </tbody>
                   </table>
                 </div>
-
-                {/* Footer Buttons for Modal */}
-                <div className="p-4 border-t border-gray-200 flex justify-end gap-3 bg-gray-50 shrink-0">
-                   <button onClick={handleCloseModal} className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors shadow-sm">
-                     Batal
-                   </button>
-                   <button onClick={handleSaveSelection} className="px-4 py-2 bg-action-teal text-white rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-teal-700 transition-colors shadow-sm">
-                     <Save className="w-4 h-4" /> Simpan Pilihan
-                   </button>
-                </div>
               </div>
 
               {/* Right Side: Selected Users */}
-              <div className="w-full md:w-2/5 border border-gray-200 rounded-xl flex flex-col h-[50vh] md:h-full min-h-0 overflow-hidden shadow-sm bg-white">
+              <div className="w-full md:w-2/5 border border-gray-200 rounded-xl flex flex-col min-h-[400px] md:min-h-0 md:h-full overflow-hidden shadow-sm bg-white">
                 <div className="bg-gray-50 px-5 py-4 border-b border-gray-200 text-sm font-bold text-gray-800 flex justify-between items-center shrink-0">
                   <span>Selected Users</span>
                   <span className="bg-brand-red text-white text-xs px-2 py-0.5 rounded-full">{selectedUsers.length}</span>
                 </div>
                 
                 {/* Right Table */}
-                <div className="flex-1 overflow-auto bg-white min-h-0">
+                <div className="flex-1 overflow-y-auto bg-white min-h-0">
                   <table className="w-full text-left border-collapse text-sm">
                     <thead className="bg-gray-50 text-gray-500 uppercase text-xs font-semibold tracking-wider border-b border-gray-200 sticky top-0 z-10 shadow-sm">
                       <tr>
@@ -552,6 +544,16 @@ export const PerananPengguna = () => {
 
               </div>
 
+            </div>
+            
+            {/* Modal Footer */}
+            <div className="px-4 md:px-6 py-4 border-t border-gray-200 flex justify-end gap-3 bg-gray-50 shrink-0">
+               <button onClick={handleCloseModal} className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors shadow-sm">
+                 Batal
+               </button>
+               <button onClick={handleSaveSelection} className="px-4 py-2 bg-action-teal text-white rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-teal-700 transition-colors shadow-sm">
+                 <Save className="w-4 h-4" /> Simpan Pilihan
+               </button>
             </div>
           </motion.div>
         </div>

@@ -113,16 +113,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isO
           {examOpen && (
             <div className="pl-10 space-y-0.5 pb-1">
               <button
-                onClick={() => setActiveView('ExamProfile')}
-                className={`w-full text-left px-3 py-2 rounded-[6px] text-[12px] font-medium transition-all ${
-                  activeView === 'ExamProfile' 
-                  ? 'text-brand-red font-bold bg-gray-50' 
-                  : 'text-charcoal/70 hover:text-charcoal hover:bg-gray-50'
-                }`}
-              >
-                Profil Peperiksaan
-              </button>
-              <button
                 onClick={() => setActiveView('ExamSchedule')}
                 className={`w-full text-left px-3 py-2 rounded-[6px] text-[12px] font-medium transition-all ${
                   activeView === 'ExamSchedule' 
@@ -222,21 +212,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isO
             )}
           </div>
         )}
-
-        <button
-          onClick={() => setActiveView('Panduan')}
-          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[6px] text-[13px] font-bold transition-all relative group ${
-            activeView === 'Panduan' 
-            ? 'bg-blush-rose text-brand-red-deep shadow-sm' 
-            : 'text-charcoal/80 hover:bg-gray-50'
-          }`}
-        >
-          {activeView === 'Panduan' && (
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-3/4 bg-brand-red rounded-r-full" />
-          )}
-          <BookOpen className={`w-[18px] h-[18px] transition-colors ${activeView === 'Panduan' ? 'text-brand-red' : 'text-gray-400 group-hover:text-charcoal'}`} />
-          {t('guide')}
-        </button>
 
         <div className="space-y-0.5">
           <button

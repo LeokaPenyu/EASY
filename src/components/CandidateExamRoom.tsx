@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { CheckCircle, Clock, AlertTriangle, ArrowRight, ArrowLeft, Info, Play, AlertCircle, Camera, CheckSquare, Square } from 'lucide-react';
+import { CheckCircle, Clock, AlertTriangle, ArrowRight, ArrowLeft, Info, Play, AlertCircle, CheckSquare, XCircle, Ban } from 'lucide-react';
 import { sharedQuestions, Question } from '../data/mockQuestions';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -12,6 +12,11 @@ export const CandidateExamRoom = ({ examTitle, onFinish }: { examTitle: string, 
   const [timeLeft, setTimeLeft] = useState(45 * 60); // 45 minutes
   const { translateContent } = useLanguage();
 
+  const [showResults, setShowResults] = useState(false);
+  const [score, setScore] = useState(0);
+  const [passFail, setPassFail] = useState('');
+  const [cooldownTime, setCooldownTime] = useState<Date | null>(null);
+
   // Verification State
   const [checks, setChecks] = useState({
     doc: false,
@@ -19,6 +24,19 @@ export const CandidateExamRoom = ({ examTitle, onFinish }: { examTitle: string, 
   });
 
   const allChecksPassed = checks.doc && checks.id;
+
+  useEffect(() => {
+    // Check localStorage for cooldown
+    const cooldown = localStorage.getItem(`retest_cooldown_${examTitle}`);
+    if (cooldown) {
+      const cooldownDate = new Date(cooldown);
+      if (new Date() < cooldownDate) {
+        setCooldownTime(cooldownDate);
+      } else {
+        localStorage.removeItem(`retest_cooldown_${examTitle}`);
+      }
+    }
+  }, [examTitle]);
 
   useEffect(() => {
     let timer: any;
@@ -32,9 +50,41 @@ export const CandidateExamRoom = ({ examTitle, onFinish }: { examTitle: string, 
     return () => clearInterval(timer);
   }, [hasStarted, submitted, timeLeft]);
 
+  useEffect(() => {
+     if (submitted && !showResults) {
+       let correctCount = 0;
+       sharedQuestions.forEach(q => {
+         const userAns = answers[q.id];
+         if (userAns) {
+           if (!q.category || q.category === 'Objektif') {
+             const optIndex = q.options.indexOf(userAns);
+             const isCorrect = String.fromCharCode(65 + optIndex) === (q?.answer || '').toUpperCase() || userAns.trim().toLowerCase() === (q?.answer || '').trim().toLowerCase();
+             if (isCorrect) correctCount++;
+           } else {
+             // For subjective/QA, basic loose check or just give point if not empty for mock purposes
+             const isCorrect = userAns.trim().toLowerCase() === (q?.answer || '').trim().toLowerCase();
+             if (isCorrect || userAns.trim().length > 5) correctCount++;
+           }
+         }
+       });
+       const percentage = Math.round((correctCount / sharedQuestions.length) * 100);
+       setScore(percentage);
+       if (percentage >= 50) { 
+         setPassFail('LULUS');
+       } else {
+         setPassFail('GAGAL');
+         // Set 1 hour cooldown
+         const oneHourLater = new Date(new Date().getTime() + 60 * 60 * 1000);
+         localStorage.setItem(`retest_cooldown_${examTitle}`, oneHourLater.toISOString());
+         setCooldownTime(oneHourLater);
+       }
+       setShowResults(true);
+     }
+  }, [submitted, showResults, answers, examTitle]);
+
   const q = sharedQuestions[currentQIndex];
 
-  if (!q) {
+  if (!q && !showResults && !cooldownTime) {
     return (
       <div className="p-4 md:p-8 text-center bg-white rounded-xl shadow-sm border border-gray-100 max-w-2xl mx-auto mt-12">
         <AlertTriangle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
@@ -55,14 +105,46 @@ export const CandidateExamRoom = ({ examTitle, onFinish }: { examTitle: string, 
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
-  if (submitted) {
+  if (cooldownTime) {
     return (
       <div className="max-w-2xl mx-auto p-4 md:p-8 bg-white shadow-xl border border-gray-100 rounded-2xl flex flex-col items-center mt-12 text-center">
-        <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mb-6">
-          <CheckCircle className="w-10 h-10 text-green-500" />
+        <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mb-6">
+          <Ban className="w-10 h-10 text-amber-500" />
         </div>
-        <h2 className="text-2xl font-bold text-charcoal mb-2">{translateContent('Peperiksaan Selesai')}</h2>
-        <p className="text-gray-500 mb-8 max-w-md">{translateContent('Terima kasih kerana melengkapkan peperiksaan. Jawapan anda telah direkodkan. Sila rujuk Penyelaras Peperiksaan untuk maklumat lanjut.')}</p>
+        <h2 className="text-2xl font-bold text-charcoal mb-2">{translateContent('Peperiksaan Dikunci Sementara')}</h2>
+        <p className="text-gray-500 mb-6 max-w-md">
+          {translateContent(`Oleh kerana anda tidak melepasi markah lulus, peperiksaan dihentikan untuk sementara. Sila cuba lagi selepas tempoh menunggu (1 jam).`)}
+        </p>
+        <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-xl mb-8 font-medium">
+          Dibenarkan mencuba lagi pada: {cooldownTime.toLocaleTimeString()}
+        </div>
+        <button onClick={onFinish} className="bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-4 md:px-6 rounded-lg transition-colors w-full max-w-sm">
+          {translateContent('Kembali ke Papan Pemuka')}
+        </button>
+      </div>
+    );
+  }
+
+  if (showResults) {
+    return (
+      <div className="max-w-2xl mx-auto p-4 md:p-8 bg-white shadow-xl border border-gray-100 rounded-2xl flex flex-col items-center mt-12 text-center">
+        <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 ${passFail === 'LULUS' ? 'bg-green-50' : 'bg-red-50'}`}>
+          {passFail === 'LULUS' ? <CheckCircle className="w-10 h-10 text-green-500" /> : <XCircle className="w-10 h-10 text-brand-red" />}
+        </div>
+        <h2 className="text-2xl font-bold text-charcoal mb-2">{translateContent('Rumusan Peperiksaan')}</h2>
+        <p className="text-gray-500 mb-6 max-w-md">{translateContent('Terima kasih kerana melengkapkan peperiksaan. Penilaian anda telah direkodkan.')}</p>
+        
+        <div className="w-full max-w-xs mb-8 flex flex-col items-center">
+          <div className="text-sm font-semibold uppercase tracking-wider text-gray-400 mb-1">Mata Penilaian</div>
+          <div className={`text-5xl font-black mb-2 ${passFail === 'LULUS' ? 'text-green-600' : 'text-brand-red'}`}>{score}%</div>
+          <div className={`px-4 py-1 rounded-full text-sm font-bold ${passFail === 'LULUS' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-brand-red'}`}>
+            {passFail}
+          </div>
+          {passFail === 'GAGAL' && (
+            <p className="mt-4 text-xs font-semibold text-brand-red">Anda perlu menunggu selama 1 jam sebelum mengambil peperiksaan semula.</p>
+          )}
+        </div>
+
         <button onClick={onFinish} className="bg-brand-red hover:bg-brand-red-deep text-white font-bold py-3 px-4 md:px-6 rounded-lg transition-colors w-full max-w-sm">
           {translateContent('Kembali ke Papan Pemuka')}
         </button>
@@ -182,26 +264,40 @@ export const CandidateExamRoom = ({ examTitle, onFinish }: { examTitle: string, 
           </h3>
 
           <div className="space-y-2 mb-6 flex-1">
-            {q.options.map((opt, i) => {
-              const isSelected = answers[q.id] === opt;
-              const translatedOpt = translateContent(opt);
-              return (
-                <button
-                  key={i}
-                  onClick={() => handleSelectOption(opt)}
-                  className={`w-full text-left p-3 rounded-xl border transition-all flex items-center gap-3 ${
-                    isSelected ? 'border-action-teal bg-teal-50/30' : 'border-gray-200 hover:border-action-teal/40 hover:bg-gray-50'
-                  }`}
-                >
-                  <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${isSelected ? 'border-action-teal' : 'border-gray-300'}`}>
-                    {isSelected && <div className="w-2 h-2 rounded-full bg-action-teal" />}
-                  </div>
-                  <span className={`text-sm ${isSelected ? 'text-charcoal font-bold' : 'text-gray-600'}`}>
-                    {translatedOpt}
-                  </span>
-                </button>
-              )
-            })}
+            {(!q.category || q.category === 'Objektif') ? (
+              q.options.map((opt, i) => {
+                const isSelected = answers[q.id] === opt;
+                const translatedOpt = translateContent(opt);
+                return (
+                  <button
+                    key={i}
+                    onClick={() => handleSelectOption(opt)}
+                    className={`w-full text-left p-3 rounded-xl border transition-all flex items-center gap-3 ${
+                      isSelected ? 'border-action-teal bg-teal-50/30' : 'border-gray-200 hover:border-action-teal/40 hover:bg-gray-50'
+                    }`}
+                  >
+                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${isSelected ? 'border-action-teal' : 'border-gray-300'}`}>
+                      {isSelected && <div className="w-2 h-2 rounded-full bg-action-teal" />}
+                    </div>
+                    <span className={`text-sm ${isSelected ? 'text-charcoal font-bold' : 'text-gray-600'}`}>
+                      {translatedOpt}
+                    </span>
+                  </button>
+                )
+              })
+            ) : (
+              <div className="w-full">
+                <textarea
+                  value={answers[q.id] || ''}
+                  onChange={(e) => handleSelectOption(e.target.value)}
+                  className="w-full min-h-[150px] p-4 rounded-xl border border-gray-200 focus:border-action-teal focus:ring-1 focus:ring-action-teal outline-none resize-y text-sm text-gray-700 font-medium"
+                  placeholder={q.category === 'Q/A' ? "Taip jawapan pendek anda di sini..." : "Taip jawapan subjektif/esei anda di sini..."}
+                ></textarea>
+                <div className="text-right mt-2 text-xs text-gray-400 font-medium">
+                  {((answers[q.id] || '').match(/\S+/g) || []).length} patah perkataan
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center justify-between pt-6 border-t border-gray-100">

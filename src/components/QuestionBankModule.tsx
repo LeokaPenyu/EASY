@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Lock, FileUp, CheckCircle, Database, Edit2, Trash2, Plus, Shuffle, Save, Info, ArrowLeft, Settings, Edit } from 'lucide-react';
+import { Lock, FileUp, CheckCircle, Database, Edit2, Trash2, Plus, Shuffle, Save, Info, ArrowLeft, Settings, Edit, X, CircleDot, CheckSquare, List, Type, Bold, Italic, Underline, AlignLeft, GripVertical, Check, Search } from 'lucide-react';
 import Papa from 'papaparse';
 import { sharedQuestions, updateSharedQuestions, Question } from '../data/mockQuestions';
 import { useLanguage } from '../context/LanguageContext';
@@ -11,16 +11,18 @@ interface Subjek {
   code: string;
   duration: string;
   languages: string[];
+  questionCount?: number;
+  category?: string;
 }
 
 const initialSubjek: Subjek[] = [
-  { id: '1', name: 'Pertolongan Cemas Asas dan CPR', code: '800/2', duration: '14', languages: ['BI', 'BM'] },
-  { id: '2', name: 'Pertolongan Cemas Asas, CPR dan AED', code: 'CBFA1021', duration: '14', languages: ['BI', 'BM', 'BC'] },
-  { id: '3', name: 'Pendidikan Palang Merah dan Bulan Sabit Merah', code: 'CERC1011', duration: '8', languages: ['BI', 'BM'] },
-  { id: '4', name: 'Pendidikan Kesihatan', code: 'CHED1031', duration: '8', languages: ['BI', 'BM'] },
-  { id: '5', name: 'Rawatan Rumah', code: 'CHNU1041', duration: '8', languages: ['BI', 'BM'] },
-  { id: '6', name: 'PERTOLONGAN CEMAS LANJUTAN, CPR & AED', code: 'PAFA1042', duration: '18 JAM', languages: ['BI', 'BM'] },
-  { id: '7', name: 'PENGENALAN PERTOLONGAN CEMAS, CPR & AED', code: 'PIFA 1021', duration: '8 JAM', languages: ['BI', 'BM'] },
+  { id: '1', name: 'Pertolongan Cemas Asas dan CPR', code: '800/2', duration: '14', languages: ['BI', 'BM'], questionCount: 40, category: 'Objektif' },
+  { id: '2', name: 'Pertolongan Cemas Asas, CPR dan AED', code: 'CBFA1021', duration: '14', languages: ['BI', 'BM', 'BC'], questionCount: 60, category: 'Objektif & Amali' },
+  { id: '3', name: 'Pendidikan Palang Merah dan Bulan Sabit Merah', code: 'CERC1011', duration: '8', languages: ['BI', 'BM'], questionCount: 20, category: 'Objektif' },
+  { id: '4', name: 'Pendidikan Kesihatan', code: 'CHED1031', duration: '8', languages: ['BI', 'BM'], questionCount: 25, category: 'Objektif' },
+  { id: '5', name: 'Rawatan Rumah', code: 'CHNU1041', duration: '8', languages: ['BI', 'BM'], questionCount: 30, category: 'Subjektif' },
+  { id: '6', name: 'PERTOLONGAN CEMAS LANJUTAN, CPR & AED', code: 'PAFA1042', duration: '18 JAM', languages: ['BI', 'BM'], questionCount: 50, category: 'Objektif & Amali' },
+  { id: '7', name: 'PENGENALAN PERTOLONGAN CEMAS, CPR & AED', code: 'PIFA 1021', duration: '8 JAM', languages: ['BI', 'BM'], questionCount: 15, category: 'Objektif' },
 ];
 
 export const QuestionBankModule = () => {
@@ -116,7 +118,17 @@ export const QuestionBankModule = () => {
   const handleEdit = (index: number) => {
     if (locked) return;
     setEditingIndex(index);
-    setEditForm({ ...questions[index] });
+    const q = { ...questions[index] };
+    
+    // Convert full text answer to A, B, C, D if needed
+    if (q.answer && !['A', 'B', 'C', 'D'].includes(q.answer.toUpperCase())) {
+      const optIndex = q.options.findIndex(opt => opt.trim().toLowerCase() === q.answer.trim().toLowerCase());
+      if (optIndex >= 0) {
+        q.answer = String.fromCharCode(65 + optIndex);
+      }
+    }
+    
+    setEditForm(q);
   };
 
   const saveEdit = () => {
@@ -126,17 +138,19 @@ export const QuestionBankModule = () => {
       setQuestions(newQ);
       setEditingIndex(null);
       setEditForm(null);
+      setIsAddingNew(false);
     }
   };
 
   const cancelEdit = () => {
     setEditingIndex(null);
     setEditForm(null);
+    setIsAddingNew(false);
   };
 
   const handleAddNew = () => {
     setIsAddingNew(true);
-    setEditForm({ id: 'q_' + Math.random().toString(36).substr(2, 9), question: '', options: ['', '', '', ''], answer: '' });
+    setEditForm({ id: 'q_' + Math.random().toString(36).substr(2, 9), question: '', options: ['', '', '', ''], answer: '', category: 'Objektif' });
     setEditingIndex(-1);
   };
 
@@ -152,55 +166,93 @@ export const QuestionBankModule = () => {
   const renderEditForm = () => {
     if (!editForm) return null;
     return (
-      <div className="border border-brand-red/20 rounded-lg p-5 bg-red-50/30 shadow-sm mb-4">
-        <h4 className="font-bold text-brand-red mb-4">{isAddingNew ? 'Tambah Soalan Baru' : 'Kemaskini Soalan'}</h4>
-        <div className="space-y-4">
-          <div>
-            <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Soalan</label>
-            <textarea 
-              value={editForm.question}
-              onChange={(e) => setEditForm({...editForm, question: e.target.value})}
-              className="w-full border border-gray-200 rounded-md p-2.5 text-sm focus:border-brand-red focus:ring-1 focus:ring-brand-red/20 outline-none"
-              rows={2}
-              placeholder="Masukkan soalan di sini..."
-            />
+      <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+          <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+            <h4 className="font-bold text-gray-900">{isAddingNew ? 'Tambah Soalan Baru' : 'Kemaskini Soalan'}</h4>
+            <button onClick={cancelEdit} className="text-gray-400 hover:text-gray-600 transition-colors">
+              <X className="w-5 h-5"/>
+            </button>
           </div>
-          <div>
-            <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2 block">Pilihan Jawapan</label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {editForm.options.map((opt, idx) => (
-                <div key={idx} className="flex gap-2 items-center">
-                  <span className="w-8 h-8 shrink-0 rounded bg-white border border-gray-200 flex items-center justify-center text-xs font-bold text-gray-500 shadow-sm">
-                    {String.fromCharCode(65 + idx)}
-                  </span>
-                  <input 
-                    type="text"
-                    value={opt}
-                    onChange={(e) => {
-                      const newOps = [...editForm.options];
-                      newOps[idx] = e.target.value;
-                      setEditForm({...editForm, options: newOps});
-                    }}
-                    placeholder={`Pilihan ${String.fromCharCode(65 + idx)}`}
-                    className="flex-1 border border-gray-200 rounded-md p-2.5 text-sm focus:border-brand-red focus:ring-1 focus:ring-brand-red/20 outline-none"
-                  />
+          <div className="p-6 overflow-y-auto flex-1 space-y-4">
+            <div>
+              <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Kategori Soalan</label>
+              <select 
+                value={editForm.category || 'Objektif'}
+                onChange={(e) => setEditForm({...editForm, category: e.target.value})}
+                className="w-full border border-gray-200 rounded-md p-2.5 text-sm focus:border-action-teal focus:ring-1 focus:ring-action-teal/20 outline-none bg-white"
+              >
+                <option value="Objektif">Objektif (A/B/C/D)</option>
+                <option value="Subjektif">Subjektif / Esei</option>
+                <option value="Q/A">Q/A (Soal Jawab Pendek)</option>
+                <option value="Lain-lain">Lain-lain</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Soalan</label>
+              <textarea 
+                value={editForm.question}
+                onChange={(e) => setEditForm({...editForm, question: e.target.value})}
+                className="w-full border border-gray-200 rounded-md p-2.5 text-sm focus:border-action-teal focus:ring-1 focus:ring-action-teal/20 outline-none"
+                rows={2}
+                placeholder="Masukkan soalan di sini..."
+              />
+            </div>
+            {(!editForm.category || editForm.category === 'Objektif') && (
+              <div>
+                <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2 block">Pilihan Jawapan</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {editForm.options.map((opt, idx) => (
+                    <div key={idx} className="flex gap-2 items-center">
+                      <span className="w-8 h-8 shrink-0 rounded bg-white border border-gray-200 flex items-center justify-center text-xs font-bold text-gray-500 shadow-sm">
+                        {String.fromCharCode(65 + idx)}
+                      </span>
+                      <input 
+                        type="text"
+                        value={opt}
+                        onChange={(e) => {
+                          const newOps = [...editForm.options];
+                          newOps[idx] = e.target.value;
+                          setEditForm({...editForm, options: newOps});
+                        }}
+                        placeholder={`Pilihan ${String.fromCharCode(65 + idx)}`}
+                        className="flex-1 border border-gray-200 rounded-md p-2.5 text-sm focus:border-action-teal focus:ring-1 focus:ring-action-teal/20 outline-none"
+                      />
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+            )}
+            <div>
+              <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Jawapan Tepat</label>
+              {(!editForm.category || editForm.category === 'Objektif') ? (
+                <select 
+                  value={editForm.answer}
+                  onChange={(e) => setEditForm({...editForm, answer: e.target.value})}
+                  className="w-full border border-gray-200 rounded-md p-2.5 text-sm focus:border-action-teal focus:ring-1 focus:ring-action-teal/20 outline-none bg-white"
+                >
+                  <option value="">-- Sila Pilih Jawapan (A/B/C/D) --</option>
+                  <option value="A">A - {editForm.options[0] || ''}</option>
+                  <option value="B">B - {editForm.options[1] || ''}</option>
+                  <option value="C">C - {editForm.options[2] || ''}</option>
+                  <option value="D">D - {editForm.options[3] || ''}</option>
+                </select>
+              ) : (
+                <textarea 
+                  value={editForm.answer}
+                  onChange={(e) => setEditForm({...editForm, answer: e.target.value})}
+                  className="w-full border border-gray-200 rounded-md p-2.5 text-sm focus:border-action-teal focus:ring-1 focus:ring-action-teal/20 outline-none"
+                  rows={2}
+                  placeholder={`Masukkan jawapan ${editForm.category.toLowerCase()} di sini...`}
+                />
+              )}
             </div>
           </div>
-          <div>
-            <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1 block">Jawapan Tepat</label>
-            <input 
-              type="text"
-              value={editForm.answer}
-              onChange={(e) => setEditForm({...editForm, answer: e.target.value})}
-              placeholder="Cth: A, Kemanusiaan"
-              className="w-full border border-gray-200 rounded-md p-2.5 text-sm focus:border-brand-red focus:ring-1 focus:ring-brand-red/20 outline-none"
-            />
-          </div>
-          <div className="flex justify-end gap-2 pt-3 border-t border-gray-100 mt-2">
-            <button onClick={isAddingNew ? () => {setIsAddingNew(false); cancelEdit();} : cancelEdit} className="px-4 py-2 text-sm font-bold text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors">Batal</button>
-            <button onClick={isAddingNew ? saveNew : saveEdit} className="px-5 py-2 bg-action-teal text-white rounded-md text-sm font-bold shadow-sm hover:bg-teal-700 transition-colors">Simpan Soalan</button>
+          <div className="flex justify-end gap-2 px-6 py-4 border-t border-gray-100 bg-gray-50">
+            <button onClick={cancelEdit} className="px-4 py-2 text-sm font-bold text-gray-500 hover:text-gray-700 bg-white hover:bg-gray-100 border border-gray-200 rounded-md transition-colors">Batal</button>
+            <button onClick={isAddingNew ? saveNew : saveEdit} className="px-5 py-2 bg-action-teal text-white rounded-md text-sm font-bold shadow-sm hover:bg-teal-700 transition-colors flex items-center gap-2">
+              <Save className="w-4 h-4"/> Simpan Soalan
+            </button>
           </div>
         </div>
       </div>
@@ -227,8 +279,8 @@ export const QuestionBankModule = () => {
                   <th className="px-4 md:px-6 py-4 text-center w-12 border-b border-gray-100">No.</th>
                   <th className="px-4 md:px-6 py-4 border-b border-gray-100">Nama Subjek</th>
                   <th className="px-4 md:px-6 py-4 text-center whitespace-nowrap border-b border-gray-100">Kod Subjek</th>
-                  <th className="px-4 md:px-6 py-4 text-center whitespace-nowrap border-b border-gray-100">Waktu Subjek</th>
-                  <th className="px-4 md:px-6 py-4 text-center whitespace-nowrap border-b border-gray-100">Bahasa Subjek</th>
+                  <th className="px-4 md:px-6 py-4 text-center whitespace-nowrap border-b border-gray-100">Bil Soalan</th>
+                  <th className="px-4 md:px-6 py-4 text-center whitespace-nowrap border-b border-gray-100">Kategori</th>
                   <th className="px-4 md:px-6 py-4 text-center w-28 border-b border-gray-100">Tindakan</th>
                 </tr>
               </thead>
@@ -238,12 +290,18 @@ export const QuestionBankModule = () => {
                     <td className="px-4 md:px-6 py-4 text-center font-medium text-gray-500">{index + 1}</td>
                     <td className="px-4 md:px-6 py-4 font-medium text-gray-900">{subjek.name}</td>
                     <td className="px-4 md:px-6 py-4 text-center text-gray-600">{subjek.code}</td>
-                    <td className="px-4 md:px-6 py-4 text-center text-gray-600 truncate max-w-[100px]">{subjek.duration}</td>
-                    <td className="px-4 md:px-6 py-4 text-center text-gray-600">{subjek.languages.join(', ')}</td>
+                    <td className="px-4 md:px-6 py-4 text-center text-gray-600 font-bold">{subjek.questionCount || 0}</td>
+                    <td className="px-4 md:px-6 py-4 text-center text-gray-600"><span className="bg-gray-100 px-2.5 py-1 rounded-md text-xs font-semibold">{subjek.category || 'Objektif'}</span></td>
                     <td className="px-4 md:px-6 py-4">
-                      <div className="flex items-center justify-center gap-3">
-                        <button onClick={(e) => { e.stopPropagation(); setSelectedSubject(subjek); }} className="bg-action-teal text-white w-full py-1.5 px-3 rounded text-xs font-bold hover:bg-teal-700 transition shadow-sm whitespace-nowrap">
-                          Pilih
+                      <div className="flex items-center justify-center gap-4">
+                        <button onClick={(e) => { e.stopPropagation(); setSelectedSubject(subjek); }} className="text-slate-400 hover:text-action-teal transition-colors" title="Lihat">
+                          <Search className="w-[18px] h-[18px]" strokeWidth={2} />
+                        </button>
+                        <button onClick={(e) => { e.stopPropagation(); setSelectedSubject(subjek); }} className="text-slate-400 hover:text-action-teal transition-colors" title="Edit">
+                          <Edit className="w-[18px] h-[18px]" strokeWidth={2} />
+                        </button>
+                        <button onClick={(e) => { e.stopPropagation(); }} className="text-slate-400 hover:text-brand-red transition-colors" title="Padam">
+                          <Trash2 className="w-[18px] h-[18px]" strokeWidth={2} />
                         </button>
                       </div>
                     </td>
@@ -276,13 +334,43 @@ export const QuestionBankModule = () => {
               <p className="text-xs font-bold text-gray-500 mt-1.5 flex items-center gap-1.5"><span className="text-action-teal uppercase tracking-widest">{selectedSubject.code}</span> - {selectedSubject.name}</p>
             </div>
           </div>
-          {locked ? (
-            <span className="bg-amber-100 text-amber-700 px-3 py-1 text-xs font-bold rounded-full flex items-center gap-1">
-              <Lock className="w-3 h-3" /> Dikunci
-            </span>
-          ) : (
-            <button onClick={() => setLocked(true)} className="px-4 py-2 bg-gray-100 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-200 text-sm font-bold shadow-sm transition-colors">Kunci Soalan</button>
-          )}
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+               <button 
+                 onClick={handleUploadClick}
+                 disabled={locked} 
+                 className="flex items-center gap-2 bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-lg font-bold text-sm shadow-sm hover:bg-gray-50 disabled:opacity-50 transition-all cursor-pointer"
+               >
+                 <FileUp className="w-4 h-4 text-action-teal" />
+                 {uploadedFile ? 'Tukar Fail CSV' : 'Muat Naik CSV'}
+               </button>
+               {uploadedFile && (
+                 <span className="text-sm font-medium text-green-600 flex items-center gap-1.5 px-2 py-1 bg-green-50 rounded-md border border-green-100" title={`${uploadedFile.name} diproses`}>
+                   <CheckCircle className="w-4 h-4" />
+                   <span className="hidden sm:inline text-xs">{uploadedFile.name}</span>
+                 </span>
+               )}
+            </div>
+
+            <input 
+               type="file" 
+               ref={fileInputRef}
+               className="hidden" 
+               accept=".csv"
+               onChange={handleFileChange}
+            />
+
+            {locked ? (
+              <span className="bg-amber-100 text-amber-700 px-3 py-1 text-xs font-bold rounded-full flex items-center gap-1">
+                <Lock className="w-3 h-3" /> Dikunci
+              </span>
+            ) : (
+              <button onClick={() => setLocked(true)} className="flex items-center gap-1.5 px-4 py-2 bg-gray-100 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-200 text-sm font-bold shadow-sm transition-colors cursor-pointer">
+                <Lock className="w-4 h-4" />
+                Kunci Soalan
+              </button>
+            )}
+          </div>
         </div>
         
         <AnimatePresence>
@@ -297,52 +385,29 @@ export const QuestionBankModule = () => {
                 <CheckCircle className="w-5 h-5 text-green-500" />
                 <p className="text-sm font-bold">Berjaya! Bank soalan telah dikemas kini daripada fail CSV anda.</p>
               </div>
-              <button onClick={() => setUploadSuccessMsg(false)} className="text-green-500 hover:text-green-700 ml-4">
+              <button onClick={() => setUploadSuccessMsg(false)} className="text-green-500 hover:text-green-700 ml-4 cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
               </button>
             </motion.div>
           )}
         </AnimatePresence>
 
-        <div className="border border-dashed border-gray-300 p-4 md:p-8 rounded-xl flex flex-col items-center justify-center text-center bg-gray-50/50">
-           {uploadedFile ? (
-             <AnimatePresence>
-               <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex flex-col items-center">
-                 <CheckCircle className="w-10 h-10 text-green-500 mb-3" />
-                 <p className="text-[15px] font-bold text-gray-800 mb-1">{uploadedFile.name}</p>
-                 <p className="text-xs text-gray-500 mb-4">Fail CSV berjaya dimuat naik dan diproses!</p>
-                 <button 
-                   onClick={() => { setUploadedFile(null); if (fileInputRef.current) fileInputRef.current.value = ''; }}
-                   className="text-action-teal text-sm font-bold mt-2 hover:text-teal-700 flex items-center gap-1"
-                   disabled={locked}
-                 >
-                   <FileUp className="w-4 h-4" /> Muat Naik Fail Lain
-                 </button>
-               </motion.div>
-             </AnimatePresence>
-           ) : (
-             <>
-               <FileUp className="w-10 h-10 text-brand-red/50 mb-3" />
-               <p className="text-[15px] font-bold text-gray-800 mb-1">Muat Naik CSV Soalan Objektif</p>
-               <p className="text-xs text-gray-500 mb-5">Format yang disyorkan: Soalan, Pilihan A, B, C, D, Jawapan</p>
-               <button 
-                 onClick={handleUploadClick}
-                 disabled={locked} 
-                 className="bg-brand-red text-white px-4 md:px-6 py-2.5 rounded-[6px] font-bold text-sm shadow-sm hover:bg-red-700 disabled:opacity-50 transition-all cursor-pointer"
-               >
-                 Tarik fail atau Klik untuk Muat Naik
-               </button>
-             </>
-           )}
-           <input 
-             type="file" 
-             ref={fileInputRef}
-             className="hidden" 
-             accept=".csv"
-             onChange={handleFileChange}
-           />
-        </div>
-        
+        {questions.length === 0 && (
+          <div className="border border-dashed border-gray-300 p-8 rounded-xl flex flex-col items-center justify-center text-center bg-gray-50/50 mb-8 mt-4">
+            <FileUp className="w-10 h-10 text-brand-red/50 mb-3" />
+            <p className="text-[15px] font-bold text-gray-800 mb-1">Tiada Soalan Ditemui</p>
+            <p className="text-xs text-gray-500 mb-5">Sila muat naik fail CSV di atas atau tambah soalan secara manual.</p>
+            <button 
+              onClick={handleAddNew}
+              disabled={locked || isAddingNew || editingIndex !== null}
+              className="flex items-center gap-1.5 bg-action-teal text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-teal-700 transition-colors disabled:opacity-50 shadow-sm cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              Tambah Soalan Manual
+            </button>
+          </div>
+        )}
+
         {questions.length > 0 && (
           <div className="mt-8">
             <div className="flex justify-between items-center mb-4 border-b border-gray-100 pb-2">
@@ -357,31 +422,30 @@ export const QuestionBankModule = () => {
               </button>
             </div>
             
-            {isAddingNew && renderEditForm()}
+            {renderEditForm()}
 
             <div className="grid grid-cols-1 gap-4">
               {questions.map((q, i) => (
                 <div key={i}>
-                  {editingIndex === i ? (
-                    renderEditForm()
-                  ) : (
-                    <div className="border border-gray-200 rounded-lg p-5 bg-white shadow-sm hover:border-gray-300 transition-colors group">
-                      <div className="flex justify-between items-start mb-4">
-                        <div className="font-bold text-charcoal text-[15px] pr-8">
-                          <span className="text-brand-red mr-2">{i + 1}.</span>
-                          {q ? translateContent(q.question) : 'Soalan Tidak Sah'}
-                        </div>
-                        {!locked && editingIndex === null && !isAddingNew && (
-                          <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button onClick={() => handleEdit(i)} className="p-1.5 text-gray-400 hover:text-action-teal rounded hover:bg-teal-50 cursor-pointer" title="Kemaskini">
-                              <Edit2 className="w-4 h-4" />
-                            </button>
-                            <button onClick={() => handleDelete(i)} className="p-1.5 text-gray-400 hover:text-brand-red rounded hover:bg-red-50 cursor-pointer" title="Padam">
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        )}
+                  <div className="border border-gray-200 rounded-lg p-5 bg-white shadow-sm hover:border-gray-300 transition-colors group">
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="font-bold text-charcoal text-[15px] pr-8">
+                        <span className="text-brand-red mr-2">{i + 1}.</span>
+                        <span className="bg-gray-100 text-gray-500 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mr-2">{q.category || 'Objektif'}</span>
+                        {q ? translateContent(q.question) : 'Soalan Tidak Sah'}
                       </div>
+                      {!locked && editingIndex === null && !isAddingNew && (
+                        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button onClick={() => handleEdit(i)} className="p-1.5 text-gray-400 hover:text-action-teal rounded hover:bg-teal-50 cursor-pointer" title="Kemaskini">
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          <button onClick={() => handleDelete(i)} className="p-1.5 text-gray-400 hover:text-brand-red rounded hover:bg-red-50 cursor-pointer" title="Padam">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    {(!q.category || q.category === 'Objektif') ? (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pl-5">
                         {q?.options?.map((opt, optIndex) => {
                           const isCorrect = String.fromCharCode(65 + optIndex) === (q?.answer || '').toUpperCase() || opt.trim().toLowerCase() === (q?.answer || '').trim().toLowerCase();
@@ -402,8 +466,15 @@ export const QuestionBankModule = () => {
                           );
                         })}
                       </div>
-                    </div>
-                  )}
+                    ) : (
+                      <div className="pl-5">
+                        <div className="p-4 rounded-lg border bg-green-50/50 border-green-200 text-green-900 shadow-sm">
+                          <div className="text-xs font-bold text-green-800 mb-1 uppercase tracking-wider">Jawapan Tepat / Panduan:</div>
+                          <div className="text-sm font-medium">{q.answer}</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
